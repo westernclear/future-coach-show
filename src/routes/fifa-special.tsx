@@ -1,12 +1,16 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { Check, ChevronRight, Clock3, Globe2, Search, ShieldCheck, Trophy } from "lucide-react";
+import { useState, type FormEvent } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { Check, ChevronRight, Clock3, Globe2, Loader2, Search, ShieldCheck, Trophy } from "lucide-react";
 
 import stadiumImage from "@/assets/coachface-stadium.jpg";
 import { CoachFacePageShell } from "@/components/coachface-page-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
+import { submitFifaSpecialEntry } from "@/lib/fifa-special.functions";
 import { cn } from "@/lib/utils";
 
 const fifaCoaches = [
@@ -83,8 +87,37 @@ function FifaSpecialPage() {
   const [roster, setRoster] = useState<number[]>([]);
   const [search, setSearch] = useState("");
   const [activeGroup, setActiveGroup] = useState("All");
+  const [entryName, setEntryName] = useState("My FIFA Special XI");
+  const [submitting, setSubmitting] = useState(false);
+  const [entryMessage, setEntryMessage] = useState<string | null>(null);
+  const submitEntry = useServerFn(submitFifaSpecialEntry);
   const toggleCoach = (id: number) => {
-    setRoster((current) => current.includes(id) ? current.filter((coachId) => coachId !== id) : current.length < 3 ? [...current, id] : current);
+    setEntryMessage(null);
+    setRoster((current) => {
+      if (current.includes(id)) return current.filter((coachId) => coachId !== id);
+      const coach = fifaCoaches.find((item) => item.id === id);
+      const sameGroupCount = current.filter((coachId) => fifaCoaches.find((item) => item.id === coachId)?.group === coach?.group).length;
+      return current.length < 3 && sameGroupCount < 2 ? [...current, id] : current;
+    });
+  };
+  const handleEntry = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setEntryMessage(null);
+    if (roster.length !== 3) return;
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) {
+      window.location.assign("/auth?redirect=/fifa-special");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await submitEntry({ data: { entryName, coachSlugs: roster.map((id) => fifaCoaches.find((coach) => coach.id === id)?.slug ?? "") } });
+      setEntryMessage("Entry confirmed. Your three coaches are locked into the global leaderboard.");
+    } catch (error) {
+      setEntryMessage(error instanceof Error ? error.message : "Your entry could not be saved.");
+    } finally {
+      setSubmitting(false);
+    }
   };
   const normalizedSearch = search.trim().toLowerCase();
   const visibleCoaches = fifaCoaches.filter((coach) => {
