@@ -91,12 +91,12 @@ function AuthPage() {
             <Button className="w-full" size="lg" type="submit" disabled={loading}>{loading && <Loader2 className="animate-spin" />}{mode === "signin" ? "Sign in" : "Create free account"}</Button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          <div className="mt-6 flex items-center justify-center gap-1 text-sm text-muted-foreground">
             {mode === "signin" ? "New to CoachFace?" : "Already have an account?"}{" "}
-            <button className="font-bold text-foreground underline underline-offset-4" type="button" onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setMessage(null); }}>
+            <Button variant="link" className="h-auto p-0 text-foreground" type="button" onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setMessage(null); }}>
               {mode === "signin" ? "Create an account" : "Sign in"}
-            </button>
-          </p>
+            </Button>
+          </div>
         </div>
       </section>
     </main>
