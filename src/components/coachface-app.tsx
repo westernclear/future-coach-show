@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   BarChart3,
@@ -74,9 +75,12 @@ export function CoachFaceApp() {
             <a className="transition-colors hover:text-foreground" href="#show">The show</a>
             <a className="transition-colors hover:text-foreground" href="#scoring">How scoring works</a>
           </nav>
-          <Button size="sm" onClick={() => document.querySelector("#game")?.scrollIntoView({ behavior: "smooth" })}>
-            Build roster <ArrowRight />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="ghost" asChild><Link to="/auth">Sign in</Link></Button>
+            <Button size="sm" onClick={() => document.querySelector("#game")?.scrollIntoView({ behavior: "smooth" })}>
+              Build roster <ArrowRight />
+            </Button>
+          </div>
         </div>
       </header>
 

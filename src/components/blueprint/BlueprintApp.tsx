@@ -1,31 +1,14 @@
 import { useState } from "react";
 import { ArchOverview } from "./ArchOverview";
-import { DomainModules } from "./DomainModules";
-import { DatabaseEntities } from "./DatabaseEntities";
-import { DataIngestion } from "./DataIngestion";
-import { ScoringEngine } from "./ScoringEngine";
-import { RealtimeDelivery } from "./RealtimeDelivery";
-import { SecurityAuth } from "./SecurityAuth";
-import { Observability } from "./Observability";
-import { PhasedPlan } from "./PhasedPlan";
 import { TechStack } from "./TechStack";
 import { cn } from "@/lib/utils";
 import { 
-  BookOpen, Database, GitBranch, Layers, Radio, Shield, 
-  BarChart3, Map, Zap, Server
+  Map, Server
 } from "lucide-react";
 
 const sections = [
   { id: "overview",     label: "System Overview",       icon: Map },
   { id: "stack",        label: "Tech Stack",             icon: Server },
-  { id: "domains",      label: "Domain Modules",         icon: Layers },
-  { id: "db",           label: "Database Schema",        icon: Database },
-  { id: "ingestion",    label: "Event Ingestion",        icon: GitBranch },
-  { id: "scoring",      label: "Scoring Engine",         icon: BarChart3 },
-  { id: "realtime",     label: "Realtime Delivery",      icon: Radio },
-  { id: "security",     label: "Security & Auth",        icon: Shield },
-  { id: "observability",label: "Observability",          icon: Zap },
-  { id: "phases",       label: "Phased Roadmap",         icon: BookOpen },
 ];
 
 export function BlueprintApp() {
@@ -80,9 +63,8 @@ export function BlueprintApp() {
               <span className="text-muted-foreground">Mega-Scale Blueprint</span>
             </h1>
             <p className="mt-4 max-w-2xl text-muted-foreground leading-relaxed">
-              A complete architecture, domain decomposition, database schema, event pipeline, scoring engine design, 
-              realtime delivery, security model, observability stack, and phased build roadmap — 
-              grounded in the existing TanStack Start + Supabase prototype.
+              The production architecture for a live four-sport fantasy game, public coach intelligence platform,
+              explainable scoring system, editorial workflow, and licensed data pipeline.
             </p>
             <div className="mt-6 flex flex-wrap gap-3 text-xs">
               {["Baseball","Football","Basketball","Soccer"].map(s => (
@@ -97,14 +79,6 @@ export function BlueprintApp() {
           <div className="space-y-20">
             <SectionWrapper id="overview" onVisible={setActive}><ArchOverview /></SectionWrapper>
             <SectionWrapper id="stack" onVisible={setActive}><TechStack /></SectionWrapper>
-            <SectionWrapper id="domains" onVisible={setActive}><DomainModules /></SectionWrapper>
-            <SectionWrapper id="db" onVisible={setActive}><DatabaseEntities /></SectionWrapper>
-            <SectionWrapper id="ingestion" onVisible={setActive}><DataIngestion /></SectionWrapper>
-            <SectionWrapper id="scoring" onVisible={setActive}><ScoringEngine /></SectionWrapper>
-            <SectionWrapper id="realtime" onVisible={setActive}><RealtimeDelivery /></SectionWrapper>
-            <SectionWrapper id="security" onVisible={setActive}><SecurityAuth /></SectionWrapper>
-            <SectionWrapper id="observability" onVisible={setActive}><Observability /></SectionWrapper>
-            <SectionWrapper id="phases" onVisible={setActive}><PhasedPlan /></SectionWrapper>
           </div>
         </main>
       </div>
