@@ -83,6 +83,7 @@ export function CoachFaceApp() {
             <span className="font-display text-xl font-black uppercase tracking-tight">CoachFace</span>
           </a>
           <nav className="hidden items-center gap-7 text-sm font-semibold text-muted-foreground md:flex" aria-label="Main navigation">
+            <Link className="font-black text-primary transition-colors hover:text-foreground" to="/fifa-special">FIFA Special</Link>
             <Link className="transition-colors hover:text-foreground" to="/rankings">Power Rankings</Link>
             <Link className="transition-colors hover:text-foreground" to="/play">Play</Link>
             <Link className="transition-colors hover:text-foreground" to="/rewards">Rewards</Link>
@@ -112,7 +113,8 @@ export function CoachFaceApp() {
                 Build a roster of coaches across sports. Score every call, every adjustment, and every result. The sideline finally counts.
               </p>
               <div className="mt-9 flex flex-wrap gap-3">
-                <Button size="lg" asChild><Link to="/play">Play free this week <ArrowRight /></Link></Button>
+                <Button size="lg" asChild><Link to="/fifa-special">Enter FIFA Special <Trophy /></Link></Button>
+                <Button size="lg" variant="outline" className="border-hero-border bg-hero-surface text-hero-foreground hover:bg-hero-surface-hover hover:text-hero-foreground" asChild><Link to="/play">Weekly play <ArrowRight /></Link></Button>
                 <Button size="lg" variant="outline" className="border-hero-border bg-hero-surface text-hero-foreground hover:bg-hero-surface-hover hover:text-hero-foreground" asChild><Link to="/the-show"><CirclePlay /> Watch the format</Link></Button>
               </div>
               <div className="mt-12 flex flex-wrap gap-x-7 gap-y-3 text-sm font-medium text-hero-muted">
