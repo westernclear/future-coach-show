@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BarChart3, Flame, Radio, Sparkles, Users } from "lucide-react";
 
-import showOpening from "@/assets/coachface-show-opening.mp4.asset.json";
+import showOpening from "@/assets/coachface-show-voiceover.mp4.asset.json";
 import stadiumImage from "@/assets/coachface-stadium.jpg";
 import { CoachFacePageShell, PageHero } from "@/components/coachface-page-shell";
 import { Badge } from "@/components/ui/badge";
@@ -39,7 +39,7 @@ function ShowPage() {
               playsInline
               controls
               preload="metadata"
-              aria-label="Cinematic simulation of The CoachFace Show opening"
+              aria-label="Cinematic simulation of The CoachFace Show opening with broadcast voiceover"
               className="absolute inset-0 h-full w-full object-cover"
             />
             <Badge className="pointer-events-none absolute left-5 top-5 rounded-sm uppercase tracking-wider">
