@@ -14,6 +14,7 @@ import { Route as ScoringRouteImport } from './routes/scoring'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as RankingsRouteImport } from './routes/rankings'
 import { Route as PlayRouteImport } from './routes/play'
+import { Route as FifaSpecialRouteImport } from './routes/fifa-special'
 import { Route as BlueprintRouteImport } from './routes/blueprint'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
@@ -43,6 +44,11 @@ const PlayRoute = PlayRouteImport.update({
   path: '/play',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FifaSpecialRoute = FifaSpecialRouteImport.update({
+  id: '/fifa-special',
+  path: '/fifa-special',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlueprintRoute = BlueprintRouteImport.update({
   id: '/blueprint',
   path: '/blueprint',
@@ -63,6 +69,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/blueprint': typeof BlueprintRoute
+  '/fifa-special': typeof FifaSpecialRoute
   '/play': typeof PlayRoute
   '/rankings': typeof RankingsRoute
   '/rewards': typeof RewardsRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/blueprint': typeof BlueprintRoute
+  '/fifa-special': typeof FifaSpecialRoute
   '/play': typeof PlayRoute
   '/rankings': typeof RankingsRoute
   '/rewards': typeof RewardsRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/blueprint': typeof BlueprintRoute
+  '/fifa-special': typeof FifaSpecialRoute
   '/play': typeof PlayRoute
   '/rankings': typeof RankingsRoute
   '/rewards': typeof RewardsRoute
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/blueprint'
+    | '/fifa-special'
     | '/play'
     | '/rankings'
     | '/rewards'
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/blueprint'
+    | '/fifa-special'
     | '/play'
     | '/rankings'
     | '/rewards'
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/blueprint'
+    | '/fifa-special'
     | '/play'
     | '/rankings'
     | '/rewards'
@@ -127,6 +139,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   BlueprintRoute: typeof BlueprintRoute
+  FifaSpecialRoute: typeof FifaSpecialRoute
   PlayRoute: typeof PlayRoute
   RankingsRoute: typeof RankingsRoute
   RewardsRoute: typeof RewardsRoute
@@ -171,6 +184,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlayRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/fifa-special': {
+      id: '/fifa-special'
+      path: '/fifa-special'
+      fullPath: '/fifa-special'
+      preLoaderRoute: typeof FifaSpecialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blueprint': {
       id: '/blueprint'
       path: '/blueprint'
@@ -199,6 +219,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   BlueprintRoute: BlueprintRoute,
+  FifaSpecialRoute: FifaSpecialRoute,
   PlayRoute: PlayRoute,
   RankingsRoute: RankingsRoute,
   RewardsRoute: RewardsRoute,
