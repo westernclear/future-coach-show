@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const slate = [
-  { id: 1, initials: "MC", name: "Marcus Cole", sport: "Football", projection: 94.2 },
-  { id: 2, initials: "AR", name: "Ana Reyes", sport: "Soccer", projection: 91.7 },
-  { id: 3, initials: "DM", name: "Darius Miles", sport: "Basketball", projection: 89.4 },
-  { id: 4, initials: "JL", name: "Jordan Lee", sport: "Baseball", projection: 86.9 },
+  { id: 1, initials: "AR", name: "Andy Reid", sport: "NFL Football · Kansas City Chiefs", projection: 94.2 },
+  { id: 2, initials: "MD", name: "Mark Daigneault", sport: "Basketball · Oklahoma City Thunder", projection: 93.1 },
+  { id: 3, initials: "DR", name: "Dave Roberts", sport: "Baseball · Los Angeles Dodgers", projection: 91.8 },
+  { id: 4, initials: "MA", name: "Mikel Arteta", sport: "Premier League · Arsenal", projection: 90.6 },
+  { id: 5, initials: "LE", name: "Luis Enrique", sport: "Champions League · Paris Saint-Germain", projection: 89.9 },
+  { id: 6, initials: "FL", name: "Frank Lampard", sport: "Championship League · Coventry City", projection: 86.5 },
 ];
 
 export const Route = createFileRoute("/play")({

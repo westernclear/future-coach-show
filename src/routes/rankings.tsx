@@ -8,19 +8,22 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const coaches = [
-  { rank: 1, initials: "MC", name: "Marcus Cole", sport: "Football", role: "Head Coach", score: 94.2, change: "+3.8", form: "W W W L W" },
-  { rank: 2, initials: "AR", name: "Ana Reyes", sport: "Soccer", role: "Manager", score: 91.7, change: "+1.4", form: "W D W W W" },
-  { rank: 3, initials: "DM", name: "Darius Miles", sport: "Basketball", role: "Head Coach", score: 89.4, change: "+4.2", form: "W W L W W" },
-  { rank: 4, initials: "JL", name: "Jordan Lee", sport: "Baseball", role: "Manager", score: 86.9, change: "-0.6", form: "W L W W L" },
-  { rank: 5, initials: "SK", name: "Samira Khan", sport: "Soccer", role: "Manager", score: 85.8, change: "+2.1", form: "D W W L W" },
-  { rank: 6, initials: "TB", name: "Theo Brooks", sport: "Basketball", role: "Head Coach", score: 83.6, change: "-1.2", form: "L W W W L" },
+  { rank: 1, initials: "AR", name: "Andy Reid", sport: "NFL Football", role: "Kansas City Chiefs", score: 94.2, change: "+3.8", form: "W W W L W" },
+  { rank: 2, initials: "MD", name: "Mark Daigneault", sport: "Basketball", role: "Oklahoma City Thunder", score: 93.1, change: "+2.4", form: "W W W W W" },
+  { rank: 3, initials: "DR", name: "Dave Roberts", sport: "Baseball", role: "Los Angeles Dodgers", score: 91.8, change: "+1.7", form: "W W L W W" },
+  { rank: 4, initials: "MA", name: "Mikel Arteta", sport: "Premier League", role: "Arsenal", score: 90.6, change: "+1.3", form: "W D W W W" },
+  { rank: 5, initials: "LE", name: "Luis Enrique", sport: "Champions League", role: "Paris Saint-Germain", score: 89.9, change: "+4.1", form: "W W W W W" },
+  { rank: 6, initials: "HF", name: "Hansi Flick", sport: "La Liga", role: "FC Barcelona", score: 88.7, change: "+2.0", form: "W W D W W" },
+  { rank: 7, initials: "FL", name: "Frank Lampard", sport: "Championship League", role: "Coventry City", score: 86.5, change: "+1.8", form: "W D W L W" },
+  { rank: 8, initials: "RS", name: "Randy Smith", sport: "Golf", role: "Coach to Scottie Scheffler", score: 84.4, change: "+0.9", form: "T5 W T3 T8 W" },
+  { rank: 9, initials: "SV", name: "Simone Vagnozzi", sport: "Tennis", role: "Coach to Jannik Sinner", score: 83.2, change: "-0.4", form: "W W W L W" },
 ];
-const sports = ["All", "Football", "Basketball", "Baseball", "Soccer"];
+const sports = ["All", "NFL Football", "Basketball", "Baseball", "Premier League", "La Liga", "Golf", "Tennis", "Champions League", "Championship League"];
 
 export const Route = createFileRoute("/rankings")({
   head: () => ({ meta: [
     { title: "Live Coach Rankings | CoachFace" },
-    { name: "description", content: "Compare live, explainable CoachFace rankings across football, basketball, baseball, and soccer." },
+    { name: "description", content: "Compare explainable CoachFace rankings across football, basketball, baseball, soccer, golf, and tennis." },
     { property: "og:title", content: "Live Coach Rankings | CoachFace" },
     { property: "og:description", content: "See which coaches owned the week across four sports." },
   ] }),
