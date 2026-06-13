@@ -9,10 +9,34 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TheShowRouteImport } from './routes/the-show'
+import { Route as ScoringRouteImport } from './routes/scoring'
+import { Route as RankingsRouteImport } from './routes/rankings'
+import { Route as PlayRouteImport } from './routes/play'
 import { Route as BlueprintRouteImport } from './routes/blueprint'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TheShowRoute = TheShowRouteImport.update({
+  id: '/the-show',
+  path: '/the-show',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScoringRoute = ScoringRouteImport.update({
+  id: '/scoring',
+  path: '/scoring',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RankingsRoute = RankingsRouteImport.update({
+  id: '/rankings',
+  path: '/rankings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlayRoute = PlayRouteImport.update({
+  id: '/play',
+  path: '/play',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlueprintRoute = BlueprintRouteImport.update({
   id: '/blueprint',
   path: '/blueprint',
@@ -33,34 +57,100 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/blueprint': typeof BlueprintRoute
+  '/play': typeof PlayRoute
+  '/rankings': typeof RankingsRoute
+  '/scoring': typeof ScoringRoute
+  '/the-show': typeof TheShowRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/blueprint': typeof BlueprintRoute
+  '/play': typeof PlayRoute
+  '/rankings': typeof RankingsRoute
+  '/scoring': typeof ScoringRoute
+  '/the-show': typeof TheShowRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/blueprint': typeof BlueprintRoute
+  '/play': typeof PlayRoute
+  '/rankings': typeof RankingsRoute
+  '/scoring': typeof ScoringRoute
+  '/the-show': typeof TheShowRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/blueprint'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/blueprint'
+    | '/play'
+    | '/rankings'
+    | '/scoring'
+    | '/the-show'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/blueprint'
-  id: '__root__' | '/' | '/auth' | '/blueprint'
+  to:
+    | '/'
+    | '/auth'
+    | '/blueprint'
+    | '/play'
+    | '/rankings'
+    | '/scoring'
+    | '/the-show'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/blueprint'
+    | '/play'
+    | '/rankings'
+    | '/scoring'
+    | '/the-show'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   BlueprintRoute: typeof BlueprintRoute
+  PlayRoute: typeof PlayRoute
+  RankingsRoute: typeof RankingsRoute
+  ScoringRoute: typeof ScoringRoute
+  TheShowRoute: typeof TheShowRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/the-show': {
+      id: '/the-show'
+      path: '/the-show'
+      fullPath: '/the-show'
+      preLoaderRoute: typeof TheShowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scoring': {
+      id: '/scoring'
+      path: '/scoring'
+      fullPath: '/scoring'
+      preLoaderRoute: typeof ScoringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rankings': {
+      id: '/rankings'
+      path: '/rankings'
+      fullPath: '/rankings'
+      preLoaderRoute: typeof RankingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/play': {
+      id: '/play'
+      path: '/play'
+      fullPath: '/play'
+      preLoaderRoute: typeof PlayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blueprint': {
       id: '/blueprint'
       path: '/blueprint'
@@ -89,7 +179,21 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   BlueprintRoute: BlueprintRoute,
+  PlayRoute: PlayRoute,
+  RankingsRoute: RankingsRoute,
+  ScoringRoute: ScoringRoute,
+  TheShowRoute: TheShowRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
