@@ -18,6 +18,8 @@ export type Database = {
         Row: {
           calculated_at: string
           coach_id: string
+          context_points: number
+          decision_points: number
           editorial_points: number
           event_count: number
           game_id: string | null
@@ -25,15 +27,19 @@ export type Database = {
           is_final: boolean
           movement: number | null
           objective_points: number
+          performance_points: number
           rank: number | null
           scope: string
           scope_key: string
+          scoring_breakdown: Json
           total_points: number
           updated_at: string
         }
         Insert: {
           calculated_at?: string
           coach_id: string
+          context_points?: number
+          decision_points?: number
           editorial_points?: number
           event_count?: number
           game_id?: string | null
@@ -41,15 +47,19 @@ export type Database = {
           is_final?: boolean
           movement?: number | null
           objective_points?: number
+          performance_points?: number
           rank?: number | null
           scope: string
           scope_key: string
+          scoring_breakdown?: Json
           total_points?: number
           updated_at?: string
         }
         Update: {
           calculated_at?: string
           coach_id?: string
+          context_points?: number
+          decision_points?: number
           editorial_points?: number
           event_count?: number
           game_id?: string | null
@@ -57,9 +67,11 @@ export type Database = {
           is_final?: boolean
           movement?: number | null
           objective_points?: number
+          performance_points?: number
           rank?: number | null
           scope?: string
           scope_key?: string
+          scoring_breakdown?: Json
           total_points?: number
           updated_at?: string
         }
@@ -194,16 +206,26 @@ export type Database = {
         Row: {
           created_at: string
           description: string
+          eligibility_rules: Json
           ends_at: string
+          entry_price_cents: number
+          entry_type: Database["public"]["Enums"]["contest_entry_type"]
+          format: Database["public"]["Enums"]["contest_format"]
+          guaranteed_prize_cents: number
+          head_to_head_size: number | null
           id: string
           is_featured: boolean
           is_published: boolean
+          league_id: string | null
           locks_at: string
           max_entries_per_user: number
           name: string
           opens_at: string
+          payout_structure: Json
+          platform_fee_bps: number
           roster_size: number
           rules: Json
+          settlement_status: Database["public"]["Enums"]["contest_settlement_status"]
           slug: string
           sport_id: string | null
           status: Database["public"]["Enums"]["contest_status"]
@@ -212,16 +234,26 @@ export type Database = {
         Insert: {
           created_at?: string
           description: string
+          eligibility_rules?: Json
           ends_at: string
+          entry_price_cents?: number
+          entry_type?: Database["public"]["Enums"]["contest_entry_type"]
+          format?: Database["public"]["Enums"]["contest_format"]
+          guaranteed_prize_cents?: number
+          head_to_head_size?: number | null
           id?: string
           is_featured?: boolean
           is_published?: boolean
+          league_id?: string | null
           locks_at: string
           max_entries_per_user?: number
           name: string
           opens_at: string
+          payout_structure?: Json
+          platform_fee_bps?: number
           roster_size: number
           rules?: Json
+          settlement_status?: Database["public"]["Enums"]["contest_settlement_status"]
           slug: string
           sport_id?: string | null
           status?: Database["public"]["Enums"]["contest_status"]
@@ -230,22 +262,39 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string
+          eligibility_rules?: Json
           ends_at?: string
+          entry_price_cents?: number
+          entry_type?: Database["public"]["Enums"]["contest_entry_type"]
+          format?: Database["public"]["Enums"]["contest_format"]
+          guaranteed_prize_cents?: number
+          head_to_head_size?: number | null
           id?: string
           is_featured?: boolean
           is_published?: boolean
+          league_id?: string | null
           locks_at?: string
           max_entries_per_user?: number
           name?: string
           opens_at?: string
+          payout_structure?: Json
+          platform_fee_bps?: number
           roster_size?: number
           rules?: Json
+          settlement_status?: Database["public"]["Enums"]["contest_settlement_status"]
           slug?: string
           sport_id?: string | null
           status?: Database["public"]["Enums"]["contest_status"]
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "contests_league_id_fkey"
+            columns: ["league_id"]
+            isOneToOne: false
+            referencedRelation: "leagues"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "contests_sport_id_fkey"
             columns: ["sport_id"]
@@ -375,6 +424,75 @@ export type Database = {
           },
         ]
       }
+      prize_awards: {
+        Row: {
+          amount: number
+          awarded_at: string
+          contest_id: string
+          created_at: string
+          currency: string | null
+          entry_id: string | null
+          fulfilled_at: string | null
+          fulfillment_reference: string | null
+          id: string
+          kind: Database["public"]["Enums"]["reward_kind"]
+          metadata: Json
+          placement: number
+          status: Database["public"]["Enums"]["reward_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          awarded_at?: string
+          contest_id: string
+          created_at?: string
+          currency?: string | null
+          entry_id?: string | null
+          fulfilled_at?: string | null
+          fulfillment_reference?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["reward_kind"]
+          metadata?: Json
+          placement: number
+          status?: Database["public"]["Enums"]["reward_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          awarded_at?: string
+          contest_id?: string
+          created_at?: string
+          currency?: string | null
+          entry_id?: string | null
+          fulfilled_at?: string | null
+          fulfillment_reference?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["reward_kind"]
+          metadata?: Json
+          placement?: number
+          status?: Database["public"]["Enums"]["reward_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prize_awards_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "contests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "prize_awards_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "contest_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -416,6 +534,117 @@ export type Database = {
           username?: string
         }
         Relationships: []
+      }
+      reward_badges: {
+        Row: {
+          created_at: string
+          criteria: Json
+          description: string
+          icon: string
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          criteria?: Json
+          description: string
+          icon?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          tier?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          criteria?: Json
+          description?: string
+          icon?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      reward_ledger: {
+        Row: {
+          amount: number
+          awarded_at: string
+          contest_id: string | null
+          created_at: string
+          currency: string | null
+          description: string
+          entry_id: string | null
+          expires_at: string | null
+          fulfilled_at: string | null
+          id: string
+          kind: Database["public"]["Enums"]["reward_kind"]
+          metadata: Json
+          reference_key: string | null
+          status: Database["public"]["Enums"]["reward_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          awarded_at?: string
+          contest_id?: string | null
+          created_at?: string
+          currency?: string | null
+          description: string
+          entry_id?: string | null
+          expires_at?: string | null
+          fulfilled_at?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["reward_kind"]
+          metadata?: Json
+          reference_key?: string | null
+          status?: Database["public"]["Enums"]["reward_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          awarded_at?: string
+          contest_id?: string | null
+          created_at?: string
+          currency?: string | null
+          description?: string
+          entry_id?: string | null
+          expires_at?: string | null
+          fulfilled_at?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["reward_kind"]
+          metadata?: Json
+          reference_key?: string | null
+          status?: Database["public"]["Enums"]["reward_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_ledger_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "contests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reward_ledger_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "contest_entries"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       roster_picks: {
         Row: {
@@ -705,6 +934,51 @@ export type Database = {
           },
         ]
       }
+      user_badges: {
+        Row: {
+          awarded_at: string
+          badge_id: string
+          contest_id: string | null
+          created_at: string
+          id: string
+          metadata: Json
+          user_id: string
+        }
+        Insert: {
+          awarded_at?: string
+          badge_id: string
+          contest_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          user_id: string
+        }
+        Update: {
+          awarded_at?: string
+          badge_id?: string
+          contest_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "reward_badges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_badges_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "contests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -735,6 +1009,14 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "editor" | "scoring_analyst" | "user"
+      contest_entry_type: "free" | "paid"
+      contest_format: "global" | "private_league" | "head_to_head"
+      contest_settlement_status:
+        | "unsettled"
+        | "pending_review"
+        | "settled"
+        | "cancelled"
+        | "refunded"
       contest_status:
         | "draft"
         | "open"
@@ -744,6 +1026,18 @@ export type Database = {
         | "cancelled"
       game_status: "scheduled" | "live" | "final" | "postponed" | "cancelled"
       review_status: "pending" | "approved" | "rejected" | "overridden"
+      reward_kind:
+        | "points"
+        | "contest_ticket"
+        | "badge"
+        | "merchandise"
+        | "cash"
+      reward_status:
+        | "pending"
+        | "available"
+        | "fulfilled"
+        | "cancelled"
+        | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -872,9 +1166,26 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "editor", "scoring_analyst", "user"],
+      contest_entry_type: ["free", "paid"],
+      contest_format: ["global", "private_league", "head_to_head"],
+      contest_settlement_status: [
+        "unsettled",
+        "pending_review",
+        "settled",
+        "cancelled",
+        "refunded",
+      ],
       contest_status: ["draft", "open", "locked", "live", "final", "cancelled"],
       game_status: ["scheduled", "live", "final", "postponed", "cancelled"],
       review_status: ["pending", "approved", "rejected", "overridden"],
+      reward_kind: ["points", "contest_ticket", "badge", "merchandise", "cash"],
+      reward_status: [
+        "pending",
+        "available",
+        "fulfilled",
+        "cancelled",
+        "expired",
+      ],
     },
   },
 } as const
