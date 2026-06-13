@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
-  { to: "/rankings", label: "Rankings" },
+  { to: "/rankings", label: "Power Rankings" },
   { to: "/play", label: "Play" },
   { to: "/the-show", label: "The Show" },
   { to: "/scoring", label: "How Scoring Works" },
