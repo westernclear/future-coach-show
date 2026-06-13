@@ -255,6 +255,9 @@ export function CoachFaceApp() {
           <div><p className="font-display text-2xl font-black uppercase">CoachFace</p><p className="mt-1 text-sm text-game-muted">The game behind the game.</p></div>
            <p className="max-w-md text-xs leading-relaxed text-game-muted">Concept experience based on the original CoachFace vision. Coach names and scores shown here are fictional for prototype purposes. Paid contests are limited to eligible users and locations.</p>
         </div>
+        <div className="mx-auto mt-8 max-w-7xl px-5 lg:px-8">
+          <p className="text-center text-xs text-game-muted/60">© 2026 CoachFace. All Rights Reserved. CoachFace™ is a sports fantasy platform developed and operated by SCOSTrade.</p>
+        </div>
       </footer>
     </div>
   );
