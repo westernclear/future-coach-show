@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 import stadiumImage from "@/assets/coachface-stadium.jpg";
-import conceptTrailer from "@/assets/coachface-concept-trailer-v2.mp4.asset.json";
+import conceptTrailer from "@/assets/coachface-concept-trailer-stills.mp4.asset.json";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
