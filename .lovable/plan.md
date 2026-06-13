@@ -1,4 +1,52 @@
-# CoachFace Venture Evaluation Plan
+# CoachFace Mega-Scale Product Build
+
+## Confirmed product scope
+
+CoachFace will launch as one combined four-sport platform for baseball, football, basketball, and soccer. It includes a public coach intelligence product, free fantasy contests, full user profiles, explainable scoring, licensed live sports data, editorial review, and administrative overrides.
+
+## Foundation completed
+
+- Lovable Cloud database, authentication, realtime delivery, and server-side capabilities are connected.
+- Email and Google account access are configured with leaked-password protection.
+- The production data model covers profiles, separate secure roles, sports, leagues, teams, coaches, games, versioned scoring rules, immutable score events, score totals, contests, entries, and roster picks.
+- Row-level access rules protect user information and restrict scoring or administrative changes to authorized roles.
+- Games, score events, and coach totals can broadcast live updates to connected clients.
+
+## Delivery sequence
+
+### Phase 1: Accounts and core product
+
+- Complete onboarding, profile editing, favorite teams and sports, notification preferences, and account recovery.
+- Replace fictional homepage data with public database reads and clear empty/loading/error states.
+- Build coach directory, coach detail, live scores, schedules, rankings, contest lobby, roster builder, and personal entries.
+- Add an authenticated operations console for sports configuration, coaches, scoring rules, contests, and staff roles.
+
+### Phase 2: Licensed feed and scoring pipeline
+
+- Select and contract one licensed provider with coverage across all four sports.
+- Store the provider key securely, never in browser code.
+- Implement a provider adapter that converts vendor payloads into a stable internal event format.
+- Add signed webhook ingestion where supported, scheduled polling as fallback, idempotency, retries, dead-letter handling, and source health monitoring.
+- Run deterministic versioned scoring against normalized events. Every score must preserve evidence, rule version, confidence, and review state.
+- Publish approved events and update game, coach, roster, and leaderboard totals atomically.
+
+### Phase 3: Live fan experience
+
+- Subscribe only to the live games, contests, and rankings a viewer is actively watching.
+- Push score diffs instead of repeatedly downloading full leaderboards.
+- Add live game centers, score explanations, movement indicators, roster impact, alerts, and finalization states.
+- Support corrections by superseding events rather than deleting history, then replay affected totals.
+
+### Phase 4: Scale, media, and intelligence
+
+- Add editorial articles, Fantasy Coach Insider programming, show pages, voting, and producer workflows.
+- Generate cited AI recaps only from approved CoachFace events and source data.
+- Add caching, search, analytics, performance budgets, operational dashboards, alerting, backups, and recovery drills.
+- Introduce premium analytics, private leagues, sponsor modules, and white-label distribution after free-product retention is proven.
+
+## Required external dependency
+
+The live pipeline can be finished after selecting the licensed sports-data provider and securely connecting its API credentials. The internal provider-neutral model prevents vendor lock-in.
 
 ## Preliminary assessment
 
