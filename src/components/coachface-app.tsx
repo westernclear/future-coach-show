@@ -70,16 +70,14 @@ export function CoachFaceApp() {
             <span className="font-display text-xl font-black uppercase tracking-tight">CoachFace</span>
           </a>
           <nav className="hidden items-center gap-7 text-sm font-semibold text-muted-foreground md:flex" aria-label="Main navigation">
-            <a className="transition-colors hover:text-foreground" href="#rankings">Rankings</a>
-            <a className="transition-colors hover:text-foreground" href="#game">Play</a>
-            <a className="transition-colors hover:text-foreground" href="#show">The show</a>
-            <a className="transition-colors hover:text-foreground" href="#scoring">How scoring works</a>
+            <Link className="transition-colors hover:text-foreground" to="/rankings">Rankings</Link>
+            <Link className="transition-colors hover:text-foreground" to="/play">Play</Link>
+            <Link className="transition-colors hover:text-foreground" to="/the-show">The show</Link>
+            <Link className="transition-colors hover:text-foreground" to="/scoring">How scoring works</Link>
           </nav>
           <div className="flex items-center gap-2">
             <Button size="sm" variant="ghost" asChild><Link to="/auth">Sign in</Link></Button>
-            <Button size="sm" onClick={() => document.querySelector("#game")?.scrollIntoView({ behavior: "smooth" })}>
-              Build roster <ArrowRight />
-            </Button>
+            <Button size="sm" asChild><Link to="/play">Build roster <ArrowRight /></Link></Button>
           </div>
         </div>
       </header>
@@ -100,10 +98,8 @@ export function CoachFaceApp() {
                 Build a roster of coaches across sports. Score every call, every adjustment, and every result. The sideline finally counts.
               </p>
               <div className="mt-9 flex flex-wrap gap-3">
-                <Button size="lg" onClick={() => document.querySelector("#game")?.scrollIntoView({ behavior: "smooth" })}>Play free this week <ArrowRight /></Button>
-                <Button size="lg" variant="outline" className="border-hero-border bg-hero-surface text-hero-foreground hover:bg-hero-surface-hover hover:text-hero-foreground" onClick={() => document.querySelector("#show")?.scrollIntoView({ behavior: "smooth" })}>
-                  <CirclePlay /> Watch the format
-                </Button>
+                <Button size="lg" asChild><Link to="/play">Play free this week <ArrowRight /></Link></Button>
+                <Button size="lg" variant="outline" className="border-hero-border bg-hero-surface text-hero-foreground hover:bg-hero-surface-hover hover:text-hero-foreground" asChild><Link to="/the-show"><CirclePlay /> Watch the format</Link></Button>
               </div>
               <div className="mt-12 flex flex-wrap gap-x-7 gap-y-3 text-sm font-medium text-hero-muted">
                 <span className="flex items-center gap-2"><ShieldCheck className="size-4 text-primary" /> Free to play</span>
