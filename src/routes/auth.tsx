@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { z } from "zod";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: z.object({ redirect: z.string().startsWith("/").optional() }),
   head: () => ({
     meta: [
       { title: "Sign in | CoachFace" },
@@ -20,6 +22,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { redirect } = Route.useSearch();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -44,7 +47,7 @@ function AuthPage() {
       setMessage("Check your email to confirm your account, then return to sign in.");
       return;
     }
-    await navigate({ to: "/" });
+    await navigate({ to: redirect === "/fifa-special" ? "/fifa-special" : "/" });
   };
 
   const handleGoogle = async () => {
@@ -56,7 +59,7 @@ function AuthPage() {
       setMessage(result.error.message);
       return;
     }
-    if (!result.redirected) await navigate({ to: "/" });
+    if (!result.redirected) await navigate({ to: redirect === "/fifa-special" ? "/fifa-special" : "/" });
   };
 
   return (
