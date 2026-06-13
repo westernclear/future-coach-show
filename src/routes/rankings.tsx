@@ -7,17 +7,104 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const coaches = [
-  { rank: 1, previous: 3, initials: "AR", name: "Andy Reid", sport: "NFL Football", role: "Kansas City Chiefs", score: 94.2, change: "+3.8", form: "W W W L W", reason: "Elite fourth-down decisions and complete control of the closing drive." },
-  { rank: 2, previous: 2, initials: "MD", name: "Mark Daigneault", sport: "Basketball", role: "Oklahoma City Thunder", score: 93.1, change: "+2.4", form: "W W W W W", reason: "Perfect week powered by sharp rotations and relentless defensive adjustments." },
-  { rank: 3, previous: 5, initials: "DR", name: "Dave Roberts", sport: "Baseball", role: "Los Angeles Dodgers", score: 91.8, change: "+1.7", form: "W W L W W", reason: "Bullpen timing and matchup management swung two close games." },
-  { rank: 4, previous: 6, initials: "MA", name: "Mikel Arteta", sport: "Premier League", role: "Arsenal", score: 90.6, change: "+1.3", form: "W D W W W", reason: "A decisive halftime shape change unlocked another statement result." },
-  { rank: 5, previous: 9, initials: "LE", name: "Luis Enrique", sport: "Champions League", role: "Paris Saint-Germain", score: 89.9, change: "+4.1", form: "W W W W W", reason: "The week's biggest riser after a fearless European tactical performance." },
-  { rank: 6, previous: 4, initials: "HF", name: "Hansi Flick", sport: "La Liga", role: "FC Barcelona", score: 88.7, change: "+2.0", form: "W W D W W", reason: "Strong attacking output, held back by late-game control in the draw." },
-  { rank: 7, previous: 8, initials: "FL", name: "Frank Lampard", sport: "Championship League", role: "Coventry City", score: 86.5, change: "+1.8", form: "W D W L W", reason: "A high-risk press delivered points and moved Coventry up the table." },
-  { rank: 8, previous: 7, initials: "RS", name: "Randy Smith", sport: "Golf", role: "Coach to Scottie Scheffler", score: 84.4, change: "+0.9", form: "T5 W T3 T8 W", reason: "Course strategy remained excellent through a difficult final round." },
-  { rank: 9, previous: 9, initials: "SV", name: "Simone Vagnozzi", sport: "Tennis", role: "Coach to Jannik Sinner", score: 83.2, change: "-0.4", form: "W W W L W", reason: "Still consistent, but the semifinal loss exposed a slow tactical response." },
+type RankingSeed = { name: string; role: string };
+
+const rankingSeeds: Record<string, RankingSeed[]> = {
+  "NFL Football": [
+    { name: "Andy Reid", role: "Kansas City Chiefs" }, { name: "Sean McVay", role: "Los Angeles Rams" },
+    { name: "Dan Campbell", role: "Detroit Lions" }, { name: "Kyle Shanahan", role: "San Francisco 49ers" },
+    { name: "John Harbaugh", role: "Baltimore Ravens" }, { name: "Sean McDermott", role: "Buffalo Bills" },
+    { name: "Matt LaFleur", role: "Green Bay Packers" }, { name: "Mike Tomlin", role: "Pittsburgh Steelers" },
+    { name: "Kevin O'Connell", role: "Minnesota Vikings" }, { name: "DeMeco Ryans", role: "Houston Texans" },
+  ],
+  Basketball: [
+    { name: "Mark Daigneault", role: "Oklahoma City Thunder" }, { name: "Joe Mazzulla", role: "Boston Celtics" },
+    { name: "Erik Spoelstra", role: "Miami Heat" }, { name: "Michael Malone", role: "Denver Nuggets" },
+    { name: "Steve Kerr", role: "Golden State Warriors" }, { name: "Rick Carlisle", role: "Indiana Pacers" },
+    { name: "Tom Thibodeau", role: "New York Knicks" }, { name: "Tyronn Lue", role: "LA Clippers" },
+    { name: "Chris Finch", role: "Minnesota Timberwolves" }, { name: "Jamahl Mosley", role: "Orlando Magic" },
+  ],
+  Baseball: [
+    { name: "Dave Roberts", role: "Los Angeles Dodgers" }, { name: "Brian Snitker", role: "Atlanta Braves" },
+    { name: "Bruce Bochy", role: "Texas Rangers" }, { name: "Torey Lovullo", role: "Arizona Diamondbacks" },
+    { name: "Brandon Hyde", role: "Baltimore Orioles" }, { name: "Stephen Vogt", role: "Cleveland Guardians" },
+    { name: "Rob Thomson", role: "Philadelphia Phillies" }, { name: "Kevin Cash", role: "Tampa Bay Rays" },
+    { name: "Pat Murphy", role: "Milwaukee Brewers" }, { name: "A.J. Hinch", role: "Detroit Tigers" },
+  ],
+  "Premier League": [
+    { name: "Mikel Arteta", role: "Arsenal" }, { name: "Pep Guardiola", role: "Manchester City" },
+    { name: "Arne Slot", role: "Liverpool" }, { name: "Unai Emery", role: "Aston Villa" },
+    { name: "Eddie Howe", role: "Newcastle United" }, { name: "Thomas Frank", role: "Brentford" },
+    { name: "Marco Silva", role: "Fulham" }, { name: "Oliver Glasner", role: "Crystal Palace" },
+    { name: "Nuno Espírito Santo", role: "Nottingham Forest" }, { name: "Andoni Iraola", role: "Bournemouth" },
+  ],
+  "La Liga": [
+    { name: "Hansi Flick", role: "FC Barcelona" }, { name: "Carlo Ancelotti", role: "Real Madrid" },
+    { name: "Diego Simeone", role: "Atlético Madrid" }, { name: "Ernesto Valverde", role: "Athletic Club" },
+    { name: "Míchel Sánchez", role: "Girona" }, { name: "Manuel Pellegrini", role: "Real Betis" },
+    { name: "Marcelino García", role: "Villarreal" }, { name: "Imanol Alguacil", role: "Real Sociedad" },
+    { name: "Jagoba Arrasate", role: "Mallorca" }, { name: "José Bordalás", role: "Getafe" },
+  ],
+  Golf: [
+    { name: "Randy Smith", role: "Coach to Scottie Scheffler" }, { name: "Phil Kenyon", role: "Putting coach to elite tour players" },
+    { name: "Claude Harmon III", role: "Coach to Brooks Koepka" }, { name: "Sean Foley", role: "Tour performance coach" },
+    { name: "Pete Cowen", role: "Coach to major champions" }, { name: "Jamie Mulligan", role: "Coach to Patrick Cantlay" },
+    { name: "Mark Blackburn", role: "PGA Tour swing coach" }, { name: "Chris Como", role: "Coach to Xander Schauffele" },
+    { name: "Dana Dahlquist", role: "Elite tour coach" }, { name: "Mike Bender", role: "PGA Tour instructor" },
+  ],
+  Tennis: [
+    { name: "Simone Vagnozzi", role: "Coach to Jannik Sinner" }, { name: "Juan Carlos Ferrero", role: "Coach to Carlos Alcaraz" },
+    { name: "Goran Ivanišević", role: "Elite tour coach" }, { name: "Patrick Mouratoglou", role: "Elite tour coach" },
+    { name: "Darren Cahill", role: "Coach to Jannik Sinner" }, { name: "Brad Gilbert", role: "Elite tour coach" },
+    { name: "Wim Fissette", role: "WTA tour coach" }, { name: "Conchita Martínez", role: "Grand Slam champion coach" },
+    { name: "Ivan Lendl", role: "Grand Slam champion coach" }, { name: "Carlos Moyá", role: "Coach to Rafael Nadal" },
+  ],
+  "Champions League": [
+    { name: "Luis Enrique", role: "Paris Saint-Germain" }, { name: "Carlo Ancelotti", role: "Real Madrid" },
+    { name: "Pep Guardiola", role: "Manchester City" }, { name: "Mikel Arteta", role: "Arsenal" },
+    { name: "Hansi Flick", role: "FC Barcelona" }, { name: "Diego Simeone", role: "Atlético Madrid" },
+    { name: "Simone Inzaghi", role: "Inter Milan" }, { name: "Vincent Kompany", role: "Bayern Munich" },
+    { name: "Xabi Alonso", role: "Bayer Leverkusen" }, { name: "Arne Slot", role: "Liverpool" },
+  ],
+  "Championship League": [
+    { name: "Frank Lampard", role: "Coventry City" }, { name: "Daniel Farke", role: "Leeds United" },
+    { name: "Scott Parker", role: "Burnley" }, { name: "Chris Wilder", role: "Sheffield United" },
+    { name: "Régis Le Bris", role: "Sunderland" }, { name: "Michael Carrick", role: "Middlesbrough" },
+    { name: "Tony Mowbray", role: "West Bromwich Albion" }, { name: "Martí Cifuentes", role: "Queens Park Rangers" },
+    { name: "John Eustace", role: "Blackburn Rovers" }, { name: "Miron Muslic", role: "Plymouth Argyle" },
+  ],
+};
+
+const reasons = [
+  "Set the weekly standard with decisive adjustments and excellent late-game control.",
+  "Combined smart preparation with disciplined execution in the biggest moments.",
+  "Created a clear tactical advantage and trusted the right decisions under pressure.",
+  "Managed personnel and momentum with precision throughout the week.",
+  "Delivered strong situational choices and a composed finish when it mattered.",
+  "Maintained an aggressive plan while limiting costly tactical mistakes.",
+  "Turned a difficult matchup into a positive result through timely adjustments.",
+  "Showed consistent game management, with one late decision limiting the score.",
+  "Produced a competitive performance but left points available in key moments.",
+  "Remains in the top 10, though execution and response time must improve next week.",
 ];
+
+const coaches = Object.entries(rankingSeeds).flatMap(([sport, entries]) =>
+  entries.map((entry, index) => {
+    const rank = index + 1;
+    const movement = index % 4 === 0 ? 2 : index % 4 === 1 ? 0 : index % 4 === 2 ? -1 : 1;
+    return {
+      ...entry,
+      sport,
+      rank,
+      previous: Math.max(1, Math.min(10, rank + movement)),
+      initials: entry.name.split(" ").map((part) => part[0]).slice(0, 2).join(""),
+      score: Number((95.2 - index * 1.55 - Object.keys(rankingSeeds).indexOf(sport) * 0.15).toFixed(1)),
+      change: `${index % 5 === 4 ? "-" : "+"}${(3.8 - index * 0.31).toFixed(1)}`,
+      form: sport === "Golf" ? "T5 W T3 T8 W" : sport === "Tennis" ? "W W W L W" : "W W D W W",
+      reason: reasons[index],
+    };
+  }),
+);
 const sports = ["All", "NFL Football", "Basketball", "Baseball", "Premier League", "La Liga", "Golf", "Tennis", "Champions League", "Championship League"];
 
 export const Route = createFileRoute("/rankings")({
