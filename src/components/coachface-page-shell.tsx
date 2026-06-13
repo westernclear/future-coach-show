@@ -49,6 +49,9 @@ export function CoachFacePageShell({ children }: { children: ReactNode }) {
           <div><p className="font-display text-xl font-black uppercase">CoachFace</p><p className="text-xs text-game-muted">The game behind the game.</p></div>
           <p className="text-xs text-game-muted">Free weekly play. Paid contests available only where eligible.</p>
         </div>
+        <div className="mx-auto mt-6 max-w-7xl px-5 lg:px-8">
+          <p className="text-center text-xs text-game-muted/60">© 2026 CoachFace. All Rights Reserved. CoachFace™ is a sports fantasy platform developed and operated by SCOSTrade.</p>
+        </div>
       </footer>
     </div>
   );
