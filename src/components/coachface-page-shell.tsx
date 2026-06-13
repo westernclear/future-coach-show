@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 const navItems = [
   { to: "/rankings", label: "Power Rankings" },
   { to: "/play", label: "Play" },
+  { to: "/rewards", label: "Rewards" },
   { to: "/the-show", label: "The Show" },
   { to: "/scoring", label: "How Scoring Works" },
 ] as const;
@@ -46,7 +47,7 @@ export function CoachFacePageShell({ children }: { children: ReactNode }) {
       <footer className="border-t border-game-border bg-foreground py-9 text-background">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-4 px-5 sm:flex-row sm:items-center lg:px-8">
           <div><p className="font-display text-xl font-black uppercase">CoachFace</p><p className="text-xs text-game-muted">The game behind the game.</p></div>
-          <p className="text-xs text-game-muted">Free-to-play experience. Fictional demo scores.</p>
+          <p className="text-xs text-game-muted">Free weekly play. Paid contests available only where eligible.</p>
         </div>
       </footer>
     </div>

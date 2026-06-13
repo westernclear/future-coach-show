@@ -85,6 +85,7 @@ export function CoachFaceApp() {
           <nav className="hidden items-center gap-7 text-sm font-semibold text-muted-foreground md:flex" aria-label="Main navigation">
             <Link className="transition-colors hover:text-foreground" to="/rankings">Power Rankings</Link>
             <Link className="transition-colors hover:text-foreground" to="/play">Play</Link>
+            <Link className="transition-colors hover:text-foreground" to="/rewards">Rewards</Link>
             <Link className="transition-colors hover:text-foreground" to="/the-show">The show</Link>
             <Link className="transition-colors hover:text-foreground" to="/scoring">How scoring works</Link>
           </nav>
@@ -115,7 +116,7 @@ export function CoachFaceApp() {
                 <Button size="lg" variant="outline" className="border-hero-border bg-hero-surface text-hero-foreground hover:bg-hero-surface-hover hover:text-hero-foreground" asChild><Link to="/the-show"><CirclePlay /> Watch the format</Link></Button>
               </div>
               <div className="mt-12 flex flex-wrap gap-x-7 gap-y-3 text-sm font-medium text-hero-muted">
-                <span className="flex items-center gap-2"><ShieldCheck className="size-4 text-primary" /> Free to play</span>
+                <span className="flex items-center gap-2"><ShieldCheck className="size-4 text-primary" /> Free weekly play</span>
                 <span className="flex items-center gap-2"><BarChart3 className="size-4 text-primary" /> Transparent scoring</span>
                 <span className="flex items-center gap-2"><Sparkles className="size-4 text-primary" /> AI-powered recaps</span>
               </div>
@@ -166,7 +167,7 @@ export function CoachFaceApp() {
             <div>
               <p className="eyebrow text-primary">Weekly free play</p>
               <h2 className="font-display text-5xl font-black uppercase leading-none tracking-tight sm:text-6xl">Your coaches.<br />Your call.</h2>
-              <p className="mt-6 max-w-md leading-relaxed text-game-muted">Choose up to three leaders for the weekly slate. No entry fee, no betting, just proof that you know the game beyond the players.</p>
+               <p className="mt-6 max-w-md leading-relaxed text-game-muted">Choose up to three leaders for the free weekly slate. Earn points, badges, and contest rewards by proving you know the game beyond the players.</p>
               <div className="mt-10 border-l-2 border-primary pl-5">
                 <p className="font-display text-3xl font-black">{roster.length}/3 selected</p>
                 <p className="mt-1 text-sm text-game-muted">Roster locks Sunday at 12:55 PM ET</p>
@@ -252,7 +253,7 @@ export function CoachFaceApp() {
       <footer className="bg-foreground py-10 text-background">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-5 px-5 sm:flex-row sm:items-center lg:px-8">
           <div><p className="font-display text-2xl font-black uppercase">CoachFace</p><p className="mt-1 text-sm text-game-muted">The game behind the game.</p></div>
-          <p className="max-w-md text-xs leading-relaxed text-game-muted">Concept experience based on the original CoachFace vision. Coach names and scores shown here are fictional for prototype purposes.</p>
+           <p className="max-w-md text-xs leading-relaxed text-game-muted">Concept experience based on the original CoachFace vision. Coach names and scores shown here are fictional for prototype purposes. Paid contests are limited to eligible users and locations.</p>
         </div>
       </footer>
     </div>
