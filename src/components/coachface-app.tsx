@@ -31,10 +31,15 @@ type Coach = {
 };
 
 const coaches: Coach[] = [
-  { id: 1, initials: "MC", name: "Marcus Cole", role: "Head coach", sport: "Football", score: 94.2, movement: "+3.8", form: "W W W L W" },
-  { id: 2, initials: "AR", name: "Ana Reyes", role: "Manager", sport: "Soccer", score: 91.7, movement: "+1.4", form: "W D W W W" },
-  { id: 3, initials: "DM", name: "Darius Miles", role: "Head coach", sport: "Basketball", score: 89.4, movement: "+4.2", form: "W W L W W" },
-  { id: 4, initials: "JL", name: "Jordan Lee", role: "Manager", sport: "Baseball", score: 86.9, movement: "-0.6", form: "W L W W L" },
+  { id: 1, initials: "AR", name: "Andy Reid", role: "Kansas City Chiefs", sport: "NFL Football", score: 94.2, movement: "+3.8", form: "W W W L W" },
+  { id: 2, initials: "MD", name: "Mark Daigneault", role: "Oklahoma City Thunder", sport: "Basketball", score: 93.1, movement: "+2.4", form: "W W W W W" },
+  { id: 3, initials: "DR", name: "Dave Roberts", role: "Los Angeles Dodgers", sport: "Baseball", score: 91.8, movement: "+1.7", form: "W W L W W" },
+  { id: 4, initials: "MA", name: "Mikel Arteta", role: "Arsenal", sport: "Premier League", score: 90.6, movement: "+1.3", form: "W D W W W" },
+  { id: 5, initials: "LE", name: "Luis Enrique", role: "Paris Saint-Germain", sport: "Champions League", score: 89.9, movement: "+4.1", form: "W W W W W" },
+  { id: 6, initials: "HF", name: "Hansi Flick", role: "FC Barcelona", sport: "La Liga", score: 88.7, movement: "+2.0", form: "W W D W W" },
+  { id: 7, initials: "FL", name: "Frank Lampard", role: "Coventry City", sport: "Championship League", score: 86.5, movement: "+1.8", form: "W D W L W" },
+  { id: 8, initials: "RS", name: "Randy Smith", role: "Coach to Scottie Scheffler", sport: "Golf", score: 84.4, movement: "+0.9", form: "T5 W T3 T8 W" },
+  { id: 9, initials: "SV", name: "Simone Vagnozzi", role: "Coach to Jannik Sinner", sport: "Tennis", score: 83.2, movement: "-0.4", form: "W W W L W" },
 ];
 
 const scoreEvents = [
@@ -44,7 +49,7 @@ const scoreEvents = [
   { label: "Clock management", detail: "Timeout preserved before half", points: "+1.5" },
 ];
 
-const sports = ["All sports", "Football", "Basketball", "Baseball", "Soccer"];
+const sports = ["All sports", "NFL Football", "Basketball", "Baseball", "Premier League", "La Liga", "Golf", "Tennis", "Champions League", "Championship League"];
 
 export function CoachFaceApp() {
   const [activeSport, setActiveSport] = useState("All sports");
