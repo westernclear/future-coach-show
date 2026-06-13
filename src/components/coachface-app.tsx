@@ -83,7 +83,7 @@ export function CoachFaceApp() {
             <span className="font-display text-xl font-black uppercase tracking-tight">CoachFace</span>
           </a>
           <nav className="hidden items-center gap-7 text-sm font-semibold text-muted-foreground md:flex" aria-label="Main navigation">
-            <Link className="transition-colors hover:text-foreground" to="/rankings">Rankings</Link>
+            <Link className="transition-colors hover:text-foreground" to="/rankings">Power Rankings</Link>
             <Link className="transition-colors hover:text-foreground" to="/play">Play</Link>
             <Link className="transition-colors hover:text-foreground" to="/the-show">The show</Link>
             <Link className="transition-colors hover:text-foreground" to="/scoring">How scoring works</Link>
@@ -126,7 +126,7 @@ export function CoachFaceApp() {
         <section id="rankings" className="mx-auto max-w-7xl px-5 py-20 lg:px-8">
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
             <div>
-              <p className="eyebrow">CoachFace Index</p>
+              <p className="eyebrow">CoachFace Power Rankings</p>
               <h2 className="section-title">Who owned the week?</h2>
               <p className="mt-3 max-w-2xl text-muted-foreground">A live, explainable ranking built from game management, unit performance, tactical decisions, and results.</p>
             </div>
