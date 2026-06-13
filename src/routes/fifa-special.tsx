@@ -65,6 +65,7 @@ const fifaCoaches = [
 ];
 
 const groups = [...new Set(fifaCoaches.map((coach) => coach.group))];
+const coachSlug = (name: string) => name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 const rankingById = new Map(
   [...fifaCoaches]
     .sort((a, b) => b.score - a.score)
@@ -111,7 +112,7 @@ function FifaSpecialPage() {
     }
     setSubmitting(true);
     try {
-      await submitEntry({ data: { entryName, coachSlugs: roster.map((id) => fifaCoaches.find((coach) => coach.id === id)?.slug ?? "") } });
+      await submitEntry({ data: { entryName, coachSlugs: roster.map((id) => coachSlug(fifaCoaches.find((coach) => coach.id === id)?.name ?? "")) } });
       setEntryMessage("Entry confirmed. Your three coaches are locked into the global leaderboard.");
     } catch (error) {
       setEntryMessage(error instanceof Error ? error.message : "Your entry could not be saved.");
@@ -152,6 +153,14 @@ function FifaSpecialPage() {
             <p className="eyebrow">Special roster</p>
             <h2 className="mt-3 font-display text-4xl font-black uppercase leading-none">Pick your three.</h2>
             <p className="mt-5 leading-relaxed text-muted-foreground">Every tournament coach is available. International players drive the outcome, while your coaches earn points for squad selection, formation, substitutions, game management, and competitive context.</p>
+            <div className="mt-8 border-t border-border">
+              {[
+                ["01", "Register", "Create a free CoachFace account or sign in."],
+                ["02", "Draft three", "Choose three unique coaches, with no more than two from one group."],
+                ["03", "Follow live", "Every match adds verified performance, decision, and context points."],
+                ["04", "Climb the table", "Your three coach totals determine your global rank through the final."],
+              ].map(([step, title, text]) => <div key={step} className="grid grid-cols-[36px_1fr] gap-3 border-b border-border py-4"><span className="font-mono text-xs text-primary">{step}</span><div><h3 className="font-bold">{title}</h3><p className="mt-1 text-sm text-muted-foreground">{text}</p></div></div>)}
+            </div>
             <div className="mt-8 border-y border-border py-6">
               <p className="font-display text-5xl font-black">{roster.length}/3</p>
               <p className="mt-1 text-sm text-muted-foreground">Coaches selected</p>
@@ -197,7 +206,7 @@ function FifaSpecialPage() {
                             <span className={cn("grid size-12 shrink-0 place-items-center rounded-full font-display font-black", selected ? "bg-primary text-primary-foreground" : "bg-secondary")}>{coach.initials}</span>
                             <div><h4 className="font-bold">{coach.name}</h4><p className="text-sm text-muted-foreground">{coach.nation} · {coach.trait}</p><p className="mt-1 font-mono text-xs font-bold">Projected {coach.score}</p></div>
                           </div>
-                          <Button variant={selected ? "default" : "outline"} onClick={() => toggleCoach(coach.id)} disabled={!selected && roster.length >= 3}>{selected ? <><Check /> Selected</> : <>Draft <ChevronRight /></>}</Button>
+                          <Button variant={selected ? "default" : "outline"} onClick={() => toggleCoach(coach.id)} disabled={!selected && (roster.length >= 3 || roster.filter((id) => fifaCoaches.find((item) => item.id === id)?.group === coach.group).length >= 2)}>{selected ? <><Check /> Selected</> : <>Draft <ChevronRight /></>}</Button>
                         </article>
                       );
                     })}
@@ -206,7 +215,37 @@ function FifaSpecialPage() {
               })}
               {visibleCoaches.length === 0 && <p className="border-y border-border py-10 text-center text-muted-foreground">No coaches match your search.</p>}
             </div>
-            <Button size="lg" className="mt-6 w-full" disabled={roster.length !== 3} onClick={() => alert("Your FIFA Coaches Special roster is locked in.")}>Enter the special <Trophy /></Button>
+            <form className="mt-8 border-y border-border py-7" onSubmit={handleEntry}>
+              <div className="grid gap-5 sm:grid-cols-[1fr_auto] sm:items-end">
+                <div className="space-y-2">
+                  <Label htmlFor="entry-name">Entry name</Label>
+                  <Input id="entry-name" value={entryName} onChange={(event) => setEntryName(event.target.value)} minLength={1} maxLength={80} required />
+                </div>
+                <Button size="lg" type="submit" disabled={roster.length !== 3 || submitting}>{submitting ? <Loader2 className="animate-spin" /> : <Trophy />}{submitting ? "Saving entry" : "Enter the special"}</Button>
+              </div>
+              <p className="mt-3 text-xs text-muted-foreground">Free global contest, one entry per account. Rosters can be updated until June 17 at 11:00 AM ET.</p>
+              {roster.length === 3 && <p className="mt-2 text-xs font-semibold text-foreground">Ready to submit: {roster.map((id) => fifaCoaches.find((coach) => coach.id === id)?.name).join(" · ")}</p>}
+              {entryMessage && <p role="status" className="mt-4 border border-border bg-secondary p-3 text-sm">{entryMessage}</p>}
+              <p className="mt-4 text-sm text-muted-foreground">Need an account first? <Button variant="link" asChild className="h-auto p-0"><Link to="/auth" search={{ redirect: "/fifa-special" }}>Register or sign in</Link></Button></p>
+            </form>
+          </div>
+        </section>
+
+        <section className="border-t border-border bg-secondary/40">
+          <div className="mx-auto max-w-7xl px-5 py-14 lg:px-8">
+            <p className="eyebrow">How scoring works</p>
+            <h2 className="mt-3 font-display text-4xl font-black uppercase">The coach owns the outcome.</h2>
+            <div className="mt-9 grid gap-px bg-border md:grid-cols-3">
+              {[
+                ["45%", "Team performance", "Match result, goals, defensive execution, progress against expectation, and tournament advancement."],
+                ["35%", "Coach decisions", "Starting XI, formation, substitutions, tactical changes, game management, and response to match state."],
+                ["20%", "Competitive context", "Opponent strength, venue, injuries, tournament round, upset value, and pressure of the moment."],
+              ].map(([value, title, text]) => <article key={title} className="bg-background p-7"><p className="font-display text-5xl font-black text-primary">{value}</p><h3 className="mt-4 font-bold">{title}</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p></article>)}
+            </div>
+            <div className="mt-8 grid gap-6 border-y border-border py-7 md:grid-cols-2">
+              <div><h3 className="font-display text-2xl font-black uppercase">Leaderboard</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">All three coach scores combine for your tournament total. Scores remain provisional until match events are verified.</p></div>
+              <div><h3 className="font-display text-2xl font-black uppercase">Tiebreakers</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">Decision points first, then the highest single-coach score, then the earliest valid entry.</p></div>
+            </div>
           </div>
         </section>
 
