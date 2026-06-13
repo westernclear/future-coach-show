@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import stadiumImage from "@/assets/coachface-stadium.jpg";
+import conceptTrailer from "@/assets/coachface-concept-trailer.mp4.asset.json";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -54,6 +55,8 @@ const sports = ["All sports", "NFL Football", "Basketball", "Baseball", "Premier
 export function CoachFaceApp() {
   const [activeSport, setActiveSport] = useState("All sports");
   const [roster, setRoster] = useState<number[]>([1]);
+  const [trailerPlaying, setTrailerPlaying] = useState(false);
+  const trailerRef = useRef<HTMLVideoElement>(null);
 
   const visibleCoaches = useMemo(
     () => coaches.filter((coach) => activeSport === "All sports" || coach.sport === activeSport),
@@ -64,6 +67,11 @@ export function CoachFaceApp() {
     setRoster((current) =>
       current.includes(id) ? current.filter((coachId) => coachId !== id) : [...current, id].slice(-3),
     );
+  };
+
+  const playTrailer = () => {
+    setTrailerPlaying(true);
+    void trailerRef.current?.play();
   };
 
   return (
@@ -210,10 +218,20 @@ export function CoachFaceApp() {
         <section id="show" className="border-y border-border bg-secondary/50">
           <div className="mx-auto grid max-w-7xl lg:grid-cols-2">
             <div className="relative min-h-96 overflow-hidden bg-foreground">
-              <img src={stadiumImage} alt="Stadium tunnel prepared for the CoachFace show" loading="lazy" width={1536} height={1024} className="absolute inset-0 h-full w-full object-cover opacity-60" />
-              <div className="absolute inset-0 grid place-items-center bg-media-overlay">
-                <Button size="lg" className="rounded-full px-6"><CirclePlay className="size-5" /> Watch concept trailer</Button>
-              </div>
+              <video
+                ref={trailerRef}
+                src={conceptTrailer.url}
+                poster={stadiumImage}
+                preload="metadata"
+                playsInline
+                controls={trailerPlaying}
+                onEnded={() => setTrailerPlaying(false)}
+                aria-label="CoachFace concept trailer featuring NFL football, baseball, Premier League, La Liga, golf, and tennis"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+              {!trailerPlaying && <div className="absolute inset-0 grid place-items-center bg-media-overlay">
+                <Button size="lg" className="rounded-full px-6" onClick={playTrailer}><CirclePlay className="size-5" /> Watch concept trailer</Button>
+              </div>}
               <Badge className="absolute left-6 top-6 rounded-sm uppercase tracking-wider"><Radio className="mr-2 size-3" /> Weekly live</Badge>
             </div>
             <div className="flex flex-col justify-center px-6 py-14 lg:px-14">
