@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TheShowRouteImport } from './routes/the-show'
 import { Route as ScoringRouteImport } from './routes/scoring'
+import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as RankingsRouteImport } from './routes/rankings'
 import { Route as PlayRouteImport } from './routes/play'
 import { Route as BlueprintRouteImport } from './routes/blueprint'
@@ -25,6 +26,11 @@ const TheShowRoute = TheShowRouteImport.update({
 const ScoringRoute = ScoringRouteImport.update({
   id: '/scoring',
   path: '/scoring',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RewardsRoute = RewardsRouteImport.update({
+  id: '/rewards',
+  path: '/rewards',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RankingsRoute = RankingsRouteImport.update({
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/blueprint': typeof BlueprintRoute
   '/play': typeof PlayRoute
   '/rankings': typeof RankingsRoute
+  '/rewards': typeof RewardsRoute
   '/scoring': typeof ScoringRoute
   '/the-show': typeof TheShowRoute
 }
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/blueprint': typeof BlueprintRoute
   '/play': typeof PlayRoute
   '/rankings': typeof RankingsRoute
+  '/rewards': typeof RewardsRoute
   '/scoring': typeof ScoringRoute
   '/the-show': typeof TheShowRoute
 }
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/blueprint': typeof BlueprintRoute
   '/play': typeof PlayRoute
   '/rankings': typeof RankingsRoute
+  '/rewards': typeof RewardsRoute
   '/scoring': typeof ScoringRoute
   '/the-show': typeof TheShowRoute
 }
@@ -89,6 +98,7 @@ export interface FileRouteTypes {
     | '/blueprint'
     | '/play'
     | '/rankings'
+    | '/rewards'
     | '/scoring'
     | '/the-show'
   fileRoutesByTo: FileRoutesByTo
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/blueprint'
     | '/play'
     | '/rankings'
+    | '/rewards'
     | '/scoring'
     | '/the-show'
   id:
@@ -107,6 +118,7 @@ export interface FileRouteTypes {
     | '/blueprint'
     | '/play'
     | '/rankings'
+    | '/rewards'
     | '/scoring'
     | '/the-show'
   fileRoutesById: FileRoutesById
@@ -117,6 +129,7 @@ export interface RootRouteChildren {
   BlueprintRoute: typeof BlueprintRoute
   PlayRoute: typeof PlayRoute
   RankingsRoute: typeof RankingsRoute
+  RewardsRoute: typeof RewardsRoute
   ScoringRoute: typeof ScoringRoute
   TheShowRoute: typeof TheShowRoute
 }
@@ -135,6 +148,13 @@ declare module '@tanstack/react-router' {
       path: '/scoring'
       fullPath: '/scoring'
       preLoaderRoute: typeof ScoringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rewards': {
+      id: '/rewards'
+      path: '/rewards'
+      fullPath: '/rewards'
+      preLoaderRoute: typeof RewardsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rankings': {
@@ -181,6 +201,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlueprintRoute: BlueprintRoute,
   PlayRoute: PlayRoute,
   RankingsRoute: RankingsRoute,
+  RewardsRoute: RewardsRoute,
   ScoringRoute: ScoringRoute,
   TheShowRoute: TheShowRoute,
 }

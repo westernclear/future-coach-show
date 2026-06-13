@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BarChart3, CheckCircle2, Eye, ShieldCheck } from "lucide-react";
+import { BarChart3, CheckCircle2, Eye, ShieldCheck, Users } from "lucide-react";
 
 import { CoachFacePageShell, PageHero } from "@/components/coachface-page-shell";
 
@@ -25,6 +25,12 @@ function ScoringPage() {
     <CoachFacePageShell>
       <PageHero eyebrow="No mystery points" title="Every score has a reason." description="CoachFace separates objective game events from analysis. Every point links back to the decision, result, and rule that produced it." aside={<div className="grid grid-cols-2 gap-8"><div><p className="font-display text-4xl font-black">11.0</p><p className="text-sm text-muted-foreground">Decision points</p></div><div><p className="font-display text-4xl font-black">83%</p><p className="text-sm text-muted-foreground">Confidence</p></div></div>} />
       <main className="mx-auto max-w-7xl px-5 py-14 lg:px-8 lg:py-20">
+        <section className="mb-16 border-y border-border" aria-label="CoachFace scoring mix">
+          <div className="grid gap-px bg-border md:grid-cols-3">
+            {[{ value: "45%", title: "Athlete or team performance", text: "Results, efficiency, execution, and improvement against expectation." }, { value: "35%", title: "Coaching decisions", text: "Tactics, substitutions, challenges, lineups, clock management, and adjustments." }, { value: "20%", title: "Competitive context", text: "Opponent strength, injuries, venue, tournament round, and pre-game expectations." }].map(({ value, title, text }) => <article key={title} className="bg-background p-7"><p className="font-display text-5xl font-black text-primary">{value}</p><h2 className="mt-4 font-bold">{title}</h2><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p></article>)}
+          </div>
+          <div className="flex items-start gap-3 bg-secondary/40 p-5"><Users className="mt-0.5 size-5 shrink-0 text-primary" /><p className="text-sm leading-relaxed text-muted-foreground"><strong className="text-foreground">Player performance reflects on the coach.</strong> In team sports, execution and results contribute to the selected coach. In golf and tennis, the athlete’s improvement, decisive execution, and tournament result contribute to their coach’s score.</p></div>
+        </section>
         <section className="grid gap-px bg-border md:grid-cols-3">
           {[{ icon: Eye, title: "Observe", text: "Live game data records the call, context, and result." }, { icon: BarChart3, title: "Apply the rule", text: "The scoring engine applies the published rule for that sport." }, { icon: ShieldCheck, title: "Verify", text: "Confidence, source, and any analyst review remain attached." }].map(({ icon: Icon, title, text }, index) => <article key={title} className="bg-background p-7"><span className="font-mono text-xs text-muted-foreground">0{index + 1}</span><Icon className="mt-6 size-7 text-primary" /><h2 className="mt-5 font-display text-2xl font-black uppercase">{title}</h2><p className="mt-3 text-sm leading-relaxed text-muted-foreground">{text}</p></article>)}
         </section>

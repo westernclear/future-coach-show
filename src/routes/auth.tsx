@@ -71,7 +71,7 @@ function AuthPage() {
           <h1 className="mt-4 font-display text-5xl font-black uppercase leading-none sm:text-7xl">Your sideline starts here.</h1>
           <p className="mt-6 max-w-md text-game-muted">Build rosters, follow live coach scores, join leaderboards, and receive explainable updates for every decision.</p>
         </div>
-        <p className="text-xs text-game-muted">Free-to-play launch experience. No cash entry contests.</p>
+        <p className="text-xs text-game-muted">Free weekly play. Eligible paid contests require age, identity, and location verification.</p>
       </section>
 
       <section className="flex items-center justify-center bg-background p-6 text-foreground lg:p-12">
