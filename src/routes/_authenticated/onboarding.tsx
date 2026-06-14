@@ -321,8 +321,10 @@ function OnboardingPage() {
                       autoComplete="off"
                       required
                       maxLength={120}
-                      value={form.legalName}
-                      onChange={(event) => setForm({ ...form, legalName: event.target.value })}
+                      defaultValue={form.legalName}
+                      onInput={(event) =>
+                        setForm((current) => ({ ...current, legalName: event.currentTarget.value }))
+                      }
                     />
                   </Field>
                   <Field label="Username">
@@ -333,8 +335,10 @@ function OnboardingPage() {
                       pattern="[A-Za-z0-9_]+"
                       minLength={3}
                       maxLength={30}
-                      value={form.username}
-                      onChange={(event) => setForm({ ...form, username: event.target.value })}
+                      defaultValue={form.username}
+                      onInput={(event) =>
+                        setForm((current) => ({ ...current, username: event.currentTarget.value }))
+                      }
                     />
                   </Field>
                   <Field label="Favorite sport">
@@ -344,8 +348,13 @@ function OnboardingPage() {
                       required
                       maxLength={80}
                       placeholder="Football"
-                      value={form.favoriteSport}
-                      onChange={(event) => setForm({ ...form, favoriteSport: event.target.value })}
+                      defaultValue={form.favoriteSport}
+                      onInput={(event) =>
+                        setForm((current) => ({
+                          ...current,
+                          favoriteSport: event.currentTarget.value,
+                        }))
+                      }
                     />
                   </Field>
                   <Field label="Favorite team">
@@ -354,8 +363,13 @@ function OnboardingPage() {
                       autoComplete="off"
                       required
                       maxLength={100}
-                      value={form.favoriteTeam}
-                      onChange={(event) => setForm({ ...form, favoriteTeam: event.target.value })}
+                      defaultValue={form.favoriteTeam}
+                      onInput={(event) =>
+                        setForm((current) => ({
+                          ...current,
+                          favoriteTeam: event.currentTarget.value,
+                        }))
+                      }
                     />
                   </Field>
                   <Field label="Preferred league">
@@ -365,9 +379,12 @@ function OnboardingPage() {
                       required
                       maxLength={100}
                       placeholder="Premier League"
-                      value={form.preferredLeague}
-                      onChange={(event) =>
-                        setForm({ ...form, preferredLeague: event.target.value })
+                      defaultValue={form.preferredLeague}
+                      onInput={(event) =>
+                        setForm((current) => ({
+                          ...current,
+                          preferredLeague: event.currentTarget.value,
+                        }))
                       }
                     />
                   </Field>
