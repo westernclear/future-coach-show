@@ -10,11 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TheShowRouteImport } from './routes/the-show'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ScoringRouteImport } from './routes/scoring'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as RankingsRouteImport } from './routes/rankings'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PlayRouteImport } from './routes/play'
+import { Route as GameRulesRouteImport } from './routes/game-rules'
 import { Route as FifaSpecialRouteImport } from './routes/fifa-special'
+import { Route as FairPlayRouteImport } from './routes/fair-play'
 import { Route as BlueprintRouteImport } from './routes/blueprint'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -25,6 +29,11 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 const TheShowRoute = TheShowRouteImport.update({
   id: '/the-show',
   path: '/the-show',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ScoringRoute = ScoringRouteImport.update({
@@ -42,14 +51,29 @@ const RankingsRoute = RankingsRouteImport.update({
   path: '/rankings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlayRoute = PlayRouteImport.update({
   id: '/play',
   path: '/play',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GameRulesRoute = GameRulesRouteImport.update({
+  id: '/game-rules',
+  path: '/game-rules',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FifaSpecialRoute = FifaSpecialRouteImport.update({
   id: '/fifa-special',
   path: '/fifa-special',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FairPlayRoute = FairPlayRouteImport.update({
+  id: '/fair-play',
+  path: '/fair-play',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlueprintRoute = BlueprintRouteImport.update({
@@ -86,11 +110,15 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/blueprint': typeof BlueprintRoute
+  '/fair-play': typeof FairPlayRoute
   '/fifa-special': typeof FifaSpecialRoute
+  '/game-rules': typeof GameRulesRoute
   '/play': typeof PlayRoute
+  '/privacy': typeof PrivacyRoute
   '/rankings': typeof RankingsRoute
   '/rewards': typeof RewardsRoute
   '/scoring': typeof ScoringRoute
+  '/terms': typeof TermsRoute
   '/the-show': typeof TheShowRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
@@ -99,11 +127,15 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/blueprint': typeof BlueprintRoute
+  '/fair-play': typeof FairPlayRoute
   '/fifa-special': typeof FifaSpecialRoute
+  '/game-rules': typeof GameRulesRoute
   '/play': typeof PlayRoute
+  '/privacy': typeof PrivacyRoute
   '/rankings': typeof RankingsRoute
   '/rewards': typeof RewardsRoute
   '/scoring': typeof ScoringRoute
+  '/terms': typeof TermsRoute
   '/the-show': typeof TheShowRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
@@ -114,11 +146,15 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/blueprint': typeof BlueprintRoute
+  '/fair-play': typeof FairPlayRoute
   '/fifa-special': typeof FifaSpecialRoute
+  '/game-rules': typeof GameRulesRoute
   '/play': typeof PlayRoute
+  '/privacy': typeof PrivacyRoute
   '/rankings': typeof RankingsRoute
   '/rewards': typeof RewardsRoute
   '/scoring': typeof ScoringRoute
+  '/terms': typeof TermsRoute
   '/the-show': typeof TheShowRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
@@ -129,11 +165,15 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/blueprint'
+    | '/fair-play'
     | '/fifa-special'
+    | '/game-rules'
     | '/play'
+    | '/privacy'
     | '/rankings'
     | '/rewards'
     | '/scoring'
+    | '/terms'
     | '/the-show'
     | '/dashboard'
     | '/onboarding'
@@ -142,11 +182,15 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/blueprint'
+    | '/fair-play'
     | '/fifa-special'
+    | '/game-rules'
     | '/play'
+    | '/privacy'
     | '/rankings'
     | '/rewards'
     | '/scoring'
+    | '/terms'
     | '/the-show'
     | '/dashboard'
     | '/onboarding'
@@ -156,11 +200,15 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/blueprint'
+    | '/fair-play'
     | '/fifa-special'
+    | '/game-rules'
     | '/play'
+    | '/privacy'
     | '/rankings'
     | '/rewards'
     | '/scoring'
+    | '/terms'
     | '/the-show'
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
@@ -171,11 +219,15 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   BlueprintRoute: typeof BlueprintRoute
+  FairPlayRoute: typeof FairPlayRoute
   FifaSpecialRoute: typeof FifaSpecialRoute
+  GameRulesRoute: typeof GameRulesRoute
   PlayRoute: typeof PlayRoute
+  PrivacyRoute: typeof PrivacyRoute
   RankingsRoute: typeof RankingsRoute
   RewardsRoute: typeof RewardsRoute
   ScoringRoute: typeof ScoringRoute
+  TermsRoute: typeof TermsRoute
   TheShowRoute: typeof TheShowRoute
 }
 
@@ -186,6 +238,13 @@ declare module '@tanstack/react-router' {
       path: '/the-show'
       fullPath: '/the-show'
       preLoaderRoute: typeof TheShowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/scoring': {
@@ -209,6 +268,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RankingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/play': {
       id: '/play'
       path: '/play'
@@ -216,11 +282,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlayRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/game-rules': {
+      id: '/game-rules'
+      path: '/game-rules'
+      fullPath: '/game-rules'
+      preLoaderRoute: typeof GameRulesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/fifa-special': {
       id: '/fifa-special'
       path: '/fifa-special'
       fullPath: '/fifa-special'
       preLoaderRoute: typeof FifaSpecialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fair-play': {
+      id: '/fair-play'
+      path: '/fair-play'
+      fullPath: '/fair-play'
+      preLoaderRoute: typeof FairPlayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blueprint': {
@@ -286,11 +366,15 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   BlueprintRoute: BlueprintRoute,
+  FairPlayRoute: FairPlayRoute,
   FifaSpecialRoute: FifaSpecialRoute,
+  GameRulesRoute: GameRulesRoute,
   PlayRoute: PlayRoute,
+  PrivacyRoute: PrivacyRoute,
   RankingsRoute: RankingsRoute,
   RewardsRoute: RewardsRoute,
   ScoringRoute: ScoringRoute,
+  TermsRoute: TermsRoute,
   TheShowRoute: TheShowRoute,
 }
 export const routeTree = rootRouteImport
