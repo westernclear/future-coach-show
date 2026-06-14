@@ -67,6 +67,7 @@ export function CoachFacePageShell({ children }: { children: ReactNode }) {
         </nav>
       </header>
       {children}
+      <AdminFooter />
       <footer className="border-t border-game-border bg-foreground py-9 text-background">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-4 px-5 sm:flex-row sm:items-center lg:px-8">
           <div>
@@ -101,6 +102,27 @@ export function CoachFacePageShell({ children }: { children: ReactNode }) {
           </p>
         </div>
       </footer>
+    </div>
+  );
+}
+
+function AdminFooter() {
+  const checkAdmin = useServerFn(checkIsAdmin);
+  const { data: isAdmin } = useQuery({
+    queryKey: ["shell-is-admin"],
+    queryFn: () => checkAdmin(),
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+  });
+  if (!isAdmin) return null;
+  return (
+    <div className="border-b border-game-border bg-foreground py-3 text-background">
+      <nav className="mx-auto flex max-w-7xl items-center justify-center gap-6 px-5 text-xs font-bold lg:px-8" aria-label="Admin">
+        <Link to="/admin/audits" className="flex items-center gap-1.5 text-game-muted hover:text-background">
+          <span className="size-2 rounded-full bg-primary" />
+          Upload Audits
+        </Link>
+      </nav>
     </div>
   );
 }
