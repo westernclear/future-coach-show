@@ -154,16 +154,24 @@ function OnboardingPage() {
     setUploadingPhoto(false);
   };
 
-  const continueToEligibility = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const values = new FormData(event.currentTarget);
-    setForm((current) => ({
-      ...current,
+  const continueToEligibility = (profileForm: HTMLFormElement | null) => {
+    if (!profileForm) return;
+    const values = new FormData(profileForm);
+    const nextProfile = {
       legalName: String(values.get("legalName") ?? "").trim(),
       username: String(values.get("username") ?? "").trim(),
       favoriteSport: String(values.get("favoriteSport") ?? "").trim(),
       favoriteTeam: String(values.get("favoriteTeam") ?? "").trim(),
       preferredLeague: String(values.get("preferredLeague") ?? "").trim(),
+    };
+    const missingField = Object.values(nextProfile).some((value) => !value);
+    if (missingField) {
+      setMessage("Complete all required profile fields before checking eligibility.");
+      return;
+    }
+    setForm((current) => ({
+      ...current,
+      ...nextProfile,
     }));
     setMessage(null);
     setStep(2);
@@ -294,7 +302,7 @@ function OnboardingPage() {
             )}
 
             {step === 1 && (
-              <form onSubmit={continueToEligibility}>
+              <form>
                 <p className="eyebrow">Step 2 of 4</p>
                 <h2 className="mt-3 font-display text-4xl font-black uppercase">
                   Build your CoachFace profile
@@ -412,7 +420,8 @@ function OnboardingPage() {
                 <Button
                   className="mt-8"
                   size="lg"
-                  type="submit"
+                  type="button"
+                  onClick={(event) => continueToEligibility(event.currentTarget.form)}
                 >
                   Check eligibility <ChevronRight />
                 </Button>
