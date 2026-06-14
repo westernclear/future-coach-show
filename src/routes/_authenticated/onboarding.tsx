@@ -4,11 +4,13 @@ import { useServerFn } from "@tanstack/react-start";
 import {
   Check,
   ChevronRight,
+  CircleCheck,
   Loader2,
   LockKeyhole,
   MailCheck,
   MapPinCheck,
   ShieldCheck,
+  Upload,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -23,7 +25,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import { completeOnboarding, getOnboardingStatus } from "@/lib/onboarding.functions";
+import {
+  completeOnboarding,
+  getOnboardingStatus,
+  saveOnboardingDraft,
+} from "@/lib/onboarding.functions";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
@@ -46,12 +52,16 @@ function OnboardingPage() {
   const navigate = useNavigate();
   const loadStatus = useServerFn(getOnboardingStatus);
   const saveOnboarding = useServerFn(completeOnboarding);
+  const saveDraft = useServerFn(saveOnboardingDraft);
   const [status, setStatus] = useState<Awaited<ReturnType<typeof getOnboardingStatus>> | null>(
     null,
   );
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState("");
   const [form, setForm] = useState({
     legalName: "",
     username: "",
@@ -81,13 +91,68 @@ function OnboardingPage() {
       fantasySkillLevel: next.profile?.fantasy_skill_level ?? current.fantasySkillLevel,
       avatarUrl: next.profile?.avatar_url ?? current.avatarUrl,
     }));
-    if (next.completed) setStep(3);
+    setAvatarPreview(next.avatarPreviewUrl);
+    setStep(next.completed ? 3 : Math.min(next.savedStep, 2));
     setLoading(false);
   };
 
   useEffect(() => {
     void refresh();
   }, []);
+
+  useEffect(() => {
+    if (!status || loading || status.completed || step === 3) return;
+    setSaveState("saving");
+    const timer = window.setTimeout(async () => {
+      try {
+        await saveDraft({
+          data: {
+            ...form,
+            fantasySkillLevel: form.fantasySkillLevel as
+              | "rookie"
+              | "intermediate"
+              | "advanced"
+              | "expert",
+            step,
+          },
+        });
+        setSaveState("saved");
+      } catch {
+        setSaveState("idle");
+      }
+    }, 700);
+    return () => window.clearTimeout(timer);
+  }, [form, step, status, loading]);
+
+  const uploadPhoto = async (file: File | undefined) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/") || file.size > 5 * 1024 * 1024) {
+      setMessage("Choose a JPG, PNG, or WebP image smaller than 5 MB.");
+      return;
+    }
+    setUploadingPhoto(true);
+    setMessage(null);
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
+    if (!userId) {
+      setMessage("Please sign in again before uploading a photo.");
+      setUploadingPhoto(false);
+      return;
+    }
+    const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const path = `${userId}/avatar.${extension}`;
+    const { error } = await supabase.storage
+      .from("profile-photos")
+      .upload(path, file, { upsert: true, contentType: file.type });
+    if (error) {
+      setMessage("We could not upload that photo. Please try again.");
+    } else {
+      const { data } = await supabase.storage.from("profile-photos").createSignedUrl(path, 3600);
+      setForm((current) => ({ ...current, avatarUrl: path }));
+      setAvatarPreview(data?.signedUrl ?? URL.createObjectURL(file));
+    }
+    setUploadingPhoto(false);
+  };
 
 
   const finish = async (event: FormEvent) => {
