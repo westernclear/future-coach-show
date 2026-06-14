@@ -953,6 +953,110 @@ export type Database = {
           },
         ]
       }
+      security_findings: {
+        Row: {
+          created_at: string
+          description: string
+          external_id: string
+          first_detected_at: string
+          id: string
+          last_detected_at: string
+          owner: string | null
+          remediation: string
+          resolved_at: string | null
+          scan_run_id: string | null
+          scanner: string
+          severity: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          external_id: string
+          first_detected_at?: string
+          id?: string
+          last_detected_at?: string
+          owner?: string | null
+          remediation?: string
+          resolved_at?: string | null
+          scan_run_id?: string | null
+          scanner: string
+          severity: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          external_id?: string
+          first_detected_at?: string
+          id?: string
+          last_detected_at?: string
+          owner?: string | null
+          remediation?: string
+          resolved_at?: string | null
+          scan_run_id?: string | null
+          scanner?: string
+          severity?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "security_findings_scan_run_id_fkey"
+            columns: ["scan_run_id"]
+            isOneToOne: false
+            referencedRelation: "security_scan_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      security_scan_runs: {
+        Row: {
+          created_at: string
+          critical_count: number
+          high_count: number
+          id: string
+          issues_found: number
+          low_count: number
+          medium_count: number
+          scanned_at: string
+          scanner_version: string | null
+          source: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          critical_count?: number
+          high_count?: number
+          id?: string
+          issues_found?: number
+          low_count?: number
+          medium_count?: number
+          scanned_at?: string
+          scanner_version?: string | null
+          source: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          critical_count?: number
+          high_count?: number
+          id?: string
+          issues_found?: number
+          low_count?: number
+          medium_count?: number
+          scanned_at?: string
+          scanner_version?: string | null
+          source?: string
+          status?: string
+        }
+        Relationships: []
+      }
       sports: {
         Row: {
           config: Json
