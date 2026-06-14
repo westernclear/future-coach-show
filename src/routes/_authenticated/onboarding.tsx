@@ -154,7 +154,6 @@ function OnboardingPage() {
     setUploadingPhoto(false);
   };
 
-
   const finish = async (event: FormEvent) => {
     event.preventDefault();
     setLoading(true);
@@ -241,11 +240,18 @@ function OnboardingPage() {
 
           <section className="border-t-4 border-primary bg-card p-6 shadow-sm sm:p-10">
             {step > 0 && step < 3 && (
-              <div className="mb-6 flex justify-end text-xs font-bold text-muted-foreground" aria-live="polite">
+              <div
+                className="mb-6 flex justify-end text-xs font-bold text-muted-foreground"
+                aria-live="polite"
+              >
                 {saveState === "saving" ? (
-                  <span className="flex items-center gap-2"><Loader2 className="size-3.5 animate-spin" /> Saving progress</span>
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="size-3.5 animate-spin" /> Saving progress
+                  </span>
                 ) : saveState === "saved" ? (
-                  <span className="flex items-center gap-2"><CircleCheck className="size-3.5 text-primary" /> Progress saved</span>
+                  <span className="flex items-center gap-2">
+                    <CircleCheck className="size-3.5 text-primary" /> Progress saved
+                  </span>
                 ) : null}
               </div>
             )}
@@ -345,9 +351,15 @@ function OnboardingPage() {
                     <div className="flex items-center gap-4">
                       <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-secondary">
                         {avatarPreview ? (
-                          <img src={avatarPreview} alt="Profile preview" className="size-full object-cover" />
+                          <img
+                            src={avatarPreview}
+                            alt="Profile preview"
+                            className="size-full object-cover"
+                          />
                         ) : (
-                          <span className="font-display text-lg font-black text-muted-foreground">CF</span>
+                          <span className="font-display text-lg font-black text-muted-foreground">
+                            CF
+                          </span>
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
@@ -355,7 +367,11 @@ function OnboardingPage() {
                           htmlFor="profile-photo"
                           className="flex h-9 cursor-pointer items-center justify-center gap-2 rounded-md border border-input px-3 text-sm font-medium hover:bg-accent"
                         >
-                          {uploadingPhoto ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
+                          {uploadingPhoto ? (
+                            <Loader2 className="size-4 animate-spin" />
+                          ) : (
+                            <Upload className="size-4" />
+                          )}
                           {avatarPreview ? "Replace photo" : "Upload photo"}
                         </Label>
                         <Input
@@ -366,7 +382,9 @@ function OnboardingPage() {
                           disabled={uploadingPhoto}
                           onChange={(event) => void uploadPhoto(event.target.files?.[0])}
                         />
-                        <p className="mt-2 text-xs text-muted-foreground">JPG, PNG, or WebP. Max 5 MB.</p>
+                        <p className="mt-2 text-xs text-muted-foreground">
+                          JPG, PNG, or WebP. Max 5 MB.
+                        </p>
                       </div>
                     </div>
                   </Field>

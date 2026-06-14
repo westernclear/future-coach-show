@@ -73,13 +73,21 @@ export const getOnboardingStatus = createServerFn({ method: "GET" })
       avatarPreviewUrl,
       profile,
       registration: {
-        legalName: typeof metadata.legal_name === "string" ? metadata.legal_name : "",
-        username: typeof metadata.username === "string" ? metadata.username : "",
+        legalName:
+          profile?.legal_name ??
+          (typeof metadata.legal_name === "string" ? metadata.legal_name : ""),
+        username:
+          profile?.username ?? (typeof metadata.username === "string" ? metadata.username : ""),
         mobileNumber:
           user?.phone ?? (typeof metadata.mobile_number === "string" ? metadata.mobile_number : ""),
-        countryCode: typeof metadata.country_code === "string" ? metadata.country_code : "",
-        region: typeof metadata.region === "string" ? metadata.region : "",
-        dateOfBirth: typeof metadata.date_of_birth === "string" ? metadata.date_of_birth : "",
+        countryCode:
+          profile?.country_code ??
+          (typeof metadata.country_code === "string" ? metadata.country_code : ""),
+        region:
+          profile?.region ?? (typeof metadata.region === "string" ? metadata.region : ""),
+        dateOfBirth:
+          profile?.date_of_birth ??
+          (typeof metadata.date_of_birth === "string" ? metadata.date_of_birth : ""),
       },
     };
   });
@@ -88,9 +96,7 @@ export const saveOnboardingDraft = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => draftSchema.parse(input))
   .handler(async ({ data, context }) => {
-    const { error } = await context.supabase
-      .from("profiles")
-      .upsert({
+    const { error } = await context.supabase.from("profiles").upsert({
       id: context.userId,
       legal_name: data.legalName || null,
       display_name: data.legalName || "CoachFace Player",
