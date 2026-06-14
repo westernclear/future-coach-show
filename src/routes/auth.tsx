@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { z } from "zod";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
@@ -27,6 +27,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const router = useRouter();
   const { redirect } = Route.useSearch();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
@@ -56,15 +57,25 @@ function AuthPage() {
             },
           });
 
-    setLoading(false);
     if (result.error) {
+      setLoading(false);
       setMessage(result.error.message);
       return;
     }
     if (mode === "signup" && !result.data.session) {
+      setLoading(false);
       setMessage("Check your email to confirm your account, then return to sign in.");
       return;
     }
+
+    const { data: verifiedUser, error: verificationError } = await supabase.auth.getUser();
+    if (verificationError || !verifiedUser.user) {
+      setLoading(false);
+      setMessage("Your account signed in, but the session could not be restored. Please try again.");
+      return;
+    }
+
+    await router.invalidate();
     await navigate({
       to:
         mode === "signup"
@@ -72,22 +83,26 @@ function AuthPage() {
           : redirect === "/fifa-special"
             ? "/fifa-special"
             : "/onboarding",
+      replace: true,
     });
   };
 
   const handleGoogle = async () => {
     setLoading(true);
     setMessage(null);
+    const destination = redirect === "/fifa-special" ? "/fifa-special" : "/onboarding";
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
+      redirect_uri: `${window.location.origin}${destination}`,
     });
     if (result.error) {
       setLoading(false);
       setMessage(result.error.message);
       return;
     }
-    if (!result.redirected)
-      await navigate({ to: redirect === "/fifa-special" ? "/fifa-special" : "/onboarding" });
+    if (!result.redirected) {
+      await router.invalidate();
+      await navigate({ to: destination, replace: true });
+    }
   };
 
   return (
