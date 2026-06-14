@@ -158,11 +158,11 @@ function OnboardingPage() {
     if (!profileForm) return;
     const values = new FormData(profileForm);
     const nextProfile = {
-      legalName: String(values.get("legalName") ?? "").trim(),
-      username: String(values.get("username") ?? "").trim(),
-      favoriteSport: String(values.get("favoriteSport") ?? "").trim(),
-      favoriteTeam: String(values.get("favoriteTeam") ?? "").trim(),
-      preferredLeague: String(values.get("preferredLeague") ?? "").trim(),
+      legalName: String(values.get("cfLegalName") ?? "").trim(),
+      username: String(values.get("cfUsername") ?? "").trim(),
+      favoriteSport: String(values.get("cfFavoriteSport") ?? "").trim(),
+      favoriteTeam: String(values.get("cfFavoriteTeam") ?? "").trim(),
+      preferredLeague: String(values.get("cfPreferredLeague") ?? "").trim(),
     };
     const missingField = Object.values(nextProfile).some((value) => !value);
     if (missingField) {
@@ -304,6 +304,7 @@ function OnboardingPage() {
             {step === 1 && (
               <form
                 noValidate
+                autoComplete="off"
                 onSubmit={(event) => {
                   event.preventDefault();
                   continueToEligibility(event.currentTarget);
@@ -316,7 +317,8 @@ function OnboardingPage() {
                 <div className="mt-8 grid gap-5 sm:grid-cols-2">
                   <Field label="Full legal name">
                     <Input
-                      name="legalName"
+                      name="cfLegalName"
+                      autoComplete="off"
                       required
                       maxLength={120}
                       value={form.legalName}
@@ -325,7 +327,8 @@ function OnboardingPage() {
                   </Field>
                   <Field label="Username">
                     <Input
-                      name="username"
+                      name="cfUsername"
+                      autoComplete="off"
                       required
                       pattern="[A-Za-z0-9_]+"
                       minLength={3}
@@ -336,7 +339,8 @@ function OnboardingPage() {
                   </Field>
                   <Field label="Favorite sport">
                     <Input
-                      name="favoriteSport"
+                      name="cfFavoriteSport"
+                      autoComplete="off"
                       required
                       maxLength={80}
                       placeholder="Football"
@@ -346,7 +350,8 @@ function OnboardingPage() {
                   </Field>
                   <Field label="Favorite team">
                     <Input
-                      name="favoriteTeam"
+                      name="cfFavoriteTeam"
+                      autoComplete="off"
                       required
                       maxLength={100}
                       value={form.favoriteTeam}
@@ -355,7 +360,8 @@ function OnboardingPage() {
                   </Field>
                   <Field label="Preferred league">
                     <Input
-                      name="preferredLeague"
+                      name="cfPreferredLeague"
+                      autoComplete="off"
                       required
                       maxLength={100}
                       placeholder="Premier League"
@@ -423,6 +429,11 @@ function OnboardingPage() {
                     </div>
                   </Field>
                 </div>
+                {message && (
+                  <p role="alert" className="mt-5 text-sm font-medium text-destructive">
+                    {message}
+                  </p>
+                )}
                 <Button
                   className="mt-8"
                   size="lg"
