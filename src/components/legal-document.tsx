@@ -30,9 +30,9 @@ export function LegalDocument({
   return (
     <CoachFacePageShell>
       <header className="border-b border-border bg-foreground text-background">
-        <div className="mx-auto max-w-7xl px-5 py-14 lg:px-8 lg:py-20">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-5 lg:px-8 lg:py-20">
           <p className="eyebrow">{eyebrow}</p>
-          <h1 className="mt-4 max-w-5xl font-display text-5xl font-black uppercase leading-[0.92] tracking-tight sm:text-7xl">
+          <h1 className="mt-4 max-w-5xl font-display text-4xl font-black uppercase leading-[0.94] tracking-tight min-[375px]:text-5xl sm:text-7xl sm:leading-[0.92]">
             {title}
           </h1>
           <p className="mt-6 max-w-3xl text-lg leading-relaxed text-game-muted">{summary}</p>
@@ -43,7 +43,7 @@ export function LegalDocument({
         </div>
       </header>
 
-      <main className="mx-auto grid max-w-7xl gap-12 px-5 py-12 lg:grid-cols-[260px_minmax(0,1fr)] lg:px-8 lg:py-16">
+      <main className="mx-auto grid max-w-7xl gap-12 px-4 py-12 sm:px-5 lg:grid-cols-[260px_minmax(0,1fr)] lg:px-8 lg:py-16">
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <p className="eyebrow">Legal center</p>
           <nav className="mt-4 border-y border-border" aria-label="Legal documents">
@@ -64,7 +64,7 @@ export function LegalDocument({
           </p>
         </aside>
 
-        <article className="min-w-0">
+        <article className="min-w-0 [overflow-wrap:anywhere]">
           <div className="border-l-4 border-primary bg-secondary p-5 text-sm leading-relaxed">
             This document forms part of the agreement between you and CoachFace, developed and
             operated by SCOSTrade. Please read it carefully and keep a copy for your records.
