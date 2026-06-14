@@ -78,10 +78,18 @@ export function CoachFacePageShell({ children }: { children: ReactNode }) {
           className="mx-auto mt-6 flex max-w-7xl flex-wrap justify-center gap-x-6 gap-y-2 px-5 text-xs font-bold text-game-muted lg:px-8"
           aria-label="Legal"
         >
-          <Link to="/terms" className="hover:text-background">Terms of Service</Link>
-          <Link to="/game-rules" className="hover:text-background">Game Rules</Link>
-          <Link to="/privacy" className="hover:text-background">Privacy Policy</Link>
-          <Link to="/fair-play" className="hover:text-background">Fair Play Policy</Link>
+          <Link to="/terms" className="hover:text-background">
+            Terms of Service
+          </Link>
+          <Link to="/game-rules" className="hover:text-background">
+            Game Rules
+          </Link>
+          <Link to="/privacy" className="hover:text-background">
+            Privacy Policy
+          </Link>
+          <Link to="/fair-play" className="hover:text-background">
+            Fair Play Policy
+          </Link>
         </nav>
         <div className="mx-auto mt-6 max-w-7xl px-5 lg:px-8">
           <p className="text-center text-xs text-game-muted/60">

@@ -11,10 +11,7 @@ const updateFindingSchema = z.object({
   owner: z.string().trim().max(120),
 });
 
-async function requireAdmin(context: {
-  supabase: SupabaseClient<Database>;
-  userId: string;
-}) {
+async function requireAdmin(context: { supabase: SupabaseClient<Database>; userId: string }) {
   const { data: role } = await context.supabase
     .from("user_roles")
     .select("role")
