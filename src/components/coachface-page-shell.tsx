@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Link, useLocation } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
+import { InstallAppButton } from "@/components/install-app-button";
 import { checkIsAdmin } from "@/lib/admin-audits.functions";
 
 const navItems = [
@@ -52,11 +53,14 @@ export function CoachFacePageShell({ children }: { children: ReactNode }) {
               </Link>
             ))}
           </nav>
-          <Button size="sm" variant={isAccountPage ? "outline" : "default"} asChild>
-            <Link to={isAccountPage ? "/profile" : "/auth"}>
-              {isAccountPage ? "My profile" : "Sign in"}
-            </Link>
-          </Button>
+          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+            <Button size="sm" variant={isAccountPage ? "outline" : "default"} asChild>
+              <Link to={isAccountPage ? "/profile" : "/auth"}>
+                {isAccountPage ? "My profile" : "Sign in"}
+              </Link>
+            </Button>
+            <InstallAppButton />
+          </div>
         </div>
         <nav
           className="flex gap-5 overflow-x-auto border-t border-border/60 px-4 py-3 text-xs font-bold [scrollbar-width:none] sm:px-5 md:hidden [&::-webkit-scrollbar]:hidden"

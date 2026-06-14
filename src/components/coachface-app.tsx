@@ -19,6 +19,7 @@ import introFilm from "@/assets/coachface-idcoach-fantasy-roger-60s-v3.mp4.asset
 import conceptTrailer from "@/assets/coachface-concept-trailer-stills.mp4.asset.json";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { InstallAppButton } from "@/components/install-app-button";
 import { cn } from "@/lib/utils";
 
 type Coach = {
@@ -94,6 +95,7 @@ export function CoachFaceApp() {
           <div className="flex shrink-0 items-center gap-1 sm:gap-2">
             <Button size="sm" variant="ghost" className="px-2 sm:px-3" asChild><Link to="/auth">Sign in</Link></Button>
             <Button size="sm" className="px-2.5 sm:px-3" asChild><Link to="/play"><span className="hidden min-[360px]:inline">Build roster</span><span className="min-[360px]:hidden">Play</span> <ArrowRight /></Link></Button>
+            <InstallAppButton />
           </div>
         </div>
       </header>
