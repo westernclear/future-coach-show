@@ -56,8 +56,8 @@ function SecurityDashboard() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["security-dashboard"] }),
   });
 
-  const findings = data?.findings ?? [];
-  const runs = data?.runs ?? [];
+  const findings = useMemo(() => data?.findings ?? [], [data?.findings]);
+  const runs = useMemo(() => data?.runs ?? [], [data?.runs]);
   const filtered = useMemo(
     () =>
       findings.filter((finding) => {
