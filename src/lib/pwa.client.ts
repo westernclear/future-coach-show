@@ -1,10 +1,6 @@
 import { registerSW } from "virtual:pwa-register";
 
-const PREVIEW_HOSTS = [
-  "lovableproject.com",
-  "lovableproject-dev.com",
-  "beta.lovable.dev",
-];
+const PREVIEW_HOSTS = ["lovableproject.com", "lovableproject-dev.com", "beta.lovable.dev"];
 
 function isPreviewHost(hostname: string) {
   return (
@@ -32,7 +28,8 @@ export async function registerCoachFaceServiceWorker() {
 
   const isTopLevel = window.self === window.top;
   const disabled = new URLSearchParams(window.location.search).get("sw") === "off";
-  const mayRegister = import.meta.env.PROD && isTopLevel && !isPreviewHost(location.hostname) && !disabled;
+  const mayRegister =
+    import.meta.env.PROD && isTopLevel && !isPreviewHost(location.hostname) && !disabled;
 
   if (!mayRegister) {
     await unregisterCoachFaceWorkers();
