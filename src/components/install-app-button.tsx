@@ -103,7 +103,11 @@ export function InstallAppButton({ className }: { className?: string }) {
             </DialogDescription>
           </DialogHeader>
           <div className="flex items-center gap-3 border border-border bg-secondary/50 p-4 text-sm font-semibold">
-            {isIos ? <Share className="shrink-0 text-primary" /> : <Download className="shrink-0 text-primary" />}
+            {isIos ? (
+              <Share className="shrink-0 text-primary" />
+            ) : (
+              <Download className="shrink-0 text-primary" />
+            )}
             <span>{isIos ? "Share → Add to Home Screen" : "Menu → Install app"}</span>
           </div>
         </DialogContent>
