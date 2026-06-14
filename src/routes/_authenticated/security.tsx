@@ -334,6 +334,45 @@ function Summary({
     </div>
   );
 }
+function AlertInbox({
+  notifications,
+  unreadCount,
+  onRead,
+}: {
+  notifications: Array<{
+    id: string;
+    title: string;
+    message: string;
+    severity: string;
+    read_at: string | null;
+    created_at: string;
+  }>;
+  unreadCount: number;
+  onRead: (id: string) => void;
+}) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" size="icon" className="relative bg-card" aria-label={`${unreadCount} unread security alerts`}>
+          <Bell className="size-4" />
+          {unreadCount > 0 && <span className="absolute -right-2 -top-2 grid size-5 place-items-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">{unreadCount}</span>}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-96 p-0">
+        <div className="border-b border-border p-4"><p className="eyebrow">Security alerts</p><p className="mt-1 text-sm text-muted-foreground">High-severity detections and resolved issues.</p></div>
+        <div className="max-h-96 overflow-y-auto">
+          {notifications.length ? notifications.map((notification) => (
+            <button key={notification.id} type="button" onClick={() => onRead(notification.id)} className={cn("block w-full border-b border-border p-4 text-left transition-colors hover:bg-secondary", !notification.read_at && "bg-primary/5")}>
+              <div className="flex items-start justify-between gap-3"><p className="font-bold">{notification.title}</p>{!notification.read_at && <span className="mt-1 size-2 shrink-0 rounded-full bg-primary" />}</div>
+              <p className="mt-1 text-sm text-muted-foreground">{notification.message}</p>
+              <p className="mt-2 text-xs text-muted-foreground">{dateLabel(notification.created_at)}</p>
+            </button>
+          )) : <p className="p-6 text-sm text-muted-foreground">No security alerts yet.</p>}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
 function Severity({ severity }: { severity: string }) {
   return (
     <Badge variant={severity === "critical" || severity === "high" ? "destructive" : "secondary"}>
