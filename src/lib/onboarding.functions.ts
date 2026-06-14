@@ -12,7 +12,8 @@ const profileSchema = z.object({
   mobileNumber: z
     .string()
     .trim()
-    .regex(/^\+[1-9][0-9]{7,14}$/),
+    .regex(/^\+[1-9][0-9]{7,14}$/)
+    .or(z.literal("")),
   countryCode: z
     .string()
     .trim()
@@ -45,7 +46,6 @@ export const getOnboardingStatus = createServerFn({ method: "GET" })
     return {
       email: user?.email ?? "",
       emailVerified: Boolean(user?.email_confirmed_at),
-      phoneVerified: Boolean(user?.phone_confirmed_at),
       completed: Boolean(profile?.onboarding_completed_at),
       profile,
       registration: {
@@ -66,8 +66,8 @@ export const completeOnboarding = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const user = userData.user;
-    if (!user?.email_confirmed_at || !user.phone_confirmed_at) {
-      throw new Error("Verify both your email and mobile number before continuing.");
+    if (!user?.email_confirmed_at) {
+      throw new Error("Verify your email address before continuing.");
     }
 
     const birthDate = new Date(`${data.dateOfBirth}T00:00:00Z`);
@@ -81,7 +81,7 @@ export const completeOnboarding = createServerFn({ method: "POST" })
       display_name: data.legalName,
       legal_name: data.legalName,
       username: data.username,
-      mobile_number: data.mobileNumber,
+      mobile_number: data.mobileNumber || null,
       country_code: data.countryCode,
       region: data.region,
       location: `${data.region}, ${data.countryCode}`,
@@ -119,7 +119,6 @@ export const completeOnboarding = createServerFn({ method: "POST" })
       supabaseAdmin.from("account_verifications").upsert({
         user_id: context.userId,
         email_verified_at: user.email_confirmed_at,
-        phone_verified_at: user.phone_confirmed_at,
       }),
       supabaseAdmin.from("identity_verifications").upsert({ user_id: context.userId }),
       supabaseAdmin.from("user_wallets").upsert({ user_id: context.userId }),
