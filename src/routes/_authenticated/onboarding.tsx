@@ -154,6 +154,21 @@ function OnboardingPage() {
     setUploadingPhoto(false);
   };
 
+  const continueToEligibility = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const values = new FormData(event.currentTarget);
+    setForm((current) => ({
+      ...current,
+      legalName: String(values.get("legalName") ?? "").trim(),
+      username: String(values.get("username") ?? "").trim(),
+      favoriteSport: String(values.get("favoriteSport") ?? "").trim(),
+      favoriteTeam: String(values.get("favoriteTeam") ?? "").trim(),
+      preferredLeague: String(values.get("preferredLeague") ?? "").trim(),
+    }));
+    setMessage(null);
+    setStep(2);
+  };
+
   const finish = async (event: FormEvent) => {
     event.preventDefault();
     setLoading(true);
@@ -279,7 +294,7 @@ function OnboardingPage() {
             )}
 
             {step === 1 && (
-              <div>
+              <form onSubmit={continueToEligibility}>
                 <p className="eyebrow">Step 2 of 4</p>
                 <h2 className="mt-3 font-display text-4xl font-black uppercase">
                   Build your CoachFace profile
@@ -287,6 +302,7 @@ function OnboardingPage() {
                 <div className="mt-8 grid gap-5 sm:grid-cols-2">
                   <Field label="Full legal name">
                     <Input
+                      name="legalName"
                       required
                       maxLength={120}
                       value={form.legalName}
@@ -295,6 +311,7 @@ function OnboardingPage() {
                   </Field>
                   <Field label="Username">
                     <Input
+                      name="username"
                       required
                       pattern="[A-Za-z0-9_]+"
                       minLength={3}
@@ -305,6 +322,7 @@ function OnboardingPage() {
                   </Field>
                   <Field label="Favorite sport">
                     <Input
+                      name="favoriteSport"
                       required
                       maxLength={80}
                       placeholder="Football"
@@ -314,6 +332,7 @@ function OnboardingPage() {
                   </Field>
                   <Field label="Favorite team">
                     <Input
+                      name="favoriteTeam"
                       required
                       maxLength={100}
                       value={form.favoriteTeam}
@@ -322,6 +341,7 @@ function OnboardingPage() {
                   </Field>
                   <Field label="Preferred league">
                     <Input
+                      name="preferredLeague"
                       required
                       maxLength={100}
                       placeholder="Premier League"
@@ -392,18 +412,11 @@ function OnboardingPage() {
                 <Button
                   className="mt-8"
                   size="lg"
-                  disabled={
-                    !form.legalName ||
-                    !form.username ||
-                    !form.favoriteSport ||
-                    !form.favoriteTeam ||
-                    !form.preferredLeague
-                  }
-                  onClick={() => setStep(2)}
+                  type="submit"
                 >
                   Check eligibility <ChevronRight />
                 </Button>
-              </div>
+              </form>
             )}
 
             {step === 2 && (
