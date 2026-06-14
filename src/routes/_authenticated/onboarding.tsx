@@ -632,6 +632,14 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </div>
   );
 }
+function AccessLevel({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="border border-border bg-secondary/40 p-4">
+      <h3 className="font-bold">{title}</h3>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{text}</p>
+    </div>
+  );
+}
 function Consent({
   checked,
   onChange,
