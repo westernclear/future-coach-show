@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_verifications: {
+        Row: {
+          email_verified_at: string | null
+          phone_verified_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          email_verified_at?: string | null
+          phone_verified_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          email_verified_at?: string | null
+          phone_verified_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       coach_scores: {
         Row: {
           calculated_at: string
@@ -380,6 +401,45 @@ export type Database = {
           },
         ]
       }
+      identity_verifications: {
+        Row: {
+          address_status: string
+          government_id_status: string
+          location_status: string
+          provider_reference: string | null
+          selfie_match_status: string
+          status: string
+          tax_status: string
+          updated_at: string
+          user_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          address_status?: string
+          government_id_status?: string
+          location_status?: string
+          provider_reference?: string | null
+          selfie_match_status?: string
+          status?: string
+          tax_status?: string
+          updated_at?: string
+          user_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          address_status?: string
+          government_id_status?: string
+          location_status?: string
+          provider_reference?: string | null
+          selfie_match_status?: string
+          status?: string
+          tax_status?: string
+          updated_at?: string
+          user_id?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       leagues: {
         Row: {
           country_code: string | null
@@ -495,41 +555,77 @@ export type Database = {
       }
       profiles: {
         Row: {
+          age_confirmed_at: string | null
           avatar_url: string | null
           bio: string | null
+          country_code: string | null
           created_at: string
+          date_of_birth: string | null
           display_name: string
+          fantasy_skill_level: string | null
+          favorite_sport: string | null
           favorite_sports: string[]
+          favorite_team: string | null
           favorite_team_ids: string[]
           id: string
+          legal_name: string | null
           location: string | null
+          location_confirmed_at: string | null
+          mobile_number: string | null
           notification_preferences: Json
+          onboarding_completed_at: string | null
+          preferred_league: string | null
+          region: string | null
           updated_at: string
           username: string
         }
         Insert: {
+          age_confirmed_at?: string | null
           avatar_url?: string | null
           bio?: string | null
+          country_code?: string | null
           created_at?: string
+          date_of_birth?: string | null
           display_name: string
+          fantasy_skill_level?: string | null
+          favorite_sport?: string | null
           favorite_sports?: string[]
+          favorite_team?: string | null
           favorite_team_ids?: string[]
           id: string
+          legal_name?: string | null
           location?: string | null
+          location_confirmed_at?: string | null
+          mobile_number?: string | null
           notification_preferences?: Json
+          onboarding_completed_at?: string | null
+          preferred_league?: string | null
+          region?: string | null
           updated_at?: string
           username: string
         }
         Update: {
+          age_confirmed_at?: string | null
           avatar_url?: string | null
           bio?: string | null
+          country_code?: string | null
           created_at?: string
+          date_of_birth?: string | null
           display_name?: string
+          fantasy_skill_level?: string | null
+          favorite_sport?: string | null
           favorite_sports?: string[]
+          favorite_team?: string | null
           favorite_team_ids?: string[]
           id?: string
+          legal_name?: string | null
           location?: string | null
+          location_confirmed_at?: string | null
+          mobile_number?: string | null
           notification_preferences?: Json
+          onboarding_completed_at?: string | null
+          preferred_league?: string | null
+          region?: string | null
           updated_at?: string
           username?: string
         }
@@ -979,6 +1075,36 @@ export type Database = {
           },
         ]
       }
+      user_consents: {
+        Row: {
+          accepted_at: string
+          created_at: string
+          document_type: string
+          document_version: string
+          id: string
+          metadata: Json
+          user_id: string
+        }
+        Insert: {
+          accepted_at?: string
+          created_at?: string
+          document_type: string
+          document_version: string
+          id?: string
+          metadata?: Json
+          user_id: string
+        }
+        Update: {
+          accepted_at?: string
+          created_at?: string
+          document_type?: string
+          document_version?: string
+          id?: string
+          metadata?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -997,6 +1123,33 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_wallets: {
+        Row: {
+          fantasy_points: number
+          promotional_tokens: number
+          reward_credits: number
+          updated_at: string
+          user_id: string
+          winnings_cents: number
+        }
+        Insert: {
+          fantasy_points?: number
+          promotional_tokens?: number
+          reward_credits?: number
+          updated_at?: string
+          user_id: string
+          winnings_cents?: number
+        }
+        Update: {
+          fantasy_points?: number
+          promotional_tokens?: number
+          reward_credits?: number
+          updated_at?: string
+          user_id?: string
+          winnings_cents?: number
         }
         Relationships: []
       }
