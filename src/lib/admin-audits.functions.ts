@@ -49,7 +49,7 @@ export const getUploadRejectionAudits = createServerFn({ method: "POST" })
 
     let query = supabaseAdmin
       .from("profile_upload_rejections")
-      .select("*, profiles:profiles!inner(id, username, display_name)", { count: "exact" });
+      .select("*", { count: "exact" });
 
     if (data.reason && reasonCodes.includes(data.reason as (typeof reasonCodes)[number])) {
       query = query.eq("reason_code", data.reason);
@@ -86,21 +86,34 @@ export const getUploadRejectionAudits = createServerFn({ method: "POST" })
       throw new Error("Failed to load audit data.");
     }
 
+    const userIds = [...new Set((rows ?? []).map((r) => r.user_id))];
+    const { data: profiles } = await supabaseAdmin
+      .from("profiles")
+      .select("id, username, display_name")
+      .in("id", userIds);
+
+    const profileMap = new Map(
+      (profiles ?? []).map((p) => [p.id, p as { username: string | null; display_name: string | null }]),
+    );
+
     return {
-      rows: (rows ?? []).map((r) => ({
-        id: r.id,
-        userId: r.user_id,
-        reasonCode: r.reason_code,
-        claimedType: r.claimed_type,
-        detectedType: r.detected_type,
-        byteSize: r.byte_size,
-        width: r.width,
-        height: r.height,
-        validationDurationMs: r.validation_duration_ms,
-        createdAt: r.created_at,
-        username: (r.profiles as { username: string | null; display_name: string | null } | null)?.username ?? null,
-        displayName: (r.profiles as { username: string | null; display_name: string | null } | null)?.display_name ?? null,
-      })),
+      rows: (rows ?? []).map((r) => {
+        const profile = profileMap.get(r.user_id);
+        return {
+          id: r.id,
+          userId: r.user_id,
+          reasonCode: r.reason_code,
+          claimedType: r.claimed_type,
+          detectedType: r.detected_type,
+          byteSize: r.byte_size,
+          width: r.width,
+          height: r.height,
+          validationDurationMs: r.validation_duration_ms,
+          createdAt: r.created_at,
+          username: profile?.username ?? null,
+          displayName: profile?.display_name ?? null,
+        };
+      }),
       count: count ?? 0,
       page: data.page,
       pageSize: data.pageSize,
