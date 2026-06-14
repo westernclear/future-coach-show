@@ -83,8 +83,7 @@ export const getOnboardingStatus = createServerFn({ method: "GET" })
         countryCode:
           profile?.country_code ??
           (typeof metadata.country_code === "string" ? metadata.country_code : ""),
-        region:
-          profile?.region ?? (typeof metadata.region === "string" ? metadata.region : ""),
+        region: profile?.region ?? (typeof metadata.region === "string" ? metadata.region : ""),
         dateOfBirth:
           profile?.date_of_birth ??
           (typeof metadata.date_of_birth === "string" ? metadata.date_of_birth : ""),
@@ -112,7 +111,7 @@ export const saveOnboardingDraft = createServerFn({ method: "POST" })
       fantasy_skill_level: data.fantasySkillLevel,
       avatar_url: data.avatarUrl || null,
       onboarding_step: data.step,
-      });
+    });
     if (error) {
       throw new Error(
         error.message.includes("username")
