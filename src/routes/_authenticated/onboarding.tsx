@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
   Check,
@@ -513,8 +513,23 @@ function OnboardingPage() {
                     onChange={setAcceptedPolicies}
                     icon={<LockKeyhole />}
                   >
-                    I agree to the CoachFace Terms of Service, Game Rules, Privacy Policy, and Fair
-                    Play Policy.
+                    I agree to the CoachFace{" "}
+                    <Link to="/terms" target="_blank" className="font-bold underline underline-offset-2">
+                      Terms of Service
+                    </Link>
+                    ,{" "}
+                    <Link to="/game-rules" target="_blank" className="font-bold underline underline-offset-2">
+                      Game Rules
+                    </Link>
+                    ,{" "}
+                    <Link to="/privacy" target="_blank" className="font-bold underline underline-offset-2">
+                      Privacy Policy
+                    </Link>
+                    , and{" "}
+                    <Link to="/fair-play" target="_blank" className="font-bold underline underline-offset-2">
+                      Fair Play Policy
+                    </Link>
+                    .
                   </Consent>
                 </div>
                 <div className="mt-6 border-l-2 border-primary bg-secondary/60 p-4 text-sm text-muted-foreground">
