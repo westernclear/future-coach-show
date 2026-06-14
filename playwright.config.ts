@@ -1,0 +1,27 @@
+import { defineConfig } from "@playwright/test";
+
+export default defineConfig({
+  testDir: "./tests",
+  fullyParallel: true,
+  forbidOnly: Boolean(process.env.CI),
+  retries: process.env.CI ? 2 : 0,
+  reporter: process.env.CI ? "github" : "list",
+  use: {
+    baseURL: process.env.OVERLAY_TEST_BASE_URL ?? "https://coachface.com",
+    trace: "retain-on-failure",
+  },
+  projects: [
+    {
+      name: "desktop",
+      use: { viewport: { width: 1440, height: 900 } },
+    },
+    {
+      name: "mobile",
+      use: {
+        viewport: { width: 390, height: 844 },
+        isMobile: true,
+        hasTouch: true,
+      },
+    },
+  ],
+});
