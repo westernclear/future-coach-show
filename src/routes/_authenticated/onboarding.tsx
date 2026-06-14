@@ -240,6 +240,15 @@ function OnboardingPage() {
           </aside>
 
           <section className="border-t-4 border-primary bg-card p-6 shadow-sm sm:p-10">
+            {step > 0 && step < 3 && (
+              <div className="mb-6 flex justify-end text-xs font-bold text-muted-foreground" aria-live="polite">
+                {saveState === "saving" ? (
+                  <span className="flex items-center gap-2"><Loader2 className="size-3.5 animate-spin" /> Saving progress</span>
+                ) : saveState === "saved" ? (
+                  <span className="flex items-center gap-2"><CircleCheck className="size-3.5 text-primary" /> Progress saved</span>
+                ) : null}
+              </div>
+            )}
             {step === 0 && (
               <div>
                 <p className="eyebrow">Step 1 of 4</p>
@@ -332,13 +341,34 @@ function OnboardingPage() {
                       </SelectContent>
                     </Select>
                   </Field>
-                  <Field label="Profile photo URL">
-                    <Input
-                      type="url"
-                      placeholder="https://"
-                      value={form.avatarUrl}
-                      onChange={(event) => setForm({ ...form, avatarUrl: event.target.value })}
-                    />
+                  <Field label="Profile photo">
+                    <div className="flex items-center gap-4">
+                      <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-secondary">
+                        {avatarPreview ? (
+                          <img src={avatarPreview} alt="Profile preview" className="size-full object-cover" />
+                        ) : (
+                          <span className="font-display text-lg font-black text-muted-foreground">CF</span>
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <Label
+                          htmlFor="profile-photo"
+                          className="flex h-9 cursor-pointer items-center justify-center gap-2 rounded-md border border-input px-3 text-sm font-medium hover:bg-accent"
+                        >
+                          {uploadingPhoto ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />}
+                          {avatarPreview ? "Replace photo" : "Upload photo"}
+                        </Label>
+                        <Input
+                          id="profile-photo"
+                          className="sr-only"
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          disabled={uploadingPhoto}
+                          onChange={(event) => void uploadPhoto(event.target.files?.[0])}
+                        />
+                        <p className="mt-2 text-xs text-muted-foreground">JPG, PNG, or WebP. Max 5 MB.</p>
+                      </div>
+                    </div>
                   </Field>
                 </div>
                 <Button
