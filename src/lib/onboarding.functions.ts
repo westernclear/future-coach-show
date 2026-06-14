@@ -116,13 +116,11 @@ export const completeOnboarding = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await Promise.all([
-      supabaseAdmin
-        .from("account_verifications")
-        .upsert({
-          user_id: context.userId,
-          email_verified_at: user.email_confirmed_at,
-          phone_verified_at: user.phone_confirmed_at,
-        }),
+      supabaseAdmin.from("account_verifications").upsert({
+        user_id: context.userId,
+        email_verified_at: user.email_confirmed_at,
+        phone_verified_at: user.phone_confirmed_at,
+      }),
       supabaseAdmin.from("identity_verifications").upsert({ user_id: context.userId }),
       supabaseAdmin.from("user_wallets").upsert({ user_id: context.userId }),
     ]);
