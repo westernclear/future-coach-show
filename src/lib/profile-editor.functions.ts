@@ -32,7 +32,7 @@ const updateProfileSchema = z.object({
 });
 
 const validateUploadSchema = z.object({
-  bytes: z.array(z.number().int().min(0).max(255)).min(1).max(PROFILE_IMAGE_MAX_BYTES),
+  bytes: z.array(z.number().int().min(0).max(255)).min(1).max(PROFILE_IMAGE_MAX_BYTES + 1024 * 1024),
   claimedType: z.enum(["image/jpeg", "image/png", "image/webp"]),
 });
 
