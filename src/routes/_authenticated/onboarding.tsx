@@ -9,7 +9,6 @@ import {
   MailCheck,
   MapPinCheck,
   ShieldCheck,
-  Smartphone,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -41,7 +40,7 @@ export const Route = createFileRoute("/_authenticated/onboarding")({
   component: OnboardingPage,
 });
 
-const steps = ["Verify", "Profile", "Eligibility", "Ready"];
+const steps = ["Verify email", "Profile", "Eligibility", "Ready"];
 
 function OnboardingPage() {
   const navigate = useNavigate();
@@ -53,8 +52,6 @@ function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
-  const [phoneCode, setPhoneCode] = useState("");
-  const [codeSent, setCodeSent] = useState(false);
   const [form, setForm] = useState({
     legalName: "",
     username: "",
@@ -92,31 +89,6 @@ function OnboardingPage() {
     void refresh();
   }, []);
 
-  const sendPhoneCode = async () => {
-    setMessage(null);
-    const { error } = await supabase.auth.updateUser({ phone: form.mobileNumber });
-    if (error) {
-      setMessage(error.message);
-      return;
-    }
-    setCodeSent(true);
-    setMessage("We sent a verification code to your mobile number.");
-  };
-
-  const verifyPhone = async () => {
-    setMessage(null);
-    const { error } = await supabase.auth.verifyOtp({
-      phone: form.mobileNumber,
-      token: phoneCode,
-      type: "phone_change",
-    });
-    if (error) {
-      setMessage(error.message);
-      return;
-    }
-    await refresh();
-    setMessage("Mobile number verified.");
-  };
 
   const finish = async (event: FormEvent) => {
     event.preventDefault();
@@ -150,7 +122,7 @@ function OnboardingPage() {
         <Loader2 className="size-7 animate-spin text-primary" />
       </main>
     );
-  const verified = Boolean(status?.emailVerified && status.phoneVerified);
+  const verified = Boolean(status?.emailVerified);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -206,48 +178,14 @@ function OnboardingPage() {
             {step === 0 && (
               <div>
                 <p className="eyebrow">Step 1 of 4</p>
-                <h2 className="mt-3 font-display text-4xl font-black uppercase">
-                  Verify email and phone
-                </h2>
-                <div className="mt-8 grid gap-4 sm:grid-cols-2">
-                  <div className="border border-border p-5">
-                    <MailCheck className="size-6 text-primary" />
-                    <h3 className="mt-4 font-bold">Email address</h3>
-                    <p className="mt-1 break-all text-sm text-muted-foreground">{status?.email}</p>
-                    <p className="mt-4 text-sm font-bold">
-                      {status?.emailVerified ? "Verified" : "Check your inbox to confirm"}
-                    </p>
-                  </div>
-                  <div className="border border-border p-5">
-                    <Smartphone className="size-6 text-primary" />
-                    <h3 className="mt-4 font-bold">Mobile number</h3>
-                    <div className="mt-3 flex gap-2">
-                      <Input
-                        aria-label="Mobile number"
-                        placeholder="+12125550123"
-                        value={form.mobileNumber}
-                        onChange={(event) => setForm({ ...form, mobileNumber: event.target.value })}
-                      />
-                      <Button type="button" onClick={sendPhoneCode}>
-                        {status?.phoneVerified ? "Verified" : "Send code"}
-                      </Button>
-                    </div>
-                    {codeSent && !status?.phoneVerified && (
-                      <div className="mt-3 flex gap-2">
-                        <Input
-                          aria-label="SMS verification code"
-                          inputMode="numeric"
-                          maxLength={6}
-                          placeholder="6-digit code"
-                          value={phoneCode}
-                          onChange={(event) => setPhoneCode(event.target.value.replace(/\D/g, ""))}
-                        />
-                        <Button variant="outline" type="button" onClick={verifyPhone}>
-                          Verify
-                        </Button>
-                      </div>
-                    )}
-                  </div>
+                <h2 className="mt-3 font-display text-4xl font-black uppercase">Verify email</h2>
+                <div className="mt-8 max-w-md border border-border p-5">
+                  <MailCheck className="size-6 text-primary" />
+                  <h3 className="mt-4 font-bold">Email address</h3>
+                  <p className="mt-1 break-all text-sm text-muted-foreground">{status?.email}</p>
+                  <p className="mt-4 text-sm font-bold">
+                    {status?.emailVerified ? "Verified" : "Check your inbox to confirm"}
+                  </p>
                 </div>
                 {message && (
                   <p role="status" className="mt-4 border border-border bg-secondary p-3 text-sm">
