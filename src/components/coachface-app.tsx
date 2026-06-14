@@ -78,10 +78,10 @@ export function CoachFaceApp() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 border-b border-border/70 bg-background/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 lg:px-8">
-          <a href="#top" className="flex items-center gap-3" aria-label="CoachFace home">
+        <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 sm:px-5 lg:px-8">
+          <a href="#top" className="flex min-w-0 items-center gap-3" aria-label="CoachFace home">
             <span className="grid size-9 place-items-center rounded-sm bg-primary font-display text-xl font-black text-primary-foreground">CF</span>
-            <span className="font-display text-xl font-black uppercase tracking-tight">CoachFace</span>
+            <span className="hidden truncate font-display text-xl font-black uppercase tracking-tight min-[375px]:block">CoachFace</span>
           </a>
           <nav className="hidden items-center gap-7 text-sm font-semibold text-muted-foreground md:flex" aria-label="Main navigation">
             <Link className="font-black text-primary transition-colors hover:text-foreground" to="/fifa-special">FIFA Special</Link>
@@ -91,16 +91,16 @@ export function CoachFaceApp() {
             <Link className="transition-colors hover:text-foreground" to="/the-show">The show</Link>
             <Link className="transition-colors hover:text-foreground" to="/scoring">How scoring works</Link>
           </nav>
-          <div className="flex items-center gap-2">
-            <Button size="sm" variant="ghost" asChild><Link to="/auth">Sign in</Link></Button>
-            <Button size="sm" asChild><Link to="/play">Build roster <ArrowRight /></Link></Button>
+          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+            <Button size="sm" variant="ghost" className="px-2 sm:px-3" asChild><Link to="/auth">Sign in</Link></Button>
+            <Button size="sm" className="px-2.5 sm:px-3" asChild><Link to="/play"><span className="hidden min-[360px]:inline">Build roster</span><span className="min-[360px]:hidden">Play</span> <ArrowRight /></Link></Button>
           </div>
         </div>
       </header>
 
       <main id="top">
         <section aria-labelledby="intro-film-title" className="border-b border-border bg-foreground text-background">
-          <div className="mx-auto max-w-7xl px-5 py-10 lg:px-8 lg:py-14">
+          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-5 lg:px-8 lg:py-14">
             <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
               <div>
                 <p className="eyebrow text-primary">The CoachFace story</p>
@@ -125,12 +125,12 @@ export function CoachFaceApp() {
         <section className="relative isolate min-h-[620px] overflow-hidden border-b border-border">
           <img src={stadiumImage} alt="Coach looking out from a stadium tunnel" width={1536} height={1024} className="absolute inset-0 -z-20 h-full w-full object-cover object-center" />
           <div className="absolute inset-0 -z-10 bg-hero-overlay" />
-          <div className="mx-auto flex min-h-[620px] max-w-7xl items-center px-5 py-20 lg:px-8">
+           <div className="mx-auto flex min-h-[620px] max-w-7xl items-center px-4 py-16 sm:px-5 sm:py-20 lg:px-8">
             <div className="max-w-2xl">
               <Badge className="mb-6 rounded-sm px-3 py-1.5 uppercase tracking-[0.18em]" variant="secondary">
                 <Radio className="mr-2 size-3" /> The game behind the game
               </Badge>
-              <h1 className="font-display text-6xl font-black uppercase leading-[0.9] tracking-[-0.035em] text-hero-foreground sm:text-7xl lg:text-8xl">
+              <h1 className="font-display text-5xl font-black uppercase leading-[0.92] tracking-[-0.025em] text-hero-foreground min-[375px]:text-6xl sm:text-7xl sm:leading-[0.9] lg:text-8xl">
                 Draft the<br /><span className="text-primary">decision makers.</span>
               </h1>
               <p className="mt-7 max-w-xl text-lg leading-relaxed text-hero-muted sm:text-xl">
@@ -150,7 +150,7 @@ export function CoachFaceApp() {
           </div>
         </section>
 
-        <section id="rankings" className="mx-auto max-w-7xl px-5 py-20 lg:px-8">
+        <section id="rankings" className="mx-auto max-w-7xl px-4 py-16 sm:px-5 sm:py-20 lg:px-8">
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
             <div>
               <p className="eyebrow">CoachFace Power Rankings</p>
@@ -168,11 +168,11 @@ export function CoachFaceApp() {
             {visibleCoaches.map((coach, index) => (
               <article key={coach.id} className="grid items-center gap-4 border-b border-border py-5 last:border-b-0 sm:grid-cols-[42px_1fr_auto_auto]">
                 <span className="font-display text-2xl font-black text-muted-foreground">{String(index + 1).padStart(2, "0")}</span>
-                <div className="flex items-center gap-4">
+                 <div className="flex min-w-0 items-center gap-4">
                   <div className="grid size-12 place-items-center rounded-full bg-secondary font-display font-black text-secondary-foreground">{coach.initials}</div>
-                  <div>
+                   <div className="min-w-0">
                     <h3 className="font-bold">{coach.name}</h3>
-                    <p className="text-sm text-muted-foreground">{coach.sport} · {coach.role}</p>
+                     <p className="break-words text-sm text-muted-foreground">{coach.sport} · {coach.role}</p>
                   </div>
                 </div>
                 <div className="hidden text-right sm:block">
@@ -189,7 +189,7 @@ export function CoachFaceApp() {
         </section>
 
         <section id="game" className="bg-foreground py-20 text-background">
-          <div className="mx-auto grid max-w-7xl gap-12 px-5 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
+          <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-5 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
             <div>
               <p className="eyebrow text-primary">Weekly free play</p>
               <h2 className="font-display text-5xl font-black uppercase leading-none tracking-tight sm:text-6xl">Your coaches.<br />Your call.</h2>
@@ -222,7 +222,7 @@ export function CoachFaceApp() {
           </div>
         </section>
 
-        <section id="scoring" className="mx-auto grid max-w-7xl gap-12 px-5 py-20 lg:grid-cols-2 lg:px-8">
+        <section id="scoring" className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-5 sm:py-20 lg:grid-cols-2 lg:px-8">
           <div>
             <p className="eyebrow">No mystery points</p>
             <h2 className="section-title">Every score has a reason.</h2>
@@ -265,7 +265,7 @@ export function CoachFaceApp() {
               <p className="eyebrow">The CoachFace Show</p>
               <h2 className="section-title">The calls everyone is already arguing about.</h2>
               <p className="mt-5 leading-relaxed text-muted-foreground">A fast weekly show where hosts draft coaches, break down the biggest decisions, reveal the leaderboard, and let fans make the call.</p>
-              <div className="mt-8 grid grid-cols-2 gap-5 text-sm">
+            <div className="mt-8 grid gap-4 text-sm min-[360px]:grid-cols-2 sm:gap-5">
                 <span className="flex items-center gap-2 font-semibold"><Flame className="text-primary" /> Hot Seat Index</span>
                 <span className="flex items-center gap-2 font-semibold"><Users className="text-primary" /> Fan voting</span>
                 <span className="flex items-center gap-2 font-semibold"><BarChart3 className="text-primary" /> Film-room grades</span>

@@ -51,6 +51,14 @@ async function visibleElements(locator: Locator) {
 async function auditPage(page: Page, route: string) {
   await page.goto(route, { waitUntil: "networkidle" });
 
+  const layout = await page.evaluate(() => ({
+    viewportWidth: document.documentElement.clientWidth,
+    pageWidth: document.documentElement.scrollWidth,
+  }));
+  expect(layout.pageWidth, `Horizontal overflow on ${route}`).toBeLessThanOrEqual(
+    layout.viewportWidth + 1,
+  );
+
   await expect(page.getByText(/edit with lovable/i)).toHaveCount(0);
   expect(await visibleElements(page.locator(badgeSelectors))).toEqual([]);
 

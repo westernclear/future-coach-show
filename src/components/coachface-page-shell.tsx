@@ -27,12 +27,12 @@ export function CoachFacePageShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 border-b border-border/70 bg-background/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5 lg:px-8">
-          <Link to="/" className="flex shrink-0 items-center gap-3" aria-label="CoachFace home">
+        <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-5 lg:px-8">
+          <Link to="/" className="flex min-w-0 items-center gap-3" aria-label="CoachFace home">
             <span className="grid size-9 place-items-center rounded-sm bg-primary font-display text-xl font-black text-primary-foreground">
               CF
             </span>
-            <span className="hidden font-display text-xl font-black uppercase tracking-tight sm:block">
+            <span className="truncate font-display text-xl font-black uppercase tracking-tight">
               CoachFace
             </span>
           </Link>
@@ -59,7 +59,7 @@ export function CoachFacePageShell({ children }: { children: ReactNode }) {
           </Button>
         </div>
         <nav
-          className="flex gap-5 overflow-x-auto border-t border-border/60 px-5 py-3 text-xs font-bold md:hidden"
+          className="flex gap-5 overflow-x-auto border-t border-border/60 px-4 py-3 text-xs font-bold [scrollbar-width:none] sm:px-5 md:hidden [&::-webkit-scrollbar]:hidden"
           aria-label="Mobile navigation"
         >
           {navItems.map((item) => (
@@ -151,7 +151,7 @@ export function PageHero({
       <div className="mx-auto grid max-w-7xl gap-8 px-5 py-14 lg:grid-cols-[1fr_auto] lg:items-end lg:px-8 lg:py-20">
         <div>
           <p className="eyebrow">{eyebrow}</p>
-          <h1 className="mt-3 max-w-4xl font-display text-5xl font-black uppercase leading-[0.9] tracking-tight sm:text-7xl">
+          <h1 className="mt-3 max-w-4xl font-display text-4xl font-black uppercase leading-[0.92] tracking-tight min-[375px]:text-5xl sm:text-7xl">
             {title}
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">

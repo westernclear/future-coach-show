@@ -27,5 +27,13 @@ export default defineConfig({
         hasTouch: true,
       },
     },
+    {
+      name: "small-mobile",
+      use: {
+        viewport: { width: 320, height: 568 },
+        isMobile: true,
+        hasTouch: true,
+      },
+    },
   ],
 });
