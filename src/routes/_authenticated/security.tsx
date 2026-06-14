@@ -117,7 +117,18 @@ function SecurityDashboard() {
         eyebrow="Security operations"
         title="Every finding. One accountable view."
         description="Track application, database, framework, and connector scans with clear ownership and remediation status."
-        aside={<div className="flex items-center gap-3"><AlertInbox notifications={notifications} unreadCount={unreadCount} onRead={(id) => readMutation.mutate({ data: { id } })} /><div className="flex items-center gap-2 border border-border bg-card px-4 py-3 text-sm font-bold"><ShieldCheck className="size-5 text-positive" /> Admin protected</div></div>}
+        aside={
+          <div className="flex items-center gap-3">
+            <AlertInbox
+              notifications={notifications}
+              unreadCount={unreadCount}
+              onRead={(id) => readMutation.mutate({ data: { id } })}
+            />
+            <div className="flex items-center gap-2 border border-border bg-card px-4 py-3 text-sm font-bold">
+              <ShieldCheck className="size-5 text-positive" /> Admin protected
+            </div>
+          </div>
+        }
       />
       <main className="mx-auto max-w-7xl px-5 py-10 lg:px-8 lg:py-14">
         {isLoading ? (
@@ -353,21 +364,54 @@ function AlertInbox({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="icon" className="relative bg-card" aria-label={`${unreadCount} unread security alerts`}>
+        <Button
+          variant="outline"
+          size="icon"
+          className="relative bg-card"
+          aria-label={`${unreadCount} unread security alerts`}
+        >
           <Bell className="size-4" />
-          {unreadCount > 0 && <span className="absolute -right-2 -top-2 grid size-5 place-items-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">{unreadCount}</span>}
+          {unreadCount > 0 && (
+            <span className="absolute -right-2 -top-2 grid size-5 place-items-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
+              {unreadCount}
+            </span>
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-96 p-0">
-        <div className="border-b border-border p-4"><p className="eyebrow">Security alerts</p><p className="mt-1 text-sm text-muted-foreground">High-severity detections and resolved issues.</p></div>
+        <div className="border-b border-border p-4">
+          <p className="eyebrow">Security alerts</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            High-severity detections and resolved issues.
+          </p>
+        </div>
         <div className="max-h-96 overflow-y-auto">
-          {notifications.length ? notifications.map((notification) => (
-            <button key={notification.id} type="button" onClick={() => onRead(notification.id)} className={cn("block w-full border-b border-border p-4 text-left transition-colors hover:bg-secondary", !notification.read_at && "bg-primary/5")}>
-              <div className="flex items-start justify-between gap-3"><p className="font-bold">{notification.title}</p>{!notification.read_at && <span className="mt-1 size-2 shrink-0 rounded-full bg-primary" />}</div>
-              <p className="mt-1 text-sm text-muted-foreground">{notification.message}</p>
-              <p className="mt-2 text-xs text-muted-foreground">{dateLabel(notification.created_at)}</p>
-            </button>
-          )) : <p className="p-6 text-sm text-muted-foreground">No security alerts yet.</p>}
+          {notifications.length ? (
+            notifications.map((notification) => (
+              <button
+                key={notification.id}
+                type="button"
+                onClick={() => onRead(notification.id)}
+                className={cn(
+                  "block w-full border-b border-border p-4 text-left transition-colors hover:bg-secondary",
+                  !notification.read_at && "bg-primary/5",
+                )}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <p className="font-bold">{notification.title}</p>
+                  {!notification.read_at && (
+                    <span className="mt-1 size-2 shrink-0 rounded-full bg-primary" />
+                  )}
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground">{notification.message}</p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {dateLabel(notification.created_at)}
+                </p>
+              </button>
+            ))
+          ) : (
+            <p className="p-6 text-sm text-muted-foreground">No security alerts yet.</p>
+          )}
         </div>
       </PopoverContent>
     </Popover>
