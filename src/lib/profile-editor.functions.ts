@@ -6,7 +6,9 @@ import {
   calculateBlurScore,
   detectImageType,
   PROFILE_IMAGE_BLUR_THRESHOLD,
+  PROFILE_IMAGE_DECODE_TIMEOUT_MS,
   PROFILE_IMAGE_MAX_BYTES,
+  readEncodedImageDimensions,
   validateImageDimensions,
 } from "@/lib/profile-image-validation";
 
@@ -32,6 +34,14 @@ const validateUploadSchema = z.object({
   bytes: z.array(z.number().int().min(0).max(255)).min(1).max(PROFILE_IMAGE_MAX_BYTES),
   claimedType: z.enum(["image/jpeg", "image/png", "image/webp"]),
 });
+
+type RejectionCode = "invalid_type" | "type_mismatch" | "oversized_bytes" | "oversized_pixels" | "invalid_dimensions" | "decode_timeout" | "decode_failed" | "too_blurry";
+
+class UploadRejection extends Error {
+  constructor(public readonly code: RejectionCode, message: string) {
+    super(message);
+  }
+}
 
 export const getProfileEditor = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -62,26 +72,72 @@ export const getProfileEditor = createServerFn({ method: "GET" })
 export const validateProfileImageUpload = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => validateUploadSchema.parse(input))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const startedAt = Date.now();
     const bytes = Uint8Array.from(data.bytes);
     const detectedType = detectImageType(bytes);
-    if (!detectedType || detectedType !== data.claimedType) {
-      throw new Error("That file is not a valid JPG, PNG, or WebP image.");
-    }
+    let dimensions: { width: number; height: number } | null = null;
     try {
+      if (bytes.byteLength > PROFILE_IMAGE_MAX_BYTES) {
+        throw new UploadRejection("oversized_bytes", "Choose an image smaller than 5 MB.");
+      }
+      if (!detectedType) {
+        throw new UploadRejection("invalid_type", "That file is not a valid JPG, PNG, or WebP image.");
+      }
+      if (detectedType !== data.claimedType) {
+        throw new UploadRejection("type_mismatch", "That file's contents do not match its image type.");
+      }
+      dimensions = readEncodedImageDimensions(bytes, detectedType);
+      if (!dimensions) {
+        throw new UploadRejection("invalid_dimensions", "That image has invalid or unreadable dimensions.");
+      }
+      const headerDimensionError = validateImageDimensions(dimensions.width, dimensions.height);
+      if (headerDimensionError) {
+        throw new UploadRejection(
+          dimensions.width * dimensions.height > 12_000_000 ? "oversized_pixels" : "invalid_dimensions",
+          headerDimensionError,
+        );
+      }
       const { Image } = await import("cross-image");
-      const image = await Image.decode(bytes);
+      let timeoutId: ReturnType<typeof setTimeout> | undefined;
+      const timeout = new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(
+          () => reject(new UploadRejection("decode_timeout", "That image took too long to decode. Choose a smaller image.")),
+          PROFILE_IMAGE_DECODE_TIMEOUT_MS,
+        );
+      });
+      const image = await Promise.race([Image.decode(bytes), timeout]).finally(() => {
+        if (timeoutId) clearTimeout(timeoutId);
+      });
       const dimensionError = validateImageDimensions(image.width, image.height);
-      if (dimensionError) throw new Error(dimensionError);
+      if (dimensionError || image.width !== dimensions.width || image.height !== dimensions.height) {
+        throw new UploadRejection(
+          image.width * image.height > 12_000_000 ? "oversized_pixels" : "invalid_dimensions",
+          dimensionError ?? "That image's decoded dimensions do not match its header.",
+        );
+      }
       if (calculateBlurScore(image.data, image.width, image.height) < PROFILE_IMAGE_BLUR_THRESHOLD) {
-        throw new Error("That image is too blurry. Choose a sharper photo or graphic.");
+        throw new UploadRejection("too_blurry", "That image is too blurry. Choose a sharper photo or graphic.");
       }
       return { ok: true, width: image.width, height: image.height, detectedType };
     } catch (error) {
-      if (error instanceof Error && (error.message.startsWith("That image") || error.message.startsWith("Choose an image"))) {
-        throw error;
+      const rejection = error instanceof UploadRejection
+        ? error
+        : new UploadRejection("decode_failed", "That file could not be decoded as a supported image.");
+      const { error: auditError } = await context.supabase.from("profile_upload_rejections").insert({
+        user_id: context.userId,
+        reason_code: rejection.code,
+        claimed_type: data.claimedType,
+        detected_type: detectedType,
+        byte_size: bytes.byteLength,
+        width: dimensions?.width ?? null,
+        height: dimensions?.height ?? null,
+        validation_duration_ms: Date.now() - startedAt,
+      });
+      if (auditError) {
+        console.error("Profile upload rejection audit failed", { reasonCode: rejection.code, userId: context.userId });
       }
-      throw new Error("That file could not be decoded as a supported image.");
+      throw new Error(rejection.message);
     }
   });
 
