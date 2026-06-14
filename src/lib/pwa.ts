@@ -1,4 +1,3 @@
-import { createClientOnlyFn } from "@tanstack/react-start";
 import { registerSW } from "virtual:pwa-register";
 
 const PREVIEW_HOSTS = ["lovableproject.com", "lovableproject-dev.com", "beta.lovable.dev"];
@@ -24,8 +23,8 @@ async function unregisterCoachFaceWorkers() {
   );
 }
 
-export const registerCoachFaceServiceWorker = createClientOnlyFn(async () => {
-  if (!("serviceWorker" in navigator)) return;
+export async function registerCoachFaceServiceWorker() {
+  if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
 
   const isTopLevel = window.self === window.top;
   const disabled = new URLSearchParams(window.location.search).get("sw") === "off";
@@ -37,5 +36,10 @@ export const registerCoachFaceServiceWorker = createClientOnlyFn(async () => {
     return;
   }
 
-  registerSW({ immediate: true });
-});
+  registerSW({
+    immediate: true,
+    onRegisterError(error) {
+      console.error("CoachFace service worker registration failed", error);
+    },
+  });
+}
