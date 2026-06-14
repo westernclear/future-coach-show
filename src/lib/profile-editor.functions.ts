@@ -8,6 +8,7 @@ import {
   PROFILE_IMAGE_BLUR_THRESHOLD,
   PROFILE_IMAGE_DECODE_TIMEOUT_MS,
   PROFILE_IMAGE_MAX_BYTES,
+  PROFILE_IMAGE_MAX_PIXELS,
   readEncodedImageDimensions,
   validateImageDimensions,
 } from "@/lib/profile-image-validation";
@@ -94,7 +95,7 @@ export const validateProfileImageUpload = createServerFn({ method: "POST" })
       const headerDimensionError = validateImageDimensions(dimensions.width, dimensions.height);
       if (headerDimensionError) {
         throw new UploadRejection(
-          dimensions.width * dimensions.height > 12_000_000 ? "oversized_pixels" : "invalid_dimensions",
+          dimensions.width * dimensions.height > PROFILE_IMAGE_MAX_PIXELS ? "oversized_pixels" : "invalid_dimensions",
           headerDimensionError,
         );
       }
@@ -112,7 +113,7 @@ export const validateProfileImageUpload = createServerFn({ method: "POST" })
       const dimensionError = validateImageDimensions(image.width, image.height);
       if (dimensionError || image.width !== dimensions.width || image.height !== dimensions.height) {
         throw new UploadRejection(
-          image.width * image.height > 12_000_000 ? "oversized_pixels" : "invalid_dimensions",
+          image.width * image.height > PROFILE_IMAGE_MAX_PIXELS ? "oversized_pixels" : "invalid_dimensions",
           dimensionError ?? "That image's decoded dimensions do not match its header.",
         );
       }
