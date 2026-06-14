@@ -574,6 +574,7 @@ export type Database = {
           mobile_number: string | null
           notification_preferences: Json
           onboarding_completed_at: string | null
+          onboarding_step: number
           preferred_league: string | null
           region: string | null
           updated_at: string
@@ -599,6 +600,7 @@ export type Database = {
           mobile_number?: string | null
           notification_preferences?: Json
           onboarding_completed_at?: string | null
+          onboarding_step?: number
           preferred_league?: string | null
           region?: string | null
           updated_at?: string
@@ -624,6 +626,7 @@ export type Database = {
           mobile_number?: string | null
           notification_preferences?: Json
           onboarding_completed_at?: string | null
+          onboarding_step?: number
           preferred_league?: string | null
           region?: string | null
           updated_at?: string
