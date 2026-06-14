@@ -9,6 +9,7 @@ import avatarMascot from "@/assets/avatar-mascot.jpg";
 import avatarStrategist from "@/assets/avatar-strategist.jpg";
 import avatarTactician from "@/assets/avatar-tactician.jpg";
 import { CoachFacePageShell, PageHero } from "@/components/coachface-page-shell";
+import { ProfileImageFramer } from "@/components/profile-image-framer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,6 +58,7 @@ function ProfileEditorPage() {
   });
   const [preview, setPreview] = useState(data.avatarPreviewUrl);
   const [uploading, setUploading] = useState(false);
+  const [pendingImage, setPendingImage] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -66,32 +68,38 @@ function ProfileEditorPage() {
     setMessage(null);
   };
 
-  const uploadImage = async (file: File | undefined) => {
+  const selectImage = (file: File | undefined) => {
     if (!file) return;
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 5 * 1024 * 1024) {
       setMessage("Choose a JPG, PNG, or WebP image smaller than 5 MB.");
       return;
     }
+    setPendingImage(file);
+    setMessage(null);
+  };
+
+  const uploadFramedImage = async (blob: Blob) => {
     setUploading(true);
     setMessage(null);
     const { data: userData } = await supabase.auth.getUser();
     const userId = userData.user?.id;
     if (!userId) {
-      setUploading(false);
       setMessage("Please sign in again before uploading an image.");
+      setUploading(false);
       return;
     }
-    const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const path = `${userId}/profile-${Date.now()}.${extension}`;
+    const path = `${userId}/profile-${Date.now()}.webp`;
     const { error } = await supabase.storage
       .from("profile-photos")
-      .upload(path, file, { contentType: file.type });
+      .upload(path, blob, { contentType: "image/webp" });
     if (error) {
       setMessage("We could not upload that image. Please try again.");
     } else {
       const { data: signed } = await supabase.storage.from("profile-photos").createSignedUrl(path, 3600);
       setForm((current) => ({ ...current, avatarUrl: path }));
-      setPreview(signed?.signedUrl ?? URL.createObjectURL(file));
+      setPreview(signed?.signedUrl ?? URL.createObjectURL(blob));
+      setPendingImage(null);
+      setMessage("Framing applied. Save your profile to make it permanent.");
     }
     setUploading(false);
   };
@@ -121,6 +129,10 @@ function ProfileEditorPage() {
       <main className="mx-auto grid max-w-7xl gap-12 px-5 py-12 lg:grid-cols-[0.72fr_1.28fr] lg:px-8 lg:py-16">
         <aside>
           <div className="border-t-4 border-primary bg-foreground p-7 text-background">
+            <div className="relative mb-[-3.5rem] aspect-[3/1] overflow-hidden border border-game-border bg-game-surface">
+              {preview && <img src={preview} alt="CoachFace banner preview" className="size-full object-cover" />}
+              <div className="absolute inset-0 bg-media-overlay" />
+            </div>
             <div className="mx-auto grid size-40 place-items-center overflow-hidden rounded-full border-4 border-primary bg-game-surface font-display text-5xl font-black">
               {preview ? <img src={preview} alt="Current CoachFace identity" className="size-full object-cover" /> : "CF"}
             </div>
@@ -170,7 +182,7 @@ function ProfileEditorPage() {
               <Label htmlFor="profile-image" className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 border border-input px-4 text-sm font-bold hover:bg-accent">
                 {uploading ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />} Upload image
               </Label>
-              <Input id="profile-image" type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={uploading} onChange={(event) => void uploadImage(event.target.files?.[0])} />
+              <Input id="profile-image" type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={uploading} onChange={(event) => { selectImage(event.target.files?.[0]); event.currentTarget.value = ""; }} />
             </div>
             <div className="mt-4 flex flex-wrap gap-4 text-xs text-muted-foreground"><span className="flex items-center gap-1"><Camera className="size-3.5" /> Photo optional</span><span className="flex items-center gap-1"><Bot className="size-3.5" /> AI avatars welcome</span><span className="flex items-center gap-1"><Image className="size-3.5" /> JPG, PNG, WebP, max 5 MB</span></div>
           </section>
@@ -189,6 +201,7 @@ function ProfileEditorPage() {
           <Button type="submit" size="lg" className="mt-7" disabled={saving || uploading}>{saving && <Loader2 className="animate-spin" />} Save profile</Button>
         </form>
       </main>
+      <ProfileImageFramer file={pendingImage} onCancel={() => setPendingImage(null)} onApply={uploadFramedImage} />
     </CoachFacePageShell>
   );
 }
