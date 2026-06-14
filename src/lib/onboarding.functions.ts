@@ -24,10 +24,25 @@ const profileSchema = z.object({
   favoriteTeam: z.string().trim().min(1).max(100),
   preferredLeague: z.string().trim().min(1).max(100),
   fantasySkillLevel: z.enum(["rookie", "intermediate", "advanced", "expert"]),
-  avatarUrl: z.string().url().max(500).or(z.literal("")),
+  avatarUrl: z.string().trim().max(500),
   ageConfirmed: z.literal(true),
   locationConfirmed: z.literal(true),
   acceptedPolicies: z.literal(true),
+});
+
+const draftSchema = z.object({
+  legalName: z.string().trim().max(120),
+  username: z.string().trim().max(30),
+  mobileNumber: z.string().trim().max(20),
+  countryCode: z.string().trim().max(2),
+  region: z.string().trim().max(100),
+  dateOfBirth: z.string().trim().max(10),
+  favoriteSport: z.string().trim().max(80),
+  favoriteTeam: z.string().trim().max(100),
+  preferredLeague: z.string().trim().max(100),
+  fantasySkillLevel: z.enum(["rookie", "intermediate", "advanced", "expert"]),
+  avatarUrl: z.string().trim().max(500),
+  step: z.number().int().min(0).max(2),
 });
 
 export const getOnboardingStatus = createServerFn({ method: "GET" })
@@ -36,28 +51,75 @@ export const getOnboardingStatus = createServerFn({ method: "GET" })
     const { data: profile } = await context.supabase
       .from("profiles")
       .select(
-        "legal_name, username, mobile_number, country_code, region, date_of_birth, favorite_sport, favorite_team, preferred_league, fantasy_skill_level, avatar_url, onboarding_completed_at",
+        "legal_name, username, mobile_number, country_code, region, date_of_birth, favorite_sport, favorite_team, preferred_league, fantasy_skill_level, avatar_url, onboarding_step, onboarding_completed_at",
       )
       .eq("id", context.userId)
       .maybeSingle();
     const { data: userData } = await context.supabase.auth.getUser();
     const user = userData.user;
     const metadata = user?.user_metadata ?? {};
+    let avatarPreviewUrl = profile?.avatar_url ?? "";
+    if (profile?.avatar_url && !profile.avatar_url.startsWith("http")) {
+      const { data } = await context.supabase.storage
+        .from("profile-photos")
+        .createSignedUrl(profile.avatar_url, 3600);
+      avatarPreviewUrl = data?.signedUrl ?? "";
+    }
     return {
       email: user?.email ?? "",
       emailVerified: Boolean(user?.email_confirmed_at),
       completed: Boolean(profile?.onboarding_completed_at),
+      savedStep: profile?.onboarding_step ?? 0,
+      avatarPreviewUrl,
       profile,
       registration: {
-        legalName: typeof metadata.legal_name === "string" ? metadata.legal_name : "",
-        username: typeof metadata.username === "string" ? metadata.username : "",
+        legalName:
+          profile?.legal_name ??
+          (typeof metadata.legal_name === "string" ? metadata.legal_name : ""),
+        username:
+          profile?.username ?? (typeof metadata.username === "string" ? metadata.username : ""),
         mobileNumber:
           user?.phone ?? (typeof metadata.mobile_number === "string" ? metadata.mobile_number : ""),
-        countryCode: typeof metadata.country_code === "string" ? metadata.country_code : "",
-        region: typeof metadata.region === "string" ? metadata.region : "",
-        dateOfBirth: typeof metadata.date_of_birth === "string" ? metadata.date_of_birth : "",
+        countryCode:
+          profile?.country_code ??
+          (typeof metadata.country_code === "string" ? metadata.country_code : ""),
+        region: profile?.region ?? (typeof metadata.region === "string" ? metadata.region : ""),
+        dateOfBirth:
+          profile?.date_of_birth ??
+          (typeof metadata.date_of_birth === "string" ? metadata.date_of_birth : ""),
       },
     };
+  });
+
+export const saveOnboardingDraft = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => draftSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase.from("profiles").upsert({
+      id: context.userId,
+      legal_name: data.legalName || null,
+      display_name: data.legalName || "CoachFace Player",
+      username: data.username || `player_${context.userId.slice(0, 8)}`,
+      mobile_number: data.mobileNumber || null,
+      country_code: data.countryCode || null,
+      region: data.region || null,
+      date_of_birth: data.dateOfBirth || null,
+      favorite_sport: data.favoriteSport || null,
+      favorite_sports: data.favoriteSport ? [data.favoriteSport] : [],
+      favorite_team: data.favoriteTeam || null,
+      preferred_league: data.preferredLeague || null,
+      fantasy_skill_level: data.fantasySkillLevel,
+      avatar_url: data.avatarUrl || null,
+      onboarding_step: data.step,
+    });
+    if (error) {
+      throw new Error(
+        error.message.includes("username")
+          ? "That username is already taken."
+          : "We could not save your progress.",
+      );
+    }
+    return { ok: true };
   });
 
 export const completeOnboarding = createServerFn({ method: "POST" })
@@ -95,6 +157,7 @@ export const completeOnboarding = createServerFn({ method: "POST" })
       age_confirmed_at: now,
       location_confirmed_at: now,
       onboarding_completed_at: now,
+      onboarding_step: 3,
     });
     if (profileError)
       throw new Error(

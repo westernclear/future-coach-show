@@ -4,11 +4,13 @@ import { useServerFn } from "@tanstack/react-start";
 import {
   Check,
   ChevronRight,
+  CircleCheck,
   Loader2,
   LockKeyhole,
   MailCheck,
   MapPinCheck,
   ShieldCheck,
+  Upload,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -23,7 +25,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import { completeOnboarding, getOnboardingStatus } from "@/lib/onboarding.functions";
+import {
+  completeOnboarding,
+  getOnboardingStatus,
+  saveOnboardingDraft,
+} from "@/lib/onboarding.functions";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
@@ -46,12 +52,16 @@ function OnboardingPage() {
   const navigate = useNavigate();
   const loadStatus = useServerFn(getOnboardingStatus);
   const saveOnboarding = useServerFn(completeOnboarding);
+  const saveDraft = useServerFn(saveOnboardingDraft);
   const [status, setStatus] = useState<Awaited<ReturnType<typeof getOnboardingStatus>> | null>(
     null,
   );
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState("");
   const [form, setForm] = useState({
     legalName: "",
     username: "",
@@ -81,7 +91,8 @@ function OnboardingPage() {
       fantasySkillLevel: next.profile?.fantasy_skill_level ?? current.fantasySkillLevel,
       avatarUrl: next.profile?.avatar_url ?? current.avatarUrl,
     }));
-    if (next.completed) setStep(3);
+    setAvatarPreview(next.avatarPreviewUrl);
+    setStep(next.completed ? 3 : Math.min(next.savedStep, 2));
     setLoading(false);
   };
 
@@ -89,6 +100,59 @@ function OnboardingPage() {
     void refresh();
   }, []);
 
+  useEffect(() => {
+    if (!status || loading || status.completed || step === 3) return;
+    setSaveState("saving");
+    const timer = window.setTimeout(async () => {
+      try {
+        await saveDraft({
+          data: {
+            ...form,
+            fantasySkillLevel: form.fantasySkillLevel as
+              | "rookie"
+              | "intermediate"
+              | "advanced"
+              | "expert",
+            step,
+          },
+        });
+        setSaveState("saved");
+      } catch {
+        setSaveState("idle");
+      }
+    }, 700);
+    return () => window.clearTimeout(timer);
+  }, [form, step, status, loading]);
+
+  const uploadPhoto = async (file: File | undefined) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/") || file.size > 5 * 1024 * 1024) {
+      setMessage("Choose a JPG, PNG, or WebP image smaller than 5 MB.");
+      return;
+    }
+    setUploadingPhoto(true);
+    setMessage(null);
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
+    if (!userId) {
+      setMessage("Please sign in again before uploading a photo.");
+      setUploadingPhoto(false);
+      return;
+    }
+    const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const path = `${userId}/avatar.${extension}`;
+    const { error } = await supabase.storage
+      .from("profile-photos")
+      .upload(path, file, { upsert: true, contentType: file.type });
+    if (error) {
+      setMessage("We could not upload that photo. Please try again.");
+    } else {
+      const { data } = await supabase.storage.from("profile-photos").createSignedUrl(path, 3600);
+      setForm((current) => ({ ...current, avatarUrl: path }));
+      setAvatarPreview(data?.signedUrl ?? URL.createObjectURL(file));
+    }
+    setUploadingPhoto(false);
+  };
 
   const finish = async (event: FormEvent) => {
     event.preventDefault();
@@ -175,6 +239,22 @@ function OnboardingPage() {
           </aside>
 
           <section className="border-t-4 border-primary bg-card p-6 shadow-sm sm:p-10">
+            {step > 0 && step < 3 && (
+              <div
+                className="mb-6 flex justify-end text-xs font-bold text-muted-foreground"
+                aria-live="polite"
+              >
+                {saveState === "saving" ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="size-3.5 animate-spin" /> Saving progress
+                  </span>
+                ) : saveState === "saved" ? (
+                  <span className="flex items-center gap-2">
+                    <CircleCheck className="size-3.5 text-primary" /> Progress saved
+                  </span>
+                ) : null}
+              </div>
+            )}
             {step === 0 && (
               <div>
                 <p className="eyebrow">Step 1 of 4</p>
@@ -267,13 +347,46 @@ function OnboardingPage() {
                       </SelectContent>
                     </Select>
                   </Field>
-                  <Field label="Profile photo URL">
-                    <Input
-                      type="url"
-                      placeholder="https://"
-                      value={form.avatarUrl}
-                      onChange={(event) => setForm({ ...form, avatarUrl: event.target.value })}
-                    />
+                  <Field label="Profile photo">
+                    <div className="flex items-center gap-4">
+                      <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-secondary">
+                        {avatarPreview ? (
+                          <img
+                            src={avatarPreview}
+                            alt="Profile preview"
+                            className="size-full object-cover"
+                          />
+                        ) : (
+                          <span className="font-display text-lg font-black text-muted-foreground">
+                            CF
+                          </span>
+                        )}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <Label
+                          htmlFor="profile-photo"
+                          className="flex h-9 cursor-pointer items-center justify-center gap-2 rounded-md border border-input px-3 text-sm font-medium hover:bg-accent"
+                        >
+                          {uploadingPhoto ? (
+                            <Loader2 className="size-4 animate-spin" />
+                          ) : (
+                            <Upload className="size-4" />
+                          )}
+                          {avatarPreview ? "Replace photo" : "Upload photo"}
+                        </Label>
+                        <Input
+                          id="profile-photo"
+                          className="sr-only"
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          disabled={uploadingPhoto}
+                          onChange={(event) => void uploadPhoto(event.target.files?.[0])}
+                        />
+                        <p className="mt-2 text-xs text-muted-foreground">
+                          JPG, PNG, or WebP. Max 5 MB.
+                        </p>
+                      </div>
+                    </div>
                   </Field>
                 </div>
                 <Button
