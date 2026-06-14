@@ -1,3 +1,4 @@
+import { createClientOnlyFn } from "@tanstack/react-start";
 import { registerSW } from "virtual:pwa-register";
 
 const PREVIEW_HOSTS = ["lovableproject.com", "lovableproject-dev.com", "beta.lovable.dev"];
@@ -23,7 +24,7 @@ async function unregisterCoachFaceWorkers() {
   );
 }
 
-export async function registerCoachFaceServiceWorker() {
+export const registerCoachFaceServiceWorker = createClientOnlyFn(async () => {
   if (!("serviceWorker" in navigator)) return;
 
   const isTopLevel = window.self === window.top;
@@ -37,4 +38,4 @@ export async function registerCoachFaceServiceWorker() {
   }
 
   registerSW({ immediate: true });
-}
+});
