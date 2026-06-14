@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
   AlertTriangle,
+  Bell,
   CheckCircle2,
   CircleDot,
   Loader2,
@@ -15,6 +16,9 @@ import {
 import { CoachFacePageShell, PageHero } from "@/components/coachface-page-shell";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Select,
   SelectContent,
@@ -22,7 +26,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getSecurityDashboard, updateSecurityFinding } from "@/lib/security-dashboard.functions";
+import {
+  getSecurityDashboard,
+  markSecurityNotificationRead,
+  updateSecurityFinding,
+} from "@/lib/security-dashboard.functions";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/security")({
@@ -43,6 +51,7 @@ type FindingStatus = "open" | "in_progress" | "resolved" | "accepted_risk";
 function SecurityDashboard() {
   const fetchDashboard = useServerFn(getSecurityDashboard);
   const saveFinding = useServerFn(updateSecurityFinding);
+  const markAlertRead = useServerFn(markSecurityNotificationRead);
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState("all");
   const [severityFilter, setSeverityFilter] = useState("all");
@@ -55,9 +64,29 @@ function SecurityDashboard() {
     mutationFn: saveFinding,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["security-dashboard"] }),
   });
+  const readMutation = useMutation({
+    mutationFn: markAlertRead,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["security-dashboard"] }),
+  });
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("security-alerts")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "security_notifications" },
+        () => queryClient.invalidateQueries({ queryKey: ["security-dashboard"] }),
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const findings = useMemo(() => data?.findings ?? [], [data?.findings]);
   const runs = useMemo(() => data?.runs ?? [], [data?.runs]);
+  const notifications = useMemo(() => data?.notifications ?? [], [data?.notifications]);
+  const unreadCount = notifications.filter((notification) => !notification.read_at).length;
   const filtered = useMemo(
     () =>
       findings.filter((finding) => {
@@ -88,11 +117,7 @@ function SecurityDashboard() {
         eyebrow="Security operations"
         title="Every finding. One accountable view."
         description="Track application, database, framework, and connector scans with clear ownership and remediation status."
-        aside={
-          <div className="flex items-center gap-2 border border-border bg-card px-4 py-3 text-sm font-bold">
-            <ShieldCheck className="size-5 text-positive" /> Admin protected
-          </div>
-        }
+        aside={<div className="flex items-center gap-3"><AlertInbox notifications={notifications} unreadCount={unreadCount} onRead={(id) => readMutation.mutate({ data: { id } })} /><div className="flex items-center gap-2 border border-border bg-card px-4 py-3 text-sm font-bold"><ShieldCheck className="size-5 text-positive" /> Admin protected</div></div>}
       />
       <main className="mx-auto max-w-7xl px-5 py-10 lg:px-8 lg:py-14">
         {isLoading ? (
