@@ -16,7 +16,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import { getProfileEditor, updateProfileEditor } from "@/lib/profile-editor.functions";
+import { getProfileEditor, updateProfileEditor, validateProfileImageUpload } from "@/lib/profile-editor.functions";
+import {
+  calculateBlurScore,
+  detectImageType,
+  PROFILE_IMAGE_BLUR_THRESHOLD,
+  PROFILE_IMAGE_MAX_BYTES,
+  validateImageDimensions,
+} from "@/lib/profile-image-validation";
 import { cn } from "@/lib/utils";
 
 type AvatarType = "real_photo" | "ai_avatar" | "cartoon_avatar" | "team_logo" | "custom_image";
@@ -45,6 +52,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
 function ProfileEditorPage() {
   const { data } = useSuspenseQuery(profileQuery);
   const saveProfile = useServerFn(updateProfileEditor);
+  const validateUpload = useServerFn(validateProfileImageUpload);
   const queryClient = useQueryClient();
   const profile = data.profile;
   const [form, setForm] = useState({
@@ -68,14 +76,48 @@ function ProfileEditorPage() {
     setMessage(null);
   };
 
-  const selectImage = (file: File | undefined) => {
+  const selectImage = async (file: File | undefined) => {
     if (!file) return;
-    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 5 * 1024 * 1024) {
+    setUploading(true);
+    setMessage(null);
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > PROFILE_IMAGE_MAX_BYTES) {
       setMessage("Choose a JPG, PNG, or WebP image smaller than 5 MB.");
+      setUploading(false);
       return;
     }
-    setPendingImage(file);
-    setMessage(null);
+    try {
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      if (detectImageType(bytes) !== file.type) {
+        throw new Error("That file is not a valid JPG, PNG, or WebP image.");
+      }
+      const bitmap = await createImageBitmap(file);
+      const dimensionError = validateImageDimensions(bitmap.width, bitmap.height);
+      if (dimensionError) {
+        bitmap.close();
+        throw new Error(dimensionError);
+      }
+      const sampleScale = Math.min(1, 640 / Math.max(bitmap.width, bitmap.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(bitmap.width * sampleScale));
+      canvas.height = Math.max(1, Math.round(bitmap.height * sampleScale));
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) {
+        bitmap.close();
+        throw new Error("That image could not be checked in this browser.");
+      }
+      context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      bitmap.close();
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+      if (calculateBlurScore(pixels, canvas.width, canvas.height) < PROFILE_IMAGE_BLUR_THRESHOLD) {
+        throw new Error("That image is too blurry. Choose a sharper photo or graphic.");
+      }
+      await validateUpload({ data: { bytes: Array.from(bytes), claimedType: file.type as "image/jpeg" | "image/png" | "image/webp" } });
+      setPendingImage(file);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "That image could not be validated.");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const uploadFramedImage = async (blob: Blob) => {
@@ -182,7 +224,7 @@ function ProfileEditorPage() {
               <Label htmlFor="profile-image" className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 border border-input px-4 text-sm font-bold hover:bg-accent">
                 {uploading ? <Loader2 className="size-4 animate-spin" /> : <Upload className="size-4" />} Upload image
               </Label>
-              <Input id="profile-image" type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={uploading} onChange={(event) => { selectImage(event.target.files?.[0]); event.currentTarget.value = ""; }} />
+              <Input id="profile-image" type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={uploading} onChange={(event) => { void selectImage(event.target.files?.[0]); event.currentTarget.value = ""; }} />
             </div>
             <div className="mt-4 flex flex-wrap gap-4 text-xs text-muted-foreground"><span className="flex items-center gap-1"><Camera className="size-3.5" /> Photo optional</span><span className="flex items-center gap-1"><Bot className="size-3.5" /> AI avatars welcome</span><span className="flex items-center gap-1"><Image className="size-3.5" /> JPG, PNG, WebP, max 5 MB</span></div>
           </section>
