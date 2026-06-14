@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import stadiumImage from "@/assets/coachface-stadium.jpg";
+import introFilm from "@/assets/coachface-idcoach-fantasy-roger-60s-v3.mp4.asset.json";
 import conceptTrailer from "@/assets/coachface-concept-trailer-stills.mp4.asset.json";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -98,6 +99,29 @@ export function CoachFaceApp() {
       </header>
 
       <main id="top">
+        <section aria-labelledby="intro-film-title" className="border-b border-border bg-foreground text-background">
+          <div className="mx-auto max-w-7xl px-5 py-10 lg:px-8 lg:py-14">
+            <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+              <div>
+                <p className="eyebrow text-primary">The CoachFace story</p>
+                <h2 id="intro-film-title" className="font-display text-3xl font-black uppercase tracking-tight sm:text-4xl">Meet the game behind the game</h2>
+              </div>
+              <p className="max-w-md text-sm leading-relaxed text-game-muted">From IDCoach to CoachFace Fantasy, narrated by Roger.</p>
+            </div>
+            <div className="overflow-hidden border border-game-border bg-game-surface shadow-2xl">
+              <video
+                src={introFilm.url}
+                poster={stadiumImage}
+                controls
+                playsInline
+                preload="metadata"
+                aria-label="CoachFace origin story and fantasy game introduction narrated by Roger"
+                className="aspect-video w-full bg-foreground object-contain"
+              />
+            </div>
+          </div>
+        </section>
+
         <section className="relative isolate min-h-[620px] overflow-hidden border-b border-border">
           <img src={stadiumImage} alt="Coach looking out from a stadium tunnel" width={1536} height={1024} className="absolute inset-0 -z-20 h-full w-full object-cover object-center" />
           <div className="absolute inset-0 -z-10 bg-hero-overlay" />
