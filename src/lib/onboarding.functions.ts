@@ -30,10 +30,20 @@ const profileSchema = z.object({
   acceptedPolicies: z.literal(true),
 });
 
-const draftSchema = profileSchema
-  .omit({ ageConfirmed: true, locationConfirmed: true, acceptedPolicies: true })
-  .partial()
-  .extend({ step: z.number().int().min(0).max(2) });
+const draftSchema = z.object({
+  legalName: z.string().trim().max(120),
+  username: z.string().trim().max(30),
+  mobileNumber: z.string().trim().max(20),
+  countryCode: z.string().trim().max(2),
+  region: z.string().trim().max(100),
+  dateOfBirth: z.string().trim().max(10),
+  favoriteSport: z.string().trim().max(80),
+  favoriteTeam: z.string().trim().max(100),
+  preferredLeague: z.string().trim().max(100),
+  fantasySkillLevel: z.enum(["rookie", "intermediate", "advanced", "expert"]),
+  avatarUrl: z.string().trim().max(500),
+  step: z.number().int().min(0).max(2),
+});
 
 export const getOnboardingStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -78,28 +88,24 @@ export const saveOnboardingDraft = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => draftSchema.parse(input))
   .handler(async ({ data, context }) => {
-    const updates = {
-      legal_name: data.legalName,
-      display_name: data.legalName,
-      username: data.username,
+    const { error } = await context.supabase
+      .from("profiles")
+      .update({
+      legal_name: data.legalName || null,
+      display_name: data.legalName || "CoachFace Player",
+      username: data.username || `player_${context.userId.slice(0, 8)}`,
       mobile_number: data.mobileNumber || null,
-      country_code: data.countryCode,
-      region: data.region,
+      country_code: data.countryCode || null,
+      region: data.region || null,
       date_of_birth: data.dateOfBirth || null,
-      favorite_sport: data.favoriteSport,
-      favorite_sports: data.favoriteSport ? [data.favoriteSport] : undefined,
-      favorite_team: data.favoriteTeam,
-      preferred_league: data.preferredLeague,
+      favorite_sport: data.favoriteSport || null,
+      favorite_sports: data.favoriteSport ? [data.favoriteSport] : [],
+      favorite_team: data.favoriteTeam || null,
+      preferred_league: data.preferredLeague || null,
       fantasy_skill_level: data.fantasySkillLevel,
       avatar_url: data.avatarUrl || null,
       onboarding_step: data.step,
-    };
-    const cleanUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([, value]) => value !== undefined),
-    );
-    const { error } = await context.supabase
-      .from("profiles")
-      .update(cleanUpdates)
+      })
       .eq("id", context.userId);
     if (error) {
       throw new Error(
