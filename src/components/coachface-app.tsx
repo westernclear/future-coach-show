@@ -79,7 +79,7 @@ export function CoachFaceApp() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 border-b border-border/70 bg-background/90 backdrop-blur-xl">
-        <div className="mx-auto grid h-16 max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-2 px-4 sm:px-5 lg:px-8">
+        <div className="mx-auto grid h-16 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-2 px-4 sm:px-5 lg:px-8">
           <a href="#top" className="flex min-w-0 items-center gap-3" aria-label="CoachFace home">
             <span className="grid size-9 place-items-center rounded-sm bg-primary font-display text-xl font-black text-primary-foreground">CF</span>
             <span className="hidden truncate font-display text-xl font-black uppercase tracking-tight min-[375px]:block">CoachFace</span>
