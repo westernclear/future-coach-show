@@ -302,7 +302,13 @@ function OnboardingPage() {
             )}
 
             {step === 1 && (
-              <form>
+              <form
+                noValidate
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  continueToEligibility(event.currentTarget);
+                }}
+              >
                 <p className="eyebrow">Step 2 of 4</p>
                 <h2 className="mt-3 font-display text-4xl font-black uppercase">
                   Build your CoachFace profile
@@ -420,8 +426,7 @@ function OnboardingPage() {
                 <Button
                   className="mt-8"
                   size="lg"
-                  type="button"
-                  onClick={(event) => continueToEligibility(event.currentTarget.form)}
+                  type="submit"
                 >
                   Check eligibility <ChevronRight />
                 </Button>
