@@ -74,6 +74,7 @@ function OnboardingPage() {
     preferredLeague: "",
     fantasySkillLevel: "rookie",
     avatarUrl: "",
+    avatarType: "custom_image",
   });
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [locationConfirmed, setLocationConfirmed] = useState(false);
@@ -90,6 +91,7 @@ function OnboardingPage() {
       preferredLeague: next.profile?.preferred_league ?? current.preferredLeague,
       fantasySkillLevel: next.profile?.fantasy_skill_level ?? current.fantasySkillLevel,
       avatarUrl: next.profile?.avatar_url ?? current.avatarUrl,
+      avatarType: next.profile?.avatar_type ?? current.avatarType,
     }));
     setAvatarPreview(next.avatarPreviewUrl);
     setStep(next.completed ? 3 : Math.min(next.savedStep, 2));
@@ -113,6 +115,12 @@ function OnboardingPage() {
               | "intermediate"
               | "advanced"
               | "expert",
+            avatarType: form.avatarType as
+              | "real_photo"
+              | "ai_avatar"
+              | "cartoon_avatar"
+              | "team_logo"
+              | "custom_image",
             step,
           },
         });
@@ -160,11 +168,18 @@ function OnboardingPage() {
     const nextProfile = {
       legalName: String(values.get("cfLegalName") ?? "").trim(),
       username: String(values.get("cfUsername") ?? "").trim(),
+      mobileNumber: String(values.get("cfMobileNumber") ?? "").trim(),
       favoriteSport: String(values.get("cfFavoriteSport") ?? "").trim(),
       favoriteTeam: String(values.get("cfFavoriteTeam") ?? "").trim(),
       preferredLeague: String(values.get("cfPreferredLeague") ?? "").trim(),
     };
-    const missingField = Object.values(nextProfile).some((value) => !value);
+    const missingField = [
+      nextProfile.username,
+      nextProfile.mobileNumber,
+      nextProfile.favoriteSport,
+      nextProfile.favoriteTeam,
+      nextProfile.preferredLeague,
+    ].some((value) => !value);
     if (missingField) {
       setMessage("Complete all required profile fields before checking eligibility.");
       return;
@@ -190,6 +205,12 @@ function OnboardingPage() {
             | "intermediate"
             | "advanced"
             | "expert",
+            avatarType: form.avatarType as
+              | "real_photo"
+              | "ai_avatar"
+              | "cartoon_avatar"
+              | "team_logo"
+              | "custom_image",
           ageConfirmed,
           locationConfirmed,
           acceptedPolicies,
@@ -209,8 +230,6 @@ function OnboardingPage() {
         <Loader2 className="size-7 animate-spin text-primary" />
       </main>
     );
-  const verified = Boolean(status?.emailVerified);
-
   return (
     <main className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border bg-foreground text-background">
@@ -232,7 +251,7 @@ function OnboardingPage() {
               Get game ready.
             </h1>
             <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
-              Verify once, personalize your profile, and start playing free fantasy games.
+               Build a fantasy coaching identity now. Add verification only when you want verified status or prize access.
             </p>
             <ol className="mt-8 border-y border-border">
               {steps.map((label, index) => (
@@ -286,16 +305,14 @@ function OnboardingPage() {
                   <MailCheck className="size-6 text-primary" />
                   <h3 className="mt-4 font-bold">Email address</h3>
                   <p className="mt-1 break-all text-sm text-muted-foreground">{status?.email}</p>
-                  <p className="mt-4 text-sm font-bold">
-                    {status?.emailVerified ? "Verified" : "Check your inbox to confirm"}
-                  </p>
+                   <p className="mt-4 text-sm font-bold">{status?.emailVerified ? "Verified" : "Added, verification available later"}</p>
                 </div>
                 {message && (
                   <p role="status" className="mt-4 border border-border bg-secondary p-3 text-sm">
                     {message}
                   </p>
                 )}
-                <Button className="mt-8" size="lg" disabled={!verified} onClick={() => setStep(1)}>
+                 <Button className="mt-8" size="lg" onClick={() => setStep(1)}>
                   Create profile <ChevronRight />
                 </Button>
               </div>
@@ -315,11 +332,10 @@ function OnboardingPage() {
                   Build your CoachFace profile
                 </h2>
                 <div className="mt-8 grid gap-5 sm:grid-cols-2">
-                  <Field label="Full legal name">
+                   <Field label="Legal name (optional until prize play)">
                     <Input
                       name="cfLegalName"
                       autoComplete="off"
-                      required
                       maxLength={120}
                       defaultValue={form.legalName}
                       onInput={(event) =>
@@ -327,6 +343,16 @@ function OnboardingPage() {
                       }
                     />
                   </Field>
+                   <Field label="Mobile number">
+                     <Input
+                       name="cfMobileNumber"
+                       type="tel"
+                       required
+                       placeholder="+12125550123"
+                       value={form.mobileNumber}
+                       onChange={(event) => setForm({ ...form, mobileNumber: event.target.value })}
+                     />
+                   </Field>
                   <Field label="Username">
                     <Input
                       name="cfUsername"
@@ -404,7 +430,20 @@ function OnboardingPage() {
                       </SelectContent>
                     </Select>
                   </Field>
-                  <Field label="Profile photo">
+                   <Field label="Fantasy identity image">
+                     <Select
+                       value={form.avatarType}
+                       onValueChange={(value) => setForm({ ...form, avatarType: value })}
+                     >
+                       <SelectTrigger><SelectValue /></SelectTrigger>
+                       <SelectContent>
+                         <SelectItem value="ai_avatar">AI avatar</SelectItem>
+                         <SelectItem value="cartoon_avatar">Cartoon avatar</SelectItem>
+                         <SelectItem value="team_logo">Team logo</SelectItem>
+                         <SelectItem value="real_photo">Real photo</SelectItem>
+                         <SelectItem value="custom_image">Custom graphic</SelectItem>
+                       </SelectContent>
+                     </Select>
                     <div className="flex items-center gap-4">
                       <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-full border border-border bg-secondary">
                         {avatarPreview ? (
@@ -429,7 +468,7 @@ function OnboardingPage() {
                           ) : (
                             <Upload className="size-4" />
                           )}
-                          {avatarPreview ? "Replace photo" : "Upload photo"}
+                           {avatarPreview ? "Replace image" : "Upload image"}
                         </Label>
                         <Input
                           id="profile-photo"
@@ -440,7 +479,7 @@ function OnboardingPage() {
                           onChange={(event) => void uploadPhoto(event.target.files?.[0])}
                         />
                         <p className="mt-2 text-xs text-muted-foreground">
-                          JPG, PNG, or WebP. Max 5 MB.
+                           Your real photograph is never required. Upload the image type you selected. JPG, PNG, or WebP, max 5 MB.
                         </p>
                       </div>
                     </div>
@@ -465,12 +504,11 @@ function OnboardingPage() {
               <form onSubmit={finish}>
                 <p className="eyebrow">Step 3 of 4</p>
                 <h2 className="mt-3 font-display text-4xl font-black uppercase">
-                  Confirm eligibility
+                   Choose your access level
                 </h2>
                 <div className="mt-8 grid gap-5 sm:grid-cols-2">
-                  <Field label="Country code">
+                   <Field label="Country code (optional for free play)">
                     <Input
-                      required
                       minLength={2}
                       maxLength={2}
                       placeholder="US"
@@ -480,15 +518,14 @@ function OnboardingPage() {
                       }
                     />
                   </Field>
-                  <Field label="State or region">
+                   <Field label="State or region (optional for free play)">
                     <Input
-                      required
                       maxLength={100}
                       value={form.region}
                       onChange={(event) => setForm({ ...form, region: event.target.value })}
                     />
                   </Field>
-                  <Field label="Date of birth">
+                   <Field label="Date of birth (optional for free play)">
                     <Input
                       required
                       type="date"
@@ -498,8 +535,8 @@ function OnboardingPage() {
                   </Field>
                 </div>
                 <div className="mt-8 space-y-4 border-y border-border py-6">
-                  <Consent checked={ageConfirmed} onChange={setAgeConfirmed} icon={<ShieldCheck />}>
-                    I confirm that I am at least 18 years old.
+                   <Consent checked={ageConfirmed} onChange={setAgeConfirmed} icon={<ShieldCheck />}>
+                     I confirm that I am at least 18 years old (required before prize play).
                   </Consent>
                   <Consent
                     checked={locationConfirmed}
@@ -532,10 +569,10 @@ function OnboardingPage() {
                     .
                   </Consent>
                 </div>
-                <div className="mt-6 border-l-2 border-primary bg-secondary/60 p-4 text-sm text-muted-foreground">
-                  <strong className="text-foreground">Free play starts now.</strong> Identity
-                  verification is requested only before paid entry, cash prizes, token rewards, or
-                  withdrawals.
+                 <div className="mt-6 grid gap-3 sm:grid-cols-3">
+                   <AccessLevel title="Level 1 · Casual" text="Username, contact details, avatar, sport, and team. Free play starts immediately." />
+                   <AccessLevel title="Level 2 · Verified" text="Verified email and phone unlock the CoachFace Verified badge." />
+                   <AccessLevel title="Level 3 · Prize" text="ID, selfie, age, location, and tax checks unlock eligible cash contests and withdrawals." />
                 </div>
                 {message && (
                   <p role="alert" className="mt-4 text-sm text-destructive">
@@ -546,7 +583,7 @@ function OnboardingPage() {
                   className="mt-8"
                   size="lg"
                   type="submit"
-                  disabled={loading || !ageConfirmed || !locationConfirmed || !acceptedPolicies}
+                   disabled={loading || !acceptedPolicies}
                 >
                   {loading && <Loader2 className="animate-spin" />} Complete setup
                 </Button>
@@ -592,6 +629,14 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     <div className="space-y-2">
       <Label>{label}</Label>
       {children}
+    </div>
+  );
+}
+function AccessLevel({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="border border-border bg-secondary/40 p-4">
+      <h3 className="font-bold">{title}</h3>
+      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{text}</p>
     </div>
   );
 }
