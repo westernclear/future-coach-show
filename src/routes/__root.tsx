@@ -11,7 +11,6 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { registerCoachFaceServiceWorker } from "../lib/pwa.client";
 
 function NotFoundComponent() {
   return (
@@ -129,7 +128,9 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   useEffect(() => {
-    void registerCoachFaceServiceWorker();
+    void import("../lib/pwa.client").then(({ registerCoachFaceServiceWorker }) =>
+      registerCoachFaceServiceWorker(),
+    );
   }, []);
 
   return (
