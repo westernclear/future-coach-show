@@ -4,29 +4,27 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const profileSchema = z.object({
-  legalName: z.string().trim().min(1).max(120),
+  legalName: z.string().trim().max(120),
   username: z
     .string()
     .trim()
     .regex(/^[A-Za-z0-9_]{3,30}$/),
-  mobileNumber: z
-    .string()
-    .trim()
-    .regex(/^\+[1-9][0-9]{7,14}$/)
-    .or(z.literal("")),
+  mobileNumber: z.string().trim().regex(/^\+[1-9][0-9]{7,14}$/),
   countryCode: z
     .string()
     .trim()
-    .regex(/^[A-Z]{2}$/),
-  region: z.string().trim().min(1).max(100),
-  dateOfBirth: z.string().date(),
+    .regex(/^[A-Z]{2}$/)
+    .or(z.literal("")),
+  region: z.string().trim().max(100),
+  dateOfBirth: z.string().date().or(z.literal("")),
   favoriteSport: z.string().trim().min(1).max(80),
   favoriteTeam: z.string().trim().min(1).max(100),
   preferredLeague: z.string().trim().min(1).max(100),
   fantasySkillLevel: z.enum(["rookie", "intermediate", "advanced", "expert"]),
   avatarUrl: z.string().trim().max(500),
-  ageConfirmed: z.literal(true),
-  locationConfirmed: z.literal(true),
+  avatarType: z.enum(["real_photo", "ai_avatar", "cartoon_avatar", "team_logo", "custom_image"]),
+  ageConfirmed: z.boolean(),
+  locationConfirmed: z.boolean(),
   acceptedPolicies: z.literal(true),
 });
 
@@ -42,6 +40,7 @@ const draftSchema = z.object({
   preferredLeague: z.string().trim().max(100),
   fantasySkillLevel: z.enum(["rookie", "intermediate", "advanced", "expert"]),
   avatarUrl: z.string().trim().max(500),
+  avatarType: z.enum(["real_photo", "ai_avatar", "cartoon_avatar", "team_logo", "custom_image"]),
   step: z.number().int().min(0).max(2),
 });
 
@@ -51,7 +50,7 @@ export const getOnboardingStatus = createServerFn({ method: "GET" })
     const { data: profile } = await context.supabase
       .from("profiles")
       .select(
-        "legal_name, username, mobile_number, country_code, region, date_of_birth, favorite_sport, favorite_team, preferred_league, fantasy_skill_level, avatar_url, onboarding_step, onboarding_completed_at",
+        "legal_name, username, mobile_number, country_code, region, date_of_birth, favorite_sport, favorite_team, preferred_league, fantasy_skill_level, avatar_url, avatar_type, onboarding_step, onboarding_completed_at",
       )
       .eq("id", context.userId)
       .maybeSingle();
@@ -110,6 +109,7 @@ export const saveOnboardingDraft = createServerFn({ method: "POST" })
       preferred_league: data.preferredLeague || null,
       fantasy_skill_level: data.fantasySkillLevel,
       avatar_url: data.avatarUrl || null,
+      avatar_type: data.avatarType,
       onboarding_step: data.step,
     });
     if (error) {
@@ -128,34 +128,26 @@ export const completeOnboarding = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const user = userData.user;
-    if (!user?.email_confirmed_at) {
-      throw new Error("Verify your email address before continuing.");
-    }
-
-    const birthDate = new Date(`${data.dateOfBirth}T00:00:00Z`);
-    const ageDate = new Date(Date.now() - birthDate.getTime());
-    if (ageDate.getUTCFullYear() - 1970 < 18)
-      throw new Error("You must be at least 18 years old to use CoachFace.");
-
     const now = new Date().toISOString();
     const { error: profileError } = await context.supabase.from("profiles").upsert({
       id: context.userId,
-      display_name: data.legalName,
-      legal_name: data.legalName,
+      display_name: data.username,
+      legal_name: data.legalName || null,
       username: data.username,
       mobile_number: data.mobileNumber || null,
-      country_code: data.countryCode,
-      region: data.region,
-      location: `${data.region}, ${data.countryCode}`,
-      date_of_birth: data.dateOfBirth,
+      country_code: data.countryCode || null,
+      region: data.region || null,
+      location: data.region && data.countryCode ? `${data.region}, ${data.countryCode}` : null,
+      date_of_birth: data.dateOfBirth || null,
       favorite_sport: data.favoriteSport,
       favorite_sports: [data.favoriteSport],
       favorite_team: data.favoriteTeam,
       preferred_league: data.preferredLeague,
       fantasy_skill_level: data.fantasySkillLevel,
       avatar_url: data.avatarUrl || null,
-      age_confirmed_at: now,
-      location_confirmed_at: now,
+      avatar_type: data.avatarType,
+      age_confirmed_at: data.ageConfirmed ? now : null,
+      location_confirmed_at: data.locationConfirmed ? now : null,
       onboarding_completed_at: now,
       onboarding_step: 3,
     });
@@ -181,7 +173,7 @@ export const completeOnboarding = createServerFn({ method: "POST" })
     await Promise.all([
       supabaseAdmin.from("account_verifications").upsert({
         user_id: context.userId,
-        email_verified_at: user.email_confirmed_at,
+        email_verified_at: user?.email_confirmed_at ?? null,
       }),
       supabaseAdmin.from("identity_verifications").upsert({ user_id: context.userId }),
       supabaseAdmin.from("user_wallets").upsert({ user_id: context.userId }),
