@@ -553,6 +553,45 @@ export type Database = {
           },
         ]
       }
+      profile_upload_rejections: {
+        Row: {
+          byte_size: number
+          claimed_type: string | null
+          created_at: string
+          detected_type: string | null
+          height: number | null
+          id: string
+          reason_code: string
+          user_id: string
+          validation_duration_ms: number
+          width: number | null
+        }
+        Insert: {
+          byte_size: number
+          claimed_type?: string | null
+          created_at?: string
+          detected_type?: string | null
+          height?: number | null
+          id?: string
+          reason_code: string
+          user_id: string
+          validation_duration_ms: number
+          width?: number | null
+        }
+        Update: {
+          byte_size?: number
+          claimed_type?: string | null
+          created_at?: string
+          detected_type?: string | null
+          height?: number | null
+          id?: string
+          reason_code?: string
+          user_id?: string
+          validation_duration_ms?: number
+          width?: number | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           age_confirmed_at: string | null
