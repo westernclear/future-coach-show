@@ -171,51 +171,6 @@ function AuthPage() {
                     onChange={(event) => setUsername(event.target.value)}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="mobile">Mobile number</Label>
-                  <Input
-                    id="mobile"
-                    type="tel"
-                    autoComplete="tel"
-                    required
-                    placeholder="+12125550123"
-                    pattern="\+[1-9][0-9]{7,14}"
-                    value={mobileNumber}
-                    onChange={(event) => setMobileNumber(event.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="country">Country code</Label>
-                  <Input
-                    id="country"
-                    required
-                    minLength={2}
-                    maxLength={2}
-                    placeholder="US"
-                    value={countryCode}
-                    onChange={(event) => setCountryCode(event.target.value.toUpperCase())}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="region">State or region</Label>
-                  <Input
-                    id="region"
-                    required
-                    maxLength={100}
-                    value={region}
-                    onChange={(event) => setRegion(event.target.value)}
-                  />
-                </div>
-                <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="birth-date">Date of birth</Label>
-                  <Input
-                    id="birth-date"
-                    type="date"
-                    required
-                    value={dateOfBirth}
-                    onChange={(event) => setDateOfBirth(event.target.value)}
-                  />
-                </div>
               </div>
             )}
             <div className="space-y-2">
