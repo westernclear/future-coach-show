@@ -1,7 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
 
 const updateFindingSchema = z.object({
   id: z.string().uuid(),
@@ -10,9 +12,7 @@ const updateFindingSchema = z.object({
 });
 
 async function requireAdmin(context: {
-  supabase: Parameters<Parameters<typeof requireSupabaseAuth>["options"]["server"]>[0] extends never
-    ? never
-    : any;
+  supabase: SupabaseClient<Database>;
   userId: string;
 }) {
   const { data: role } = await context.supabase
