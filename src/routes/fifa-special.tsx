@@ -137,7 +137,7 @@ function FifaSpecialPage() {
           <div className="mx-auto flex min-h-[560px] max-w-7xl items-center px-5 py-16 lg:px-8">
             <div className="max-w-3xl">
               <Badge className="rounded-sm px-3 py-1.5 uppercase tracking-[0.18em]"><Globe2 className="mr-2 size-3" /> Limited release</Badge>
-              <h1 className="mt-6 font-display text-6xl font-black uppercase leading-[0.88] tracking-tight text-hero-foreground sm:text-7xl lg:text-8xl">FIFA coaches<br /><span className="text-primary">special.</span></h1>
+              <h1 className="mt-6 font-display text-5xl font-black uppercase leading-[0.92] tracking-tight text-hero-foreground min-[375px]:text-6xl sm:text-7xl sm:leading-[0.88] lg:text-8xl">FIFA coaches<br /><span className="text-primary">special.</span></h1>
               <p className="mt-7 max-w-2xl text-lg leading-relaxed text-hero-muted sm:text-xl">Draft from all 48 World Cup coaches. Score every selection, tactical switch, substitution, and match result on football's biggest stage.</p>
               <div className="mt-8 flex flex-wrap gap-5 text-sm font-semibold text-hero-muted">
                 <span className="flex items-center gap-2"><ShieldCheck className="size-4 text-primary" /> Free special entry</span>
@@ -204,9 +204,9 @@ function FifaSpecialPage() {
                           <span className="font-display text-xl font-black text-muted-foreground">{String(rankingById.get(coach.id)).padStart(2, "0")}</span>
                           <div className="flex items-center gap-4">
                             <span className={cn("grid size-12 shrink-0 place-items-center rounded-full font-display font-black", selected ? "bg-primary text-primary-foreground" : "bg-secondary")}>{coach.initials}</span>
-                            <div><h4 className="font-bold">{coach.name}</h4><p className="text-sm text-muted-foreground">{coach.nation} · {coach.trait}</p><p className="mt-1 font-mono text-xs font-bold">Projected {coach.score}</p></div>
+                            <div className="min-w-0"><h4 className="font-bold">{coach.name}</h4><p className="break-words text-sm text-muted-foreground">{coach.nation} · {coach.trait}</p><p className="mt-1 font-mono text-xs font-bold">Projected {coach.score}</p></div>
                           </div>
-                          <Button variant={selected ? "default" : "outline"} onClick={() => toggleCoach(coach.id)} disabled={!selected && (roster.length >= 3 || roster.filter((id) => fifaCoaches.find((item) => item.id === id)?.group === coach.group).length >= 2)}>{selected ? <><Check /> Selected</> : <>Draft <ChevronRight /></>}</Button>
+                           <Button className="w-full sm:w-auto" variant={selected ? "default" : "outline"} onClick={() => toggleCoach(coach.id)} disabled={!selected && (roster.length >= 3 || roster.filter((id) => fifaCoaches.find((item) => item.id === id)?.group === coach.group).length >= 2)}>{selected ? <><Check /> Selected</> : <>Draft <ChevronRight /></>}</Button>
                         </article>
                       );
                     })}
