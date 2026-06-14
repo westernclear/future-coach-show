@@ -26,6 +26,12 @@ function AuthPage() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [legalName, setLegalName] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
+  const [username, setUsername] = useState("");
+  const [countryCode, setCountryCode] = useState("");
+  const [region, setRegion] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -36,7 +42,14 @@ function AuthPage() {
 
     const result = mode === "signin"
       ? await supabase.auth.signInWithPassword({ email, password })
-      : await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin } });
+      : await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/onboarding`,
+            data: { legal_name: legalName.trim(), mobile_number: mobileNumber.trim(), username: username.trim(), country_code: countryCode.trim().toUpperCase(), region: region.trim(), date_of_birth: dateOfBirth },
+          },
+        });
 
     setLoading(false);
     if (result.error) {
@@ -47,7 +60,7 @@ function AuthPage() {
       setMessage("Check your email to confirm your account, then return to sign in.");
       return;
     }
-    await navigate({ to: redirect === "/fifa-special" ? "/fifa-special" : "/" });
+    await navigate({ to: mode === "signup" ? "/onboarding" : redirect === "/fifa-special" ? "/fifa-special" : "/onboarding" });
   };
 
   const handleGoogle = async () => {
@@ -59,7 +72,7 @@ function AuthPage() {
       setMessage(result.error.message);
       return;
     }
-    if (!result.redirected) await navigate({ to: redirect === "/fifa-special" ? "/fifa-special" : "/" });
+    if (!result.redirected) await navigate({ to: redirect === "/fifa-special" ? "/fifa-special" : "/onboarding" });
   };
 
   return (
@@ -88,6 +101,14 @@ function AuthPage() {
           <div className="my-6 flex items-center gap-3 text-xs uppercase tracking-widest text-muted-foreground"><span className="h-px flex-1 bg-border" />or email<span className="h-px flex-1 bg-border" /></div>
 
           <form className="space-y-5" onSubmit={handleEmail}>
+            {mode === "signup" && <div className="grid gap-5 sm:grid-cols-2">
+              <div className="space-y-2 sm:col-span-2"><Label htmlFor="legal-name">Full legal name</Label><Input id="legal-name" autoComplete="name" required maxLength={120} value={legalName} onChange={(event) => setLegalName(event.target.value)} /></div>
+              <div className="space-y-2"><Label htmlFor="username">Username</Label><Input id="username" required minLength={3} maxLength={30} pattern="[A-Za-z0-9_]+" value={username} onChange={(event) => setUsername(event.target.value)} /></div>
+              <div className="space-y-2"><Label htmlFor="mobile">Mobile number</Label><Input id="mobile" type="tel" autoComplete="tel" required placeholder="+12125550123" pattern="\+[1-9][0-9]{7,14}" value={mobileNumber} onChange={(event) => setMobileNumber(event.target.value)} /></div>
+              <div className="space-y-2"><Label htmlFor="country">Country code</Label><Input id="country" required minLength={2} maxLength={2} placeholder="US" value={countryCode} onChange={(event) => setCountryCode(event.target.value.toUpperCase())} /></div>
+              <div className="space-y-2"><Label htmlFor="region">State or region</Label><Input id="region" required maxLength={100} value={region} onChange={(event) => setRegion(event.target.value)} /></div>
+              <div className="space-y-2 sm:col-span-2"><Label htmlFor="birth-date">Date of birth</Label><Input id="birth-date" type="date" required value={dateOfBirth} onChange={(event) => setDateOfBirth(event.target.value)} /></div>
+            </div>}
             <div className="space-y-2"><Label htmlFor="email">Email</Label><Input id="email" type="email" autoComplete="email" required value={email} onChange={(event) => setEmail(event.target.value)} /></div>
             <div className="space-y-2"><Label htmlFor="password">Password</Label><Input id="password" type="password" minLength={8} autoComplete={mode === "signin" ? "current-password" : "new-password"} required value={password} onChange={(event) => setPassword(event.target.value)} /></div>
             {message && <p role="status" className="rounded-md border border-border bg-secondary p-3 text-sm">{message}</p>}
