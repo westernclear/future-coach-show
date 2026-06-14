@@ -9,6 +9,11 @@ import { Label } from "@/components/ui/label";
 import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 
+const signupMetadataSchema = z.object({
+  legal_name: z.string().trim().min(1).max(120),
+  username: z.string().trim().regex(/^[A-Za-z0-9_]{3,30}$/),
+});
+
 export const Route = createFileRoute("/auth")({
   validateSearch: z.object({ redirect: z.string().startsWith("/").optional() }),
   head: () => ({
@@ -27,11 +32,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [legalName, setLegalName] = useState("");
-  const [mobileNumber, setMobileNumber] = useState("");
   const [username, setUsername] = useState("");
-  const [countryCode, setCountryCode] = useState("");
-  const [region, setRegion] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -48,14 +49,10 @@ function AuthPage() {
             password,
             options: {
               emailRedirectTo: `${window.location.origin}/onboarding`,
-              data: {
+              data: signupMetadataSchema.parse({
                 legal_name: legalName.trim(),
-                mobile_number: mobileNumber.trim(),
                 username: username.trim(),
-                country_code: countryCode.trim().toUpperCase(),
-                region: region.trim(),
-                date_of_birth: dateOfBirth,
-              },
+              }),
             },
           });
 
@@ -172,51 +169,6 @@ function AuthPage() {
                     pattern="[A-Za-z0-9_]+"
                     value={username}
                     onChange={(event) => setUsername(event.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="mobile">Mobile number</Label>
-                  <Input
-                    id="mobile"
-                    type="tel"
-                    autoComplete="tel"
-                    required
-                    placeholder="+12125550123"
-                    pattern="\+[1-9][0-9]{7,14}"
-                    value={mobileNumber}
-                    onChange={(event) => setMobileNumber(event.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="country">Country code</Label>
-                  <Input
-                    id="country"
-                    required
-                    minLength={2}
-                    maxLength={2}
-                    placeholder="US"
-                    value={countryCode}
-                    onChange={(event) => setCountryCode(event.target.value.toUpperCase())}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="region">State or region</Label>
-                  <Input
-                    id="region"
-                    required
-                    maxLength={100}
-                    value={region}
-                    onChange={(event) => setRegion(event.target.value)}
-                  />
-                </div>
-                <div className="space-y-2 sm:col-span-2">
-                  <Label htmlFor="birth-date">Date of birth</Label>
-                  <Input
-                    id="birth-date"
-                    type="date"
-                    required
-                    value={dateOfBirth}
-                    onChange={(event) => setDateOfBirth(event.target.value)}
                   />
                 </div>
               </div>
