@@ -154,6 +154,29 @@ function OnboardingPage() {
     setUploadingPhoto(false);
   };
 
+  const continueToEligibility = (profileForm: HTMLFormElement | null) => {
+    if (!profileForm) return;
+    const values = new FormData(profileForm);
+    const nextProfile = {
+      legalName: String(values.get("cfLegalName") ?? "").trim(),
+      username: String(values.get("cfUsername") ?? "").trim(),
+      favoriteSport: String(values.get("cfFavoriteSport") ?? "").trim(),
+      favoriteTeam: String(values.get("cfFavoriteTeam") ?? "").trim(),
+      preferredLeague: String(values.get("cfPreferredLeague") ?? "").trim(),
+    };
+    const missingField = Object.values(nextProfile).some((value) => !value);
+    if (missingField) {
+      setMessage("Complete all required profile fields before checking eligibility.");
+      return;
+    }
+    setForm((current) => ({
+      ...current,
+      ...nextProfile,
+    }));
+    setMessage(null);
+    setStep(2);
+  };
+
   const finish = async (event: FormEvent) => {
     event.preventDefault();
     setLoading(true);
@@ -279,7 +302,14 @@ function OnboardingPage() {
             )}
 
             {step === 1 && (
-              <div>
+              <form
+                noValidate
+                autoComplete="off"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  continueToEligibility(event.currentTarget);
+                }}
+              >
                 <p className="eyebrow">Step 2 of 4</p>
                 <h2 className="mt-3 font-display text-4xl font-black uppercase">
                   Build your CoachFace profile
@@ -287,47 +317,74 @@ function OnboardingPage() {
                 <div className="mt-8 grid gap-5 sm:grid-cols-2">
                   <Field label="Full legal name">
                     <Input
+                      name="cfLegalName"
+                      autoComplete="off"
                       required
                       maxLength={120}
-                      value={form.legalName}
-                      onChange={(event) => setForm({ ...form, legalName: event.target.value })}
+                      defaultValue={form.legalName}
+                      onInput={(event) =>
+                        setForm((current) => ({ ...current, legalName: event.currentTarget.value }))
+                      }
                     />
                   </Field>
                   <Field label="Username">
                     <Input
+                      name="cfUsername"
+                      autoComplete="off"
                       required
                       pattern="[A-Za-z0-9_]+"
                       minLength={3}
                       maxLength={30}
-                      value={form.username}
-                      onChange={(event) => setForm({ ...form, username: event.target.value })}
+                      defaultValue={form.username}
+                      onInput={(event) =>
+                        setForm((current) => ({ ...current, username: event.currentTarget.value }))
+                      }
                     />
                   </Field>
                   <Field label="Favorite sport">
                     <Input
+                      name="cfFavoriteSport"
+                      autoComplete="off"
                       required
                       maxLength={80}
                       placeholder="Football"
-                      value={form.favoriteSport}
-                      onChange={(event) => setForm({ ...form, favoriteSport: event.target.value })}
+                      defaultValue={form.favoriteSport}
+                      onInput={(event) =>
+                        setForm((current) => ({
+                          ...current,
+                          favoriteSport: event.currentTarget.value,
+                        }))
+                      }
                     />
                   </Field>
                   <Field label="Favorite team">
                     <Input
+                      name="cfFavoriteTeam"
+                      autoComplete="off"
                       required
                       maxLength={100}
-                      value={form.favoriteTeam}
-                      onChange={(event) => setForm({ ...form, favoriteTeam: event.target.value })}
+                      defaultValue={form.favoriteTeam}
+                      onInput={(event) =>
+                        setForm((current) => ({
+                          ...current,
+                          favoriteTeam: event.currentTarget.value,
+                        }))
+                      }
                     />
                   </Field>
                   <Field label="Preferred league">
                     <Input
+                      name="cfPreferredLeague"
+                      autoComplete="off"
                       required
                       maxLength={100}
                       placeholder="Premier League"
-                      value={form.preferredLeague}
-                      onChange={(event) =>
-                        setForm({ ...form, preferredLeague: event.target.value })
+                      defaultValue={form.preferredLeague}
+                      onInput={(event) =>
+                        setForm((current) => ({
+                          ...current,
+                          preferredLeague: event.currentTarget.value,
+                        }))
                       }
                     />
                   </Field>
@@ -389,21 +446,19 @@ function OnboardingPage() {
                     </div>
                   </Field>
                 </div>
+                {message && (
+                  <p role="alert" className="mt-5 text-sm font-medium text-destructive">
+                    {message}
+                  </p>
+                )}
                 <Button
                   className="mt-8"
                   size="lg"
-                  disabled={
-                    !form.legalName ||
-                    !form.username ||
-                    !form.favoriteSport ||
-                    !form.favoriteTeam ||
-                    !form.preferredLeague
-                  }
-                  onClick={() => setStep(2)}
+                  type="submit"
                 >
                   Check eligibility <ChevronRight />
                 </Button>
-              </div>
+              </form>
             )}
 
             {step === 2 && (
