@@ -84,6 +84,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "The multi-sport fantasy game where coaching decisions count." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "CoachFace" },
+      { name: "twitter:description", content: "The multi-sport fantasy game where coaching decisions count." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d60afcec-ac09-4a68-b41f-d9ee3849f71b/id-preview-c3e2cb0e--05cbd7a7-84ea-478e-af54-13e485221a1a.lovable.app-1781405423188.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d60afcec-ac09-4a68-b41f-d9ee3849f71b/id-preview-c3e2cb0e--05cbd7a7-84ea-478e-af54-13e485221a1a.lovable.app-1781405423188.png" },
     ],
     links: [
       {
