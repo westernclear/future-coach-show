@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
+  { to: "/dashboard", label: "Dashboard" },
   { to: "/fifa-special", label: "FIFA Special" },
   { to: "/rankings", label: "Power Rankings" },
   { to: "/play", label: "Play" },
