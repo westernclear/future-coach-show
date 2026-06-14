@@ -24,11 +24,16 @@ const profileSchema = z.object({
   favoriteTeam: z.string().trim().min(1).max(100),
   preferredLeague: z.string().trim().min(1).max(100),
   fantasySkillLevel: z.enum(["rookie", "intermediate", "advanced", "expert"]),
-  avatarUrl: z.string().url().max(500).or(z.literal("")),
+  avatarUrl: z.string().trim().max(500),
   ageConfirmed: z.literal(true),
   locationConfirmed: z.literal(true),
   acceptedPolicies: z.literal(true),
 });
+
+const draftSchema = profileSchema
+  .omit({ ageConfirmed: true, locationConfirmed: true, acceptedPolicies: true })
+  .partial()
+  .extend({ step: z.number().int().min(0).max(2) });
 
 export const getOnboardingStatus = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -36,17 +41,26 @@ export const getOnboardingStatus = createServerFn({ method: "GET" })
     const { data: profile } = await context.supabase
       .from("profiles")
       .select(
-        "legal_name, username, mobile_number, country_code, region, date_of_birth, favorite_sport, favorite_team, preferred_league, fantasy_skill_level, avatar_url, onboarding_completed_at",
+        "legal_name, username, mobile_number, country_code, region, date_of_birth, favorite_sport, favorite_team, preferred_league, fantasy_skill_level, avatar_url, onboarding_step, onboarding_completed_at",
       )
       .eq("id", context.userId)
       .maybeSingle();
     const { data: userData } = await context.supabase.auth.getUser();
     const user = userData.user;
     const metadata = user?.user_metadata ?? {};
+    let avatarPreviewUrl = profile?.avatar_url ?? "";
+    if (profile?.avatar_url && !profile.avatar_url.startsWith("http")) {
+      const { data } = await context.supabase.storage
+        .from("profile-photos")
+        .createSignedUrl(profile.avatar_url, 3600);
+      avatarPreviewUrl = data?.signedUrl ?? "";
+    }
     return {
       email: user?.email ?? "",
       emailVerified: Boolean(user?.email_confirmed_at),
       completed: Boolean(profile?.onboarding_completed_at),
+      savedStep: profile?.onboarding_step ?? 0,
+      avatarPreviewUrl,
       profile,
       registration: {
         legalName: typeof metadata.legal_name === "string" ? metadata.legal_name : "",
@@ -58,6 +72,43 @@ export const getOnboardingStatus = createServerFn({ method: "GET" })
         dateOfBirth: typeof metadata.date_of_birth === "string" ? metadata.date_of_birth : "",
       },
     };
+  });
+
+export const saveOnboardingDraft = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => draftSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const updates = {
+      legal_name: data.legalName,
+      display_name: data.legalName,
+      username: data.username,
+      mobile_number: data.mobileNumber || null,
+      country_code: data.countryCode,
+      region: data.region,
+      date_of_birth: data.dateOfBirth || null,
+      favorite_sport: data.favoriteSport,
+      favorite_sports: data.favoriteSport ? [data.favoriteSport] : undefined,
+      favorite_team: data.favoriteTeam,
+      preferred_league: data.preferredLeague,
+      fantasy_skill_level: data.fantasySkillLevel,
+      avatar_url: data.avatarUrl || null,
+      onboarding_step: data.step,
+    };
+    const cleanUpdates = Object.fromEntries(
+      Object.entries(updates).filter(([, value]) => value !== undefined),
+    );
+    const { error } = await context.supabase
+      .from("profiles")
+      .update(cleanUpdates)
+      .eq("id", context.userId);
+    if (error) {
+      throw new Error(
+        error.message.includes("username")
+          ? "That username is already taken."
+          : "We could not save your progress.",
+      );
+    }
+    return { ok: true };
   });
 
 export const completeOnboarding = createServerFn({ method: "POST" })
@@ -95,6 +146,7 @@ export const completeOnboarding = createServerFn({ method: "POST" })
       age_confirmed_at: now,
       location_confirmed_at: now,
       onboarding_completed_at: now,
+      onboarding_step: 3,
     });
     if (profileError)
       throw new Error(
