@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import {
   AlertTriangle,
+  Bell,
   CheckCircle2,
   CircleDot,
   Loader2,
@@ -15,6 +16,9 @@ import {
 import { CoachFacePageShell, PageHero } from "@/components/coachface-page-shell";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Select,
   SelectContent,
@@ -22,7 +26,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getSecurityDashboard, updateSecurityFinding } from "@/lib/security-dashboard.functions";
+import {
+  getSecurityDashboard,
+  markSecurityNotificationRead,
+  updateSecurityFinding,
+} from "@/lib/security-dashboard.functions";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/security")({
@@ -43,6 +51,7 @@ type FindingStatus = "open" | "in_progress" | "resolved" | "accepted_risk";
 function SecurityDashboard() {
   const fetchDashboard = useServerFn(getSecurityDashboard);
   const saveFinding = useServerFn(updateSecurityFinding);
+  const markAlertRead = useServerFn(markSecurityNotificationRead);
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState("all");
   const [severityFilter, setSeverityFilter] = useState("all");
@@ -55,9 +64,29 @@ function SecurityDashboard() {
     mutationFn: saveFinding,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["security-dashboard"] }),
   });
+  const readMutation = useMutation({
+    mutationFn: markAlertRead,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["security-dashboard"] }),
+  });
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("security-alerts")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "security_notifications" },
+        () => queryClient.invalidateQueries({ queryKey: ["security-dashboard"] }),
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const findings = useMemo(() => data?.findings ?? [], [data?.findings]);
   const runs = useMemo(() => data?.runs ?? [], [data?.runs]);
+  const notifications = useMemo(() => data?.notifications ?? [], [data?.notifications]);
+  const unreadCount = notifications.filter((notification) => !notification.read_at).length;
   const filtered = useMemo(
     () =>
       findings.filter((finding) => {
@@ -89,8 +118,15 @@ function SecurityDashboard() {
         title="Every finding. One accountable view."
         description="Track application, database, framework, and connector scans with clear ownership and remediation status."
         aside={
-          <div className="flex items-center gap-2 border border-border bg-card px-4 py-3 text-sm font-bold">
-            <ShieldCheck className="size-5 text-positive" /> Admin protected
+          <div className="flex items-center gap-3">
+            <AlertInbox
+              notifications={notifications}
+              unreadCount={unreadCount}
+              onRead={(id) => readMutation.mutate({ data: { id } })}
+            />
+            <div className="flex items-center gap-2 border border-border bg-card px-4 py-3 text-sm font-bold">
+              <ShieldCheck className="size-5 text-positive" /> Admin protected
+            </div>
           </div>
         }
       />
@@ -307,6 +343,78 @@ function Summary({
       <p className="mt-5 font-display text-4xl font-black">{value}</p>
       <p className="mt-1 text-sm text-muted-foreground">{label}</p>
     </div>
+  );
+}
+function AlertInbox({
+  notifications,
+  unreadCount,
+  onRead,
+}: {
+  notifications: Array<{
+    id: string;
+    title: string;
+    message: string;
+    severity: string;
+    read_at: string | null;
+    created_at: string;
+  }>;
+  unreadCount: number;
+  onRead: (id: string) => void;
+}) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          size="icon"
+          className="relative bg-card"
+          aria-label={`${unreadCount} unread security alerts`}
+        >
+          <Bell className="size-4" />
+          {unreadCount > 0 && (
+            <span className="absolute -right-2 -top-2 grid size-5 place-items-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
+              {unreadCount}
+            </span>
+          )}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-96 p-0">
+        <div className="border-b border-border p-4">
+          <p className="eyebrow">Security alerts</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            High-severity detections and resolved issues.
+          </p>
+        </div>
+        <div className="max-h-96 overflow-y-auto">
+          {notifications.length ? (
+            notifications.map((notification) => (
+              <button
+                key={notification.id}
+                type="button"
+                onClick={() => onRead(notification.id)}
+                className={cn(
+                  "block w-full border-b border-border p-4 text-left transition-colors hover:bg-secondary",
+                  !notification.read_at && "bg-primary/5",
+                )}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <p className="font-bold">{notification.title}</p>
+                  {!notification.read_at && (
+                    <span className="mt-1 size-2 shrink-0 rounded-full bg-primary" />
+                  )}
+                </div>
+                <p className="mt-1 text-sm text-muted-foreground">{notification.message}</p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  {dateLabel(notification.created_at)}
+                </p>
+              </button>
+            ))
+          ) : (
+            <p className="p-6 text-sm text-muted-foreground">No security alerts yet.</p>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }
 function Severity({ severity }: { severity: string }) {

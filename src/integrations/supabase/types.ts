@@ -1015,6 +1015,50 @@ export type Database = {
           },
         ]
       }
+      security_notifications: {
+        Row: {
+          created_at: string
+          event_type: string
+          finding_id: string
+          id: string
+          message: string
+          read_at: string | null
+          severity: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          finding_id: string
+          id?: string
+          message: string
+          read_at?: string | null
+          severity: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          finding_id?: string
+          id?: string
+          message?: string
+          read_at?: string | null
+          severity?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "security_notifications_finding_id_fkey"
+            columns: ["finding_id"]
+            isOneToOne: false
+            referencedRelation: "security_findings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       security_scan_runs: {
         Row: {
           created_at: string

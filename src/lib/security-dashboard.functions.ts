@@ -11,6 +11,8 @@ const updateFindingSchema = z.object({
   owner: z.string().trim().max(120),
 });
 
+const notificationSchema = z.object({ id: z.string().uuid() });
+
 async function requireAdmin(context: { supabase: SupabaseClient<Database>; userId: string }) {
   const { data: role } = await context.supabase
     .from("user_roles")
@@ -25,7 +27,7 @@ export const getSecurityDashboard = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await requireAdmin(context);
-    const [findingsResult, runsResult] = await Promise.all([
+    const [findingsResult, runsResult, notificationsResult] = await Promise.all([
       context.supabase
         .from("security_findings")
         .select("*")
@@ -34,10 +36,19 @@ export const getSecurityDashboard = createServerFn({ method: "GET" })
         .from("security_scan_runs")
         .select("*")
         .order("scanned_at", { ascending: true }),
+      context.supabase
+        .from("security_notifications")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(20),
     ]);
-    if (findingsResult.error || runsResult.error)
+    if (findingsResult.error || runsResult.error || notificationsResult.error)
       throw new Error("Security scan data could not be loaded.");
-    return { findings: findingsResult.data ?? [], runs: runsResult.data ?? [] };
+    return {
+      findings: findingsResult.data ?? [],
+      runs: runsResult.data ?? [],
+      notifications: notificationsResult.data ?? [],
+    };
   });
 
 export const updateSecurityFinding = createServerFn({ method: "POST" })
@@ -51,5 +62,19 @@ export const updateSecurityFinding = createServerFn({ method: "POST" })
       .update({ owner: data.owner || null, status: data.status, resolved_at: resolvedAt })
       .eq("id", data.id);
     if (error) throw new Error("The finding could not be updated.");
+    return { ok: true };
+  });
+
+export const markSecurityNotificationRead = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input) => notificationSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await requireAdmin(context);
+    const { error } = await context.supabase
+      .from("security_notifications")
+      .update({ read_at: new Date().toISOString() })
+      .eq("id", data.id)
+      .eq("user_id", context.userId);
+    if (error) throw new Error("The alert could not be marked as read.");
     return { ok: true };
   });
