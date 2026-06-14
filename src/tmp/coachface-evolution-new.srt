@@ -1,0 +1,47 @@
+1
+00:00:00,400 --> 00:00:04,500
+FROM ID COACH TO COACHFACE™
+
+2
+00:00:04,700 --> 00:00:09,600
+In 2009, inventor and entrepreneur Isaac Daniel introduced ID Coach in Tampa, Florida.
+
+3
+00:00:09,900 --> 00:00:14,600
+During Super Bowl week, athletes, coaches, media and football executives witnessed the future.
+
+4
+00:00:14,900 --> 00:00:19,500
+The system securely transmitted play calls directly from coaches to designated players.
+
+5
+00:00:19,800 --> 00:00:24,300
+Military-grade encryption replaced hand signals and traditional audio transmitters.
+
+6
+00:00:24,600 --> 00:00:29,400
+Strategic decisions could move instantly and securely during competition.
+
+7
+00:00:29,700 --> 00:00:34,500
+The technology was futuristic. The sports world was not yet ready.
+
+8
+00:00:34,800 --> 00:00:39,400
+But the vision endured: better tools, better decisions, better performance.
+
+9
+00:00:39,700 --> 00:00:44,300
+More than fifteen years later, that vision has evolved.
+
+10
+00:00:44,600 --> 00:00:49,300
+CoachFace™ measures coaching intelligence, accountability and performance.
+
+11
+00:00:49,600 --> 00:00:54,300
+Fans can evaluate, predict, rank and challenge the decisions that shape sports.
+
+12
+00:00:54,600 --> 00:00:59,900
+IF FANS KNOW WHAT COACHES SHOULD DO, CAN THEY OUTPERFORM THEM?
