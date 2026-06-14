@@ -190,9 +190,9 @@ function OnboardingPage() {
             | "intermediate"
             | "advanced"
             | "expert",
-          ageConfirmed: true,
-          locationConfirmed: true,
-          acceptedPolicies: true,
+          ageConfirmed,
+          locationConfirmed,
+          acceptedPolicies,
         },
       });
       setStep(3);
