@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
+import { checkIsAdmin } from "@/lib/admin-audits.functions";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard" },
