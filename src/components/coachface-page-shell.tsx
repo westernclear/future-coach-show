@@ -1,7 +1,7 @@
 import { useMemo, type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
 import { checkIsAdmin } from "@/lib/admin-audits.functions";
@@ -19,6 +19,11 @@ const navItems = [
 ] as const;
 
 export function CoachFacePageShell({ children }: { children: ReactNode }) {
+  const pathname = useLocation({ select: (location) => location.pathname });
+  const isAccountPage = ["/dashboard", "/profile", "/security", "/admin"].some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
+  );
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 border-b border-border/70 bg-background/90 backdrop-blur-xl">
@@ -47,8 +52,10 @@ export function CoachFacePageShell({ children }: { children: ReactNode }) {
               </Link>
             ))}
           </nav>
-          <Button size="sm" asChild>
-            <Link to="/auth">Sign in</Link>
+          <Button size="sm" variant={isAccountPage ? "outline" : "default"} asChild>
+            <Link to={isAccountPage ? "/profile" : "/auth"}>
+              {isAccountPage ? "My profile" : "Sign in"}
+            </Link>
           </Button>
         </div>
         <nav
