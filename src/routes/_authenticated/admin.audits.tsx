@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { Ban, ChevronLeft, ChevronRight, Filter, Loader2, ShieldCheck } from "lucide-react";
+import { Ban, ChevronLeft, ChevronRight, Loader2, ShieldCheck } from "lucide-react";
 
 import { CoachFacePageShell, PageHero } from "@/components/coachface-page-shell";
 import { Badge } from "@/components/ui/badge";
