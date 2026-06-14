@@ -28,6 +28,14 @@ export default defineConfig({
       },
     },
     {
+      name: "tablet",
+      use: {
+        viewport: { width: 768, height: 1024 },
+        isMobile: true,
+        hasTouch: true,
+      },
+    },
+    {
       name: "small-mobile",
       use: {
         viewport: { width: 320, height: 568 },
