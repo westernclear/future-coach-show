@@ -22,7 +22,9 @@ const profileSchema = z.object({
   preferredLeague: z.string().trim().min(1).max(100),
   fantasySkillLevel: z.enum(["rookie", "intermediate", "advanced", "expert"]),
   avatarUrl: z.string().trim().max(500),
-  avatarType: z.enum(["real_photo", "ai_avatar", "cartoon_avatar", "team_logo", "custom_image"]),
+  avatarType: z
+    .enum(["real_photo", "ai_avatar", "cartoon_avatar", "team_logo", "custom_image"])
+    .default("custom_image"),
   ageConfirmed: z.boolean(),
   locationConfirmed: z.boolean(),
   acceptedPolicies: z.literal(true),
@@ -40,7 +42,9 @@ const draftSchema = z.object({
   preferredLeague: z.string().trim().max(100),
   fantasySkillLevel: z.enum(["rookie", "intermediate", "advanced", "expert"]),
   avatarUrl: z.string().trim().max(500),
-  avatarType: z.enum(["real_photo", "ai_avatar", "cartoon_avatar", "team_logo", "custom_image"]),
+  avatarType: z
+    .enum(["real_photo", "ai_avatar", "cartoon_avatar", "team_logo", "custom_image"])
+    .default("custom_image"),
   step: z.number().int().min(0).max(2),
 });
 
@@ -58,7 +62,11 @@ export const getOnboardingStatus = createServerFn({ method: "GET" })
     const user = userData.user;
     const metadata = user?.user_metadata ?? {};
     let avatarPreviewUrl = profile?.avatar_url ?? "";
-    if (profile?.avatar_url && !profile.avatar_url.startsWith("http")) {
+    if (
+      profile?.avatar_url &&
+      !profile.avatar_url.startsWith("http") &&
+      !profile.avatar_url.startsWith("/")
+    ) {
       const { data } = await context.supabase.storage
         .from("profile-photos")
         .createSignedUrl(profile.avatar_url, 3600);
