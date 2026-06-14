@@ -90,7 +90,8 @@ export const saveOnboardingDraft = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("profiles")
-      .update({
+      .upsert({
+      id: context.userId,
       legal_name: data.legalName || null,
       display_name: data.legalName || "CoachFace Player",
       username: data.username || `player_${context.userId.slice(0, 8)}`,
@@ -105,8 +106,7 @@ export const saveOnboardingDraft = createServerFn({ method: "POST" })
       fantasy_skill_level: data.fantasySkillLevel,
       avatar_url: data.avatarUrl || null,
       onboarding_step: data.step,
-      })
-      .eq("id", context.userId);
+      });
     if (error) {
       throw new Error(
         error.message.includes("username")
