@@ -6,7 +6,6 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 
 const signupMetadataSchema = z.object({
@@ -87,24 +86,6 @@ function AuthPage() {
     });
   };
 
-  const handleGoogle = async () => {
-    setLoading(true);
-    setMessage(null);
-    const destination = redirect === "/fifa-special" ? "/fifa-special" : "/onboarding";
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}${destination}`,
-    });
-    if (result.error) {
-      setLoading(false);
-      setMessage(result.error.message);
-      return;
-    }
-    if (!result.redirected) {
-      await router.invalidate();
-      await navigate({ to: destination, replace: true });
-    }
-  };
-
   return (
     <main className="grid min-h-screen bg-foreground text-background lg:grid-cols-2">
       <section className="flex min-h-72 flex-col justify-between border-b border-game-border p-6 lg:min-h-screen lg:border-b-0 lg:border-r lg:p-12">
@@ -146,21 +127,7 @@ function AuthPage() {
               : "Join the first multi-sport fantasy platform built around coaches."}
           </p>
 
-          <Button
-            variant="outline"
-            className="mt-8 w-full"
-            onClick={handleGoogle}
-            disabled={loading}
-          >
-            Continue with Google
-          </Button>
-          <div className="my-6 flex items-center gap-3 text-xs uppercase tracking-widest text-muted-foreground">
-            <span className="h-px flex-1 bg-border" />
-            or email
-            <span className="h-px flex-1 bg-border" />
-          </div>
-
-          <form className="space-y-5" onSubmit={handleEmail}>
+          <form className="mt-8 space-y-5" onSubmit={handleEmail}>
             {mode === "signup" && (
               <div className="grid gap-5 sm:grid-cols-2">
                 <div className="space-y-2 sm:col-span-2">
