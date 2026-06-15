@@ -149,6 +149,18 @@ function OnboardingPage() {
       setUploadingPhoto(false);
       return;
     }
+    try {
+      const bytes = Array.from(new Uint8Array(await file.arrayBuffer()));
+      await validateUpload({ data: { bytes, claimedType: file.type } });
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "That image could not be validated. Choose a different photo.",
+      );
+      setUploadingPhoto(false);
+      return;
+    }
     const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
     const path = `${userId}/avatar.${extension}`;
     const { error } = await supabase.storage
