@@ -30,6 +30,7 @@ import {
   getOnboardingStatus,
   saveOnboardingDraft,
 } from "@/lib/onboarding.functions";
+import { validateProfileImageUpload } from "@/lib/profile-editor.functions";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
