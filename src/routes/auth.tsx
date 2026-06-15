@@ -86,24 +86,6 @@ function AuthPage() {
     });
   };
 
-  const handleGoogle = async () => {
-    setLoading(true);
-    setMessage(null);
-    const destination = redirect === "/fifa-special" ? "/fifa-special" : "/onboarding";
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}${destination}`,
-    });
-    if (result.error) {
-      setLoading(false);
-      setMessage(result.error.message);
-      return;
-    }
-    if (!result.redirected) {
-      await router.invalidate();
-      await navigate({ to: destination, replace: true });
-    }
-  };
-
   return (
     <main className="grid min-h-screen bg-foreground text-background lg:grid-cols-2">
       <section className="flex min-h-72 flex-col justify-between border-b border-game-border p-6 lg:min-h-screen lg:border-b-0 lg:border-r lg:p-12">
