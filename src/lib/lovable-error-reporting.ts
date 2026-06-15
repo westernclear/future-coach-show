@@ -33,4 +33,45 @@ export function reportLovableError(error: unknown, context: Record<string, unkno
       severity: "error",
     },
   );
+  // Also forward to our own monitoring backend (fire-and-forget).
+  try {
+    const message =
+      error instanceof Error ? error.message : typeof error === "string" ? error : "Unknown error";
+    const stack = error instanceof Error ? error.stack ?? null : null;
+    void fetch("/api/public/monitoring/log-error", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: true,
+      body: JSON.stringify({
+        message,
+        stack,
+        route: window.location.pathname,
+        source: typeof context.source === "string" ? context.source : "react_error_boundary",
+        severity: "error",
+        context,
+      }),
+    }).catch(() => {});
+  } catch {
+    /* ignore */
+  }
+}
+
+let globalHandlersInstalled = false;
+
+export function installGlobalErrorReporter() {
+  if (typeof window === "undefined" || globalHandlersInstalled) return;
+  globalHandlersInstalled = true;
+  window.addEventListener("error", (event) => {
+    reportLovableError(event.error ?? new Error(event.message), {
+      source: "window.onerror",
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    });
+  });
+  window.addEventListener("unhandledrejection", (event) => {
+    reportLovableError(event.reason ?? new Error("Unhandled promise rejection"), {
+      source: "unhandledrejection",
+    });
+  });
 }
