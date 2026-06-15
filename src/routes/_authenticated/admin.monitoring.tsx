@@ -23,7 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { toast } from "@/components/ui/sonner";
+import { toast } from "sonner";
 import {
   getMonitoringEvents,
   triggerAlertSweep,
