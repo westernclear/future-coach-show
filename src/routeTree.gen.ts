@@ -28,6 +28,9 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminAuditsRouteImport } from './routes/_authenticated/admin.audits'
+import { Route as ApiPublicMonitoringProbeRouteImport } from './routes/api/public/monitoring/probe'
+import { Route as ApiPublicMonitoringLogErrorRouteImport } from './routes/api/public/monitoring/log-error'
+import { Route as ApiPublicMonitoringAlertSweepRouteImport } from './routes/api/public/monitoring/alert-sweep'
 
 const TheShowRoute = TheShowRouteImport.update({
   id: '/the-show',
@@ -124,6 +127,24 @@ const AuthenticatedAdminAuditsRoute =
     path: '/admin/audits',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicMonitoringProbeRoute =
+  ApiPublicMonitoringProbeRouteImport.update({
+    id: '/api/public/monitoring/probe',
+    path: '/api/public/monitoring/probe',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicMonitoringLogErrorRoute =
+  ApiPublicMonitoringLogErrorRouteImport.update({
+    id: '/api/public/monitoring/log-error',
+    path: '/api/public/monitoring/log-error',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicMonitoringAlertSweepRoute =
+  ApiPublicMonitoringAlertSweepRouteImport.update({
+    id: '/api/public/monitoring/alert-sweep',
+    path: '/api/public/monitoring/alert-sweep',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -144,6 +165,9 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/security': typeof AuthenticatedSecurityRoute
   '/admin/audits': typeof AuthenticatedAdminAuditsRoute
+  '/api/public/monitoring/alert-sweep': typeof ApiPublicMonitoringAlertSweepRoute
+  '/api/public/monitoring/log-error': typeof ApiPublicMonitoringLogErrorRoute
+  '/api/public/monitoring/probe': typeof ApiPublicMonitoringProbeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -164,6 +188,9 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/security': typeof AuthenticatedSecurityRoute
   '/admin/audits': typeof AuthenticatedAdminAuditsRoute
+  '/api/public/monitoring/alert-sweep': typeof ApiPublicMonitoringAlertSweepRoute
+  '/api/public/monitoring/log-error': typeof ApiPublicMonitoringLogErrorRoute
+  '/api/public/monitoring/probe': typeof ApiPublicMonitoringProbeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -186,6 +213,9 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/security': typeof AuthenticatedSecurityRoute
   '/_authenticated/admin/audits': typeof AuthenticatedAdminAuditsRoute
+  '/api/public/monitoring/alert-sweep': typeof ApiPublicMonitoringAlertSweepRoute
+  '/api/public/monitoring/log-error': typeof ApiPublicMonitoringLogErrorRoute
+  '/api/public/monitoring/probe': typeof ApiPublicMonitoringProbeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -208,6 +238,9 @@ export interface FileRouteTypes {
     | '/profile'
     | '/security'
     | '/admin/audits'
+    | '/api/public/monitoring/alert-sweep'
+    | '/api/public/monitoring/log-error'
+    | '/api/public/monitoring/probe'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -228,6 +261,9 @@ export interface FileRouteTypes {
     | '/profile'
     | '/security'
     | '/admin/audits'
+    | '/api/public/monitoring/alert-sweep'
+    | '/api/public/monitoring/log-error'
+    | '/api/public/monitoring/probe'
   id:
     | '__root__'
     | '/'
@@ -249,6 +285,9 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/security'
     | '/_authenticated/admin/audits'
+    | '/api/public/monitoring/alert-sweep'
+    | '/api/public/monitoring/log-error'
+    | '/api/public/monitoring/probe'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -266,6 +305,9 @@ export interface RootRouteChildren {
   ScoringRoute: typeof ScoringRoute
   TermsRoute: typeof TermsRoute
   TheShowRoute: typeof TheShowRoute
+  ApiPublicMonitoringAlertSweepRoute: typeof ApiPublicMonitoringAlertSweepRoute
+  ApiPublicMonitoringLogErrorRoute: typeof ApiPublicMonitoringLogErrorRoute
+  ApiPublicMonitoringProbeRoute: typeof ApiPublicMonitoringProbeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -403,6 +445,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAuditsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/monitoring/probe': {
+      id: '/api/public/monitoring/probe'
+      path: '/api/public/monitoring/probe'
+      fullPath: '/api/public/monitoring/probe'
+      preLoaderRoute: typeof ApiPublicMonitoringProbeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/monitoring/log-error': {
+      id: '/api/public/monitoring/log-error'
+      path: '/api/public/monitoring/log-error'
+      fullPath: '/api/public/monitoring/log-error'
+      preLoaderRoute: typeof ApiPublicMonitoringLogErrorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/monitoring/alert-sweep': {
+      id: '/api/public/monitoring/alert-sweep'
+      path: '/api/public/monitoring/alert-sweep'
+      fullPath: '/api/public/monitoring/alert-sweep'
+      preLoaderRoute: typeof ApiPublicMonitoringAlertSweepRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -440,17 +503,10 @@ const rootRouteChildren: RootRouteChildren = {
   ScoringRoute: ScoringRoute,
   TermsRoute: TermsRoute,
   TheShowRoute: TheShowRoute,
+  ApiPublicMonitoringAlertSweepRoute: ApiPublicMonitoringAlertSweepRoute,
+  ApiPublicMonitoringLogErrorRoute: ApiPublicMonitoringLogErrorRoute,
+  ApiPublicMonitoringProbeRoute: ApiPublicMonitoringProbeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

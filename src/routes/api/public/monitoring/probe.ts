@@ -43,37 +43,42 @@ async function probeOne(origin: string, path: string) {
   }
 }
 
+async function runProbe(origin: string) {
+  const { logMonitoringEvent } = await import("@/lib/monitoring/log.server");
+  const results = await Promise.all(
+    TARGETS.map(async (t) => {
+      const r = await probeOne(origin, t.path);
+      await logMonitoringEvent({
+        kind: r.ok ? "probe_success" : "probe_failure",
+        severity: r.ok ? "info" : "critical",
+        route: t.path,
+        statusCode: r.status,
+        durationMs: r.durationMs,
+        message: r.ok
+          ? `probe ok ${t.label} ${r.status} ${r.durationMs}ms`
+          : `probe failed ${t.label} status=${r.status} err=${r.error ?? "5xx"}`,
+        metadata: { label: t.label, error: r.error },
+      });
+      return { ...t, ...r };
+    }),
+  );
+  return results;
+}
+
 export const Route = createFileRoute("/api/public/monitoring/probe")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         const url = new URL(request.url);
         const origin = `${url.protocol}//${url.host}`;
-        const { logMonitoringEvent } = await import("@/lib/monitoring/log.server");
-
-        const results = await Promise.all(
-          TARGETS.map(async (t) => {
-            const r = await probeOne(origin, t.path);
-            await logMonitoringEvent({
-              kind: r.ok ? "probe_success" : "probe_failure",
-              severity: r.ok ? "info" : "critical",
-              route: t.path,
-              statusCode: r.status,
-              durationMs: r.durationMs,
-              message: r.ok
-                ? `probe ok ${t.label} ${r.status} ${r.durationMs}ms`
-                : `probe failed ${t.label} status=${r.status} err=${r.error ?? "5xx"}`,
-              metadata: { label: t.label, error: r.error },
-            });
-            return { ...t, ...r };
-          }),
-        );
-
+        const results = await runProbe(origin);
         return Response.json({ ok: true, origin, results });
       },
       GET: async ({ request }) => {
-        // Allow GET so it's easy to test from a browser.
-        return Route.options.server!.handlers!.POST!({ request } as never);
+        const url = new URL(request.url);
+        const origin = `${url.protocol}//${url.host}`;
+        const results = await runProbe(origin);
+        return Response.json({ ok: true, origin, results });
       },
     },
   },

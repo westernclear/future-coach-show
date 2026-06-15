@@ -34,7 +34,7 @@ export async function logMonitoringEvent(input: LogMonitoringEventInput): Promis
       duration_ms: input.durationMs ?? null,
       user_id: input.userId ?? null,
       user_agent: input.userAgent?.slice(0, 500) ?? null,
-      metadata: input.metadata ?? {},
+      metadata: (input.metadata ?? {}) as never,
     });
     if (error) console.error("[monitoring] insert failed", error);
   } catch (err) {
