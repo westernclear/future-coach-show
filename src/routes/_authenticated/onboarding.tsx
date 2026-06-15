@@ -30,6 +30,7 @@ import {
   getOnboardingStatus,
   saveOnboardingDraft,
 } from "@/lib/onboarding.functions";
+import { validateProfileImageUpload } from "@/lib/profile-editor.functions";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
@@ -53,6 +54,7 @@ function OnboardingPage() {
   const loadStatus = useServerFn(getOnboardingStatus);
   const saveOnboarding = useServerFn(completeOnboarding);
   const saveDraft = useServerFn(saveOnboardingDraft);
+  const validateUpload = useServerFn(validateProfileImageUpload);
   const [status, setStatus] = useState<Awaited<ReturnType<typeof getOnboardingStatus>> | null>(
     null,
   );
@@ -144,6 +146,18 @@ function OnboardingPage() {
     const userId = userData.user?.id;
     if (!userId) {
       setMessage("Please sign in again before uploading a photo.");
+      setUploadingPhoto(false);
+      return;
+    }
+    try {
+      const bytes = Array.from(new Uint8Array(await file.arrayBuffer()));
+      await validateUpload({ data: { bytes, claimedType: file.type } });
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : "That image could not be validated. Choose a different photo.",
+      );
       setUploadingPhoto(false);
       return;
     }
