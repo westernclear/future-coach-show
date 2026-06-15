@@ -29,13 +29,19 @@ export default defineConfig({
         navigateFallback: null,
         runtimeCaching: [
           {
-            urlPattern: ({ request, url }) =>
-              request.mode === "navigate" && !url.pathname.startsWith("/~oauth"),
+            urlPattern: ({ request, url }) => {
+              if (request.mode !== "navigate") return false;
+              const p = url.pathname;
+              if (p.startsWith("/~oauth")) return false;
+              // Never cache authenticated routes — risk of leaking another user's shell on shared devices.
+              const authedPrefixes = ["/dashboard", "/profile", "/onboarding", "/security", "/admin"];
+              return !authedPrefixes.some((prefix) => p === prefix || p.startsWith(`${prefix}/`));
+            },
             handler: "NetworkFirst",
             options: {
               cacheName: "coachface-pages",
               networkTimeoutSeconds: 4,
-              expiration: { maxEntries: 30, maxAgeSeconds: 7 * 24 * 60 * 60 },
+              expiration: { maxEntries: 30, maxAgeSeconds: 60 * 60 },
               cacheableResponse: { statuses: [0, 200] },
             },
           },
