@@ -127,21 +127,7 @@ function AuthPage() {
               : "Join the first multi-sport fantasy platform built around coaches."}
           </p>
 
-          <Button
-            variant="outline"
-            className="mt-8 w-full"
-            onClick={handleGoogle}
-            disabled={loading}
-          >
-            Continue with Google
-          </Button>
-          <div className="my-6 flex items-center gap-3 text-xs uppercase tracking-widest text-muted-foreground">
-            <span className="h-px flex-1 bg-border" />
-            or email
-            <span className="h-px flex-1 bg-border" />
-          </div>
-
-          <form className="space-y-5" onSubmit={handleEmail}>
+          <form className="mt-8 space-y-5" onSubmit={handleEmail}>
             {mode === "signup" && (
               <div className="grid gap-5 sm:grid-cols-2">
                 <div className="space-y-2 sm:col-span-2">
