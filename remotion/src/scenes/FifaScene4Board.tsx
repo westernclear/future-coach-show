@@ -1,12 +1,13 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring } from "remotion";
 
 const rows = [
-  { rank: 1, name: "You", country: "🇺🇸", score: 487.2, you: true },
-  { rank: 2, name: "@futbol_jefe", country: "🇲🇽", score: 471.5 },
-  { rank: 3, name: "@gaffer_global", country: "🇬🇧", score: 463.0 },
-  { rank: 4, name: "@taticas_br", country: "🇧🇷", score: 451.8 },
-  { rank: 5, name: "@der_trainer", country: "🇩🇪", score: 442.4 },
+  { rank: 1, name: "You", code: "USA", color: "#0A3161", score: 487.2, you: true },
+  { rank: 2, name: "@futbol_jefe", code: "MEX", color: "#006847", score: 471.5 },
+  { rank: 3, name: "@gaffer_global", code: "ENG", color: "#C8102E", score: 463.0 },
+  { rank: 4, name: "@taticas_br", code: "BRA", color: "#009B3A", score: 451.8 },
+  { rank: 5, name: "@der_trainer", code: "GER", color: "#1C1C1C", score: 442.4 },
 ];
+
 
 export const FifaScene4Board: React.FC = () => {
   const frame = useCurrentFrame();
@@ -73,7 +74,23 @@ export const FifaScene4Board: React.FC = () => {
               <div style={{ fontFamily: "Anton, sans-serif", fontSize: 52, width: 90 }}>
                 {String(r.rank).padStart(2, "0")}
               </div>
-              <div style={{ fontSize: 46, width: 70 }}>{r.country}</div>
+              <div
+                style={{
+                  width: 86,
+                  height: 56,
+                  marginRight: 18,
+                  background: r.color,
+                  color: "#fff",
+                  display: "grid",
+                  placeItems: "center",
+                  fontFamily: "Anton, sans-serif",
+                  fontSize: 28,
+                  letterSpacing: 1,
+                  border: "2px solid rgba(255,255,255,0.2)",
+                }}
+              >
+                {r.code}
+              </div>
               <div style={{ flex: 1, fontFamily: "Inter, sans-serif", fontWeight: 900, fontSize: 36 }}>
                 {r.name}
               </div>

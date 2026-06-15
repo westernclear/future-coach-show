@@ -1,12 +1,13 @@
 import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, spring } from "remotion";
 
 const managers = [
-  { initials: "LE", name: "Luis Enrique", country: "Spain", flag: "🇪🇸" },
-  { initials: "DD", name: "Didier Deschamps", country: "France", flag: "🇫🇷" },
-  { initials: "JN", name: "Julian Nagelsmann", country: "Germany", flag: "🇩🇪" },
-  { initials: "LS", name: "Lionel Scaloni", country: "Argentina", flag: "🇦🇷" },
-  { initials: "DA", name: "Dorival Júnior", country: "Brazil", flag: "🇧🇷" },
+  { initials: "LE", name: "Luis Enrique", country: "Spain", code: "ESP", color: "#C60B1E" },
+  { initials: "DD", name: "Didier Deschamps", country: "France", code: "FRA", color: "#0055A4" },
+  { initials: "JN", name: "Julian Nagelsmann", country: "Germany", code: "GER", color: "#1C1C1C" },
+  { initials: "LS", name: "Lionel Scaloni", country: "Argentina", code: "ARG", color: "#74ACDF" },
+  { initials: "DA", name: "Dorival Júnior", country: "Brazil", code: "BRA", color: "#009B3A" },
 ];
+
 
 export const FifaScene2Pick: React.FC = () => {
   const frame = useCurrentFrame();
@@ -96,7 +97,22 @@ export const FifaScene2Pick: React.FC = () => {
                 transform: `translateX(${interpolate(s, [0, 1], [-50, 0])}px)`,
               }}
             >
-              <div style={{ fontSize: 56, lineHeight: 1 }}>{m.flag}</div>
+              <div
+                style={{
+                  width: 84,
+                  height: 56,
+                  background: m.color,
+                  color: "#fff",
+                  display: "grid",
+                  placeItems: "center",
+                  fontFamily: "Anton, sans-serif",
+                  fontSize: 26,
+                  letterSpacing: 1,
+                  border: "2px solid rgba(255,255,255,0.15)",
+                }}
+              >
+                {m.code}
+              </div>
               <div
                 style={{
                   width: 68,
