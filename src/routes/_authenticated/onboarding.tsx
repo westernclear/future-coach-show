@@ -54,6 +54,7 @@ function OnboardingPage() {
   const loadStatus = useServerFn(getOnboardingStatus);
   const saveOnboarding = useServerFn(completeOnboarding);
   const saveDraft = useServerFn(saveOnboardingDraft);
+  const validateUpload = useServerFn(validateProfileImageUpload);
   const [status, setStatus] = useState<Awaited<ReturnType<typeof getOnboardingStatus>> | null>(
     null,
   );
