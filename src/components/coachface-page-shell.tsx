@@ -134,6 +134,10 @@ function AdminFooter() {
           <span className="size-2 rounded-full bg-primary" />
           Upload Audits
         </Link>
+        <Link to="/admin/monitoring" className="flex items-center gap-1.5 text-game-muted hover:text-background">
+          <span className="size-2 rounded-full bg-primary" />
+          Monitoring
+        </Link>
       </nav>
     </div>
   );
