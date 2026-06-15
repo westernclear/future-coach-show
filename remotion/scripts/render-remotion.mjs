@@ -22,10 +22,12 @@ await renderMedia({
   composition,
   serveUrl: bundled,
   codec: "h264",
-  outputLocation: "/mnt/documents/coachface-reel-30s.mp4",
+  outputLocation: "/tmp/reel/video-silent.mp4",
   puppeteerInstance: browser,
+  muted: true,
   concurrency: 1,
 });
+
 
 await browser.close({ silent: false });
 console.log("done");
