@@ -24,14 +24,23 @@ export const FifaScene5CTA: React.FC = () => {
     >
       <div
         style={{
-          fontSize: 280,
-          lineHeight: 1,
           opacity: trophy,
           transform: `scale(${interpolate(trophy, [0, 1], [0.4, 1]) * pulse})`,
           filter: "drop-shadow(0 0 40px rgba(233,199,88,0.7))",
         }}
       >
-        🏆
+        <svg width="260" height="280" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#F5D77A" />
+              <stop offset="100%" stopColor="#B8862A" />
+            </linearGradient>
+          </defs>
+          <path
+            fill="url(#g)"
+            d="M48 8H44V6a2 2 0 00-2-2H22a2 2 0 00-2 2v2h-4a4 4 0 00-4 4v4a10 10 0 0010 10c.6 3.4 3 6.2 6 7.4V40H22a2 2 0 00-2 2v4h24v-4a2 2 0 00-2-2h-6v-6.6c3-1.2 5.4-4 6-7.4a10 10 0 0010-10v-4a4 4 0 00-4-4zM16 16v-4h4v9.7A6 6 0 0116 16zm32 0a6 6 0 01-4 5.7V12h4v4zM14 52h36a2 2 0 012 2v4H12v-4a2 2 0 012-2z"
+          />
+        </svg>
       </div>
 
       <div
