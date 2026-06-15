@@ -484,6 +484,72 @@ export type Database = {
           },
         ]
       }
+      monitoring_alert_state: {
+        Row: {
+          consecutive_failures: number
+          id: boolean
+          last_alert_sent_at: string | null
+          last_alert_signature: string | null
+          updated_at: string
+        }
+        Insert: {
+          consecutive_failures?: number
+          id?: boolean
+          last_alert_sent_at?: string | null
+          last_alert_signature?: string | null
+          updated_at?: string
+        }
+        Update: {
+          consecutive_failures?: number
+          id?: boolean
+          last_alert_sent_at?: string | null
+          last_alert_signature?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      monitoring_events: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          id: string
+          kind: Database["public"]["Enums"]["monitoring_event_kind"]
+          message: string
+          metadata: Json
+          route: string | null
+          severity: Database["public"]["Enums"]["monitoring_severity"]
+          status_code: number | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          id?: string
+          kind: Database["public"]["Enums"]["monitoring_event_kind"]
+          message: string
+          metadata?: Json
+          route?: string | null
+          severity?: Database["public"]["Enums"]["monitoring_severity"]
+          status_code?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          id?: string
+          kind?: Database["public"]["Enums"]["monitoring_event_kind"]
+          message?: string
+          metadata?: Json
+          route?: string | null
+          severity?: Database["public"]["Enums"]["monitoring_severity"]
+          status_code?: number | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       prize_awards: {
         Row: {
           amount: number
@@ -1371,6 +1437,13 @@ export type Database = {
         | "final"
         | "cancelled"
       game_status: "scheduled" | "live" | "final" | "postponed" | "cancelled"
+      monitoring_event_kind:
+        | "client_error"
+        | "server_error"
+        | "probe_failure"
+        | "probe_success"
+        | "alert_sent"
+      monitoring_severity: "info" | "warning" | "error" | "critical"
       review_status: "pending" | "approved" | "rejected" | "overridden"
       reward_kind:
         | "points"
@@ -1523,6 +1596,14 @@ export const Constants = {
       ],
       contest_status: ["draft", "open", "locked", "live", "final", "cancelled"],
       game_status: ["scheduled", "live", "final", "postponed", "cancelled"],
+      monitoring_event_kind: [
+        "client_error",
+        "server_error",
+        "probe_failure",
+        "probe_success",
+        "alert_sent",
+      ],
+      monitoring_severity: ["info", "warning", "error", "critical"],
       review_status: ["pending", "approved", "rejected", "overridden"],
       reward_kind: ["points", "contest_ticket", "badge", "merchandise", "cash"],
       reward_status: [
