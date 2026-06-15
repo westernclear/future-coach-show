@@ -129,6 +129,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   useEffect(() => {
+    installGlobalErrorReporter();
     const register = () => {
       void registerCoachFaceServiceWorker();
     };
