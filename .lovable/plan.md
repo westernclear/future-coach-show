@@ -1,24 +1,45 @@
-## Goal
-Produce a standalone Theory of Operations document for the CoachFace engineering team, covering how the system runs, how it is secured, and how it is maintained.
+# Access Code Gate (Site-wide)
 
-## Deliverable
-A single professional document (DOCX) stored under `/mnt/documents/` and presented as a downloadable artifact. The document will be written in plain language suitable for both frontend engineers and backend developers.
+A single shared access code blocks the entire CoachFace site. Visitors who haven't entered the code are redirected to `/unlock`. Once entered, they stay unlocked indefinitely (1 year cookie, refreshed on each visit, "until further notice").
 
-## Structure
-1. **Executive Summary** — one-page snapshot of CoachFace, its stage, and why this document exists.
-2. **System Purpose & Scope** — what CoachFace does (multi-sport fantasy coach game), primary user flows, and bounded context.
-3. **Architecture Overview** — the seven horizontal layers (Edge/CDN, Presentation, API Gateway, Core Services, Data Platform, External Feeds, Async Processing) with a concise diagram description.
-4. **Technology Stack** — canonical stack table: TanStack Start, React 19, Tailwind v4, Radix/shadcn, Supabase Postgres, Supabase Auth/RLS/Realtime, TanStack Query, with notes on what is live today versus phased additions.
-5. **Data Model** — schema summary of every public table, its purpose, key relationships, and RLS posture. Includes critical constraints (e.g., contest entry eligibility tied to identity verification).
-6. **Security & Access Control** — authentication flow (Supabase Auth, Google OAuth via Lovable broker), role model (admin, editor, scoring_analyst, user), RLS policy strategy, service-role vs. user-scoped access, and the security-dashboard workflow.
-7. **Server Runtime & API** — TanStack Start server functions, middleware chain (error handling, auth attacher), public API endpoint rules (`/api/public/*`), and the SSR/edge runtime constraints (Cloudflare Workers / stateless).
-8. **Monitoring & Observability** — monitoring events table, probe/alert-sweep endpoints, error capture pipeline, and how the security scanner findings are tracked and remediated.
-9. **Operational Procedures** — how to read logs, how alerts are triggered, how to respond to a security finding, and how to run a database migration.
-10. **Deployment & Environments** — preview URL, published URL, custom domain, build commands, and environment-variable classification (client vs. server secrets).
-11. **Known Constraints & Risks** — Worker runtime limits (no child_process, no sharp), RLS-first design implications, and current external dependencies.
-12. **Roadmap Context** — summary of Phase 1–3 additions from the architecture blueprint so engineers understand what is coming.
+## How it works
 
-## Process
-- I will synthesize the existing codebase, migrations, and blueprint into the document.
-- No source code changes are required.
-- Once approved, I will generate the DOCX and present it as an artifact.
+1. Two server-only secrets are stored: `SITE_ACCESS_CODE` (the code Isaac sets) and `SITE_GATE_SESSION_SECRET` (auto-generated, encrypts the cookie).
+2. A server function `unlockSite` compares the submitted code to `SITE_ACCESS_CODE` using a timing-safe check. On success it sets an encrypted session cookie (`coachface-gate`) flagged `unlocked: true` for 365 days.
+3. A request-level middleware runs on every server request. If the path is anything other than `/unlock`, `/api/public/*`, or static assets and the session is not unlocked, it redirects to `/unlock`.
+4. The root route's `beforeLoad` also checks the session for SSR/client navigations and redirects unauthenticated visitors to `/unlock`, preserving the original URL via `?redirect=`.
+5. `/unlock` route renders a branded CoachFace lock screen with a single password input. On success it navigates to the original target (or `/`).
+
+## Files to add
+
+- `src/lib/site-gate.functions.ts` — `unlockSite`, `lockSite`, `getGateStatus` server functions + shared session config helper.
+- `src/lib/site-gate.server.ts` — server-only helpers (timing-safe compare, `requireUnlocked`, session config).
+- `src/routes/unlock.tsx` — the lock screen UI (CoachFace branding, matches `auth.tsx` styling).
+- Root `beforeLoad` guard added to `src/routes/__root.tsx` (skips `/unlock` and `/api/public/*`).
+
+## Files to modify
+
+- `src/routes/__root.tsx` — add `beforeLoad` that calls `getGateStatus` and throws `redirect({ to: "/unlock", search: { redirect: location.pathname } })` when locked, unless path is exempt.
+- `src/start.ts` — append a request middleware that enforces the gate at the server boundary (defense in depth for direct route hits and API calls).
+
+## Exemptions
+
+- `/unlock` (the form itself)
+- `/api/public/*` (webhooks, monitoring probes, cron)
+- Static assets (`/manifest.webmanifest`, icons, `/_build/*`) handled by middleware path checks
+
+`/auth` and all other routes are gated, per your "Entire site" choice.
+
+## Secrets
+
+- `SITE_ACCESS_CODE` — I'll request this from you via the secure secret form (you type the code you want visitors to use).
+- `SITE_GATE_SESSION_SECRET` — auto-generated (64 chars), used only to encrypt the gate cookie.
+
+## Unlock duration
+
+365-day cookie, refreshed on every request while unlocked. To revoke access later, rotate `SITE_ACCESS_CODE` (everyone re-enters) or change `SITE_GATE_SESSION_SECRET` (invalidates all existing cookies instantly).
+
+## Out of scope
+
+- No per-user codes, no usage tracking, no rate limiting on the unlock form (can add later if you want).
+- Existing Supabase auth (`/auth`, dashboard) keeps working unchanged behind the gate.
