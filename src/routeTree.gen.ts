@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UnlockRouteImport } from './routes/unlock'
 import { Route as TheShowRouteImport } from './routes/the-show'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ScoringRouteImport } from './routes/scoring'
@@ -33,6 +34,11 @@ import { Route as ApiPublicMonitoringProbeRouteImport } from './routes/api/publi
 import { Route as ApiPublicMonitoringLogErrorRouteImport } from './routes/api/public/monitoring/log-error'
 import { Route as ApiPublicMonitoringAlertSweepRouteImport } from './routes/api/public/monitoring/alert-sweep'
 
+const UnlockRoute = UnlockRouteImport.update({
+  id: '/unlock',
+  path: '/unlock',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TheShowRoute = TheShowRouteImport.update({
   id: '/the-show',
   path: '/the-show',
@@ -167,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/scoring': typeof ScoringRoute
   '/terms': typeof TermsRoute
   '/the-show': typeof TheShowRoute
+  '/unlock': typeof UnlockRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -191,6 +198,7 @@ export interface FileRoutesByTo {
   '/scoring': typeof ScoringRoute
   '/terms': typeof TermsRoute
   '/the-show': typeof TheShowRoute
+  '/unlock': typeof UnlockRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
@@ -217,6 +225,7 @@ export interface FileRoutesById {
   '/scoring': typeof ScoringRoute
   '/terms': typeof TermsRoute
   '/the-show': typeof TheShowRoute
+  '/unlock': typeof UnlockRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
@@ -243,6 +252,7 @@ export interface FileRouteTypes {
     | '/scoring'
     | '/terms'
     | '/the-show'
+    | '/unlock'
     | '/dashboard'
     | '/onboarding'
     | '/profile'
@@ -267,6 +277,7 @@ export interface FileRouteTypes {
     | '/scoring'
     | '/terms'
     | '/the-show'
+    | '/unlock'
     | '/dashboard'
     | '/onboarding'
     | '/profile'
@@ -292,6 +303,7 @@ export interface FileRouteTypes {
     | '/scoring'
     | '/terms'
     | '/the-show'
+    | '/unlock'
     | '/_authenticated/dashboard'
     | '/_authenticated/onboarding'
     | '/_authenticated/profile'
@@ -318,6 +330,7 @@ export interface RootRouteChildren {
   ScoringRoute: typeof ScoringRoute
   TermsRoute: typeof TermsRoute
   TheShowRoute: typeof TheShowRoute
+  UnlockRoute: typeof UnlockRoute
   ApiPublicMonitoringAlertSweepRoute: typeof ApiPublicMonitoringAlertSweepRoute
   ApiPublicMonitoringLogErrorRoute: typeof ApiPublicMonitoringLogErrorRoute
   ApiPublicMonitoringProbeRoute: typeof ApiPublicMonitoringProbeRoute
@@ -325,6 +338,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/unlock': {
+      id: '/unlock'
+      path: '/unlock'
+      fullPath: '/unlock'
+      preLoaderRoute: typeof UnlockRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/the-show': {
       id: '/the-show'
       path: '/the-show'
@@ -525,6 +545,7 @@ const rootRouteChildren: RootRouteChildren = {
   ScoringRoute: ScoringRoute,
   TermsRoute: TermsRoute,
   TheShowRoute: TheShowRoute,
+  UnlockRoute: UnlockRoute,
   ApiPublicMonitoringAlertSweepRoute: ApiPublicMonitoringAlertSweepRoute,
   ApiPublicMonitoringLogErrorRoute: ApiPublicMonitoringLogErrorRoute,
   ApiPublicMonitoringProbeRoute: ApiPublicMonitoringProbeRoute,
