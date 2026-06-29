@@ -6,12 +6,15 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  redirect,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError, installGlobalErrorReporter } from "../lib/lovable-error-reporting";
 import { registerCoachFaceServiceWorker } from "../lib/pwa";
+import { getGateStatus } from "../lib/site-gate.functions";
+
 
 function NotFoundComponent() {
   return (
@@ -74,6 +77,18 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  beforeLoad: async ({ location }) => {
+    const path = location.pathname;
+    if (path === "/unlock" || path.startsWith("/api/public/")) return;
+    const { unlocked } = await getGateStatus();
+    if (!unlocked) {
+      throw redirect({
+        to: "/unlock",
+        search: { redirect: location.href },
+      });
+    }
+  },
+
   head: () => ({
     meta: [
       { charSet: "utf-8" },
