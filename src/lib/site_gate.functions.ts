@@ -1,8 +1,23 @@
 import { createServerFn } from "@tanstack/react-start";
-import { setResponseHeader, useSession } from "@tanstack/react-start/server";
+import { getRequestHeader, setResponseHeader, useSession } from "@tanstack/react-start/server";
 import { createHash, timingSafeEqual } from "node:crypto";
 
 type GateSession = { unlocked?: boolean };
+
+const PREVIEW_HOSTS = ["lovableproject.com", "lovableproject-dev.com", "beta.lovable.dev"];
+
+function isPreviewOrLocalHost(host: string | null) {
+  const hostname = (host ?? "").split(":")[0]?.toLowerCase() ?? "";
+  return (
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname.startsWith("id-preview--") ||
+    hostname.startsWith("preview--") ||
+    PREVIEW_HOSTS.some((previewHost) =>
+      hostname === previewHost || hostname.endsWith(`.${previewHost}`),
+    )
+  );
+}
 
 function getSessionConfig() {
   const password = process.env.SITE_GATE_SESSION_SECRET;
@@ -30,8 +45,11 @@ export const getGateStatus = createServerFn({ method: "GET" }).handler(async () 
   setResponseHeader("cache-control", "no-store, no-cache, max-age=0, must-revalidate");
   setResponseHeader("pragma", "no-cache");
   setResponseHeader("expires", "0");
+  if (isPreviewOrLocalHost(getRequestHeader("host"))) {
+    return { unlocked: true, previewBypass: true };
+  }
   const session = await useSession<GateSession>(getSessionConfig());
-  return { unlocked: Boolean(session.data.unlocked) };
+  return { unlocked: Boolean(session.data.unlocked), previewBypass: false };
 });
 
 export const unlockSite = createServerFn({ method: "POST" })
