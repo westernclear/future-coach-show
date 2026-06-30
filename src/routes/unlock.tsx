@@ -7,7 +7,7 @@ import { Loader2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { unlockSite } from "@/lib/site-gate.functions";
+import { unlockSite } from "@/lib/site_gate.functions";
 
 export const Route = createFileRoute("/unlock")({
   validateSearch: z.object({ redirect: z.string().optional() }),
