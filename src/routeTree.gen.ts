@@ -30,6 +30,7 @@ import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authentic
 import { Route as AuthenticatedEligibilityRouteImport } from './routes/_authenticated/eligibility'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminMonitoringRouteImport } from './routes/_authenticated/admin.monitoring'
+import { Route as AuthenticatedAdminJurisdictionsRouteImport } from './routes/_authenticated/admin.jurisdictions'
 import { Route as AuthenticatedAdminAuditsRouteImport } from './routes/_authenticated/admin.audits'
 import { Route as ApiPublicMonitoringProbeRouteImport } from './routes/api/public/monitoring/probe'
 import { Route as ApiPublicMonitoringLogErrorRouteImport } from './routes/api/public/monitoring/log-error'
@@ -141,6 +142,12 @@ const AuthenticatedAdminMonitoringRoute =
     path: '/admin/monitoring',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminJurisdictionsRoute =
+  AuthenticatedAdminJurisdictionsRouteImport.update({
+    id: '/admin/jurisdictions',
+    path: '/admin/jurisdictions',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminAuditsRoute =
   AuthenticatedAdminAuditsRouteImport.update({
     id: '/admin/audits',
@@ -187,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/security': typeof AuthenticatedSecurityRoute
   '/admin/audits': typeof AuthenticatedAdminAuditsRoute
+  '/admin/jurisdictions': typeof AuthenticatedAdminJurisdictionsRoute
   '/admin/monitoring': typeof AuthenticatedAdminMonitoringRoute
   '/api/public/monitoring/alert-sweep': typeof ApiPublicMonitoringAlertSweepRoute
   '/api/public/monitoring/log-error': typeof ApiPublicMonitoringLogErrorRoute
@@ -213,6 +221,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/security': typeof AuthenticatedSecurityRoute
   '/admin/audits': typeof AuthenticatedAdminAuditsRoute
+  '/admin/jurisdictions': typeof AuthenticatedAdminJurisdictionsRoute
   '/admin/monitoring': typeof AuthenticatedAdminMonitoringRoute
   '/api/public/monitoring/alert-sweep': typeof ApiPublicMonitoringAlertSweepRoute
   '/api/public/monitoring/log-error': typeof ApiPublicMonitoringLogErrorRoute
@@ -241,6 +250,7 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/security': typeof AuthenticatedSecurityRoute
   '/_authenticated/admin/audits': typeof AuthenticatedAdminAuditsRoute
+  '/_authenticated/admin/jurisdictions': typeof AuthenticatedAdminJurisdictionsRoute
   '/_authenticated/admin/monitoring': typeof AuthenticatedAdminMonitoringRoute
   '/api/public/monitoring/alert-sweep': typeof ApiPublicMonitoringAlertSweepRoute
   '/api/public/monitoring/log-error': typeof ApiPublicMonitoringLogErrorRoute
@@ -269,6 +279,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/security'
     | '/admin/audits'
+    | '/admin/jurisdictions'
     | '/admin/monitoring'
     | '/api/public/monitoring/alert-sweep'
     | '/api/public/monitoring/log-error'
@@ -295,6 +306,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/security'
     | '/admin/audits'
+    | '/admin/jurisdictions'
     | '/admin/monitoring'
     | '/api/public/monitoring/alert-sweep'
     | '/api/public/monitoring/log-error'
@@ -322,6 +334,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/security'
     | '/_authenticated/admin/audits'
+    | '/_authenticated/admin/jurisdictions'
     | '/_authenticated/admin/monitoring'
     | '/api/public/monitoring/alert-sweep'
     | '/api/public/monitoring/log-error'
@@ -498,6 +511,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMonitoringRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/jurisdictions': {
+      id: '/_authenticated/admin/jurisdictions'
+      path: '/admin/jurisdictions'
+      fullPath: '/admin/jurisdictions'
+      preLoaderRoute: typeof AuthenticatedAdminJurisdictionsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/audits': {
       id: '/_authenticated/admin/audits'
       path: '/admin/audits'
@@ -536,6 +556,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSecurityRoute: typeof AuthenticatedSecurityRoute
   AuthenticatedAdminAuditsRoute: typeof AuthenticatedAdminAuditsRoute
+  AuthenticatedAdminJurisdictionsRoute: typeof AuthenticatedAdminJurisdictionsRoute
   AuthenticatedAdminMonitoringRoute: typeof AuthenticatedAdminMonitoringRoute
 }
 
@@ -546,6 +567,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSecurityRoute: AuthenticatedSecurityRoute,
   AuthenticatedAdminAuditsRoute: AuthenticatedAdminAuditsRoute,
+  AuthenticatedAdminJurisdictionsRoute: AuthenticatedAdminJurisdictionsRoute,
   AuthenticatedAdminMonitoringRoute: AuthenticatedAdminMonitoringRoute,
 }
 
