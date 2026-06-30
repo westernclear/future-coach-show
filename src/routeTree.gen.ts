@@ -24,6 +24,7 @@ import { Route as BlueprintRouteImport } from './routes/blueprint'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LegalEligibilityRouteImport } from './routes/legal.eligibility'
 import { Route as AuthenticatedSecurityRouteImport } from './routes/_authenticated/security'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
@@ -109,6 +110,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalEligibilityRoute = LegalEligibilityRouteImport.update({
+  id: '/legal/eligibility',
+  path: '/legal/eligibility',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedSecurityRoute = AuthenticatedSecurityRouteImport.update({
@@ -200,6 +206,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/security': typeof AuthenticatedSecurityRoute
+  '/legal/eligibility': typeof LegalEligibilityRoute
   '/admin/audits': typeof AuthenticatedAdminAuditsRoute
   '/admin/geo-blocks': typeof AuthenticatedAdminGeoBlocksRoute
   '/admin/jurisdictions': typeof AuthenticatedAdminJurisdictionsRoute
@@ -228,6 +235,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/security': typeof AuthenticatedSecurityRoute
+  '/legal/eligibility': typeof LegalEligibilityRoute
   '/admin/audits': typeof AuthenticatedAdminAuditsRoute
   '/admin/geo-blocks': typeof AuthenticatedAdminGeoBlocksRoute
   '/admin/jurisdictions': typeof AuthenticatedAdminJurisdictionsRoute
@@ -258,6 +266,7 @@ export interface FileRoutesById {
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/security': typeof AuthenticatedSecurityRoute
+  '/legal/eligibility': typeof LegalEligibilityRoute
   '/_authenticated/admin/audits': typeof AuthenticatedAdminAuditsRoute
   '/_authenticated/admin/geo-blocks': typeof AuthenticatedAdminGeoBlocksRoute
   '/_authenticated/admin/jurisdictions': typeof AuthenticatedAdminJurisdictionsRoute
@@ -288,6 +297,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/security'
+    | '/legal/eligibility'
     | '/admin/audits'
     | '/admin/geo-blocks'
     | '/admin/jurisdictions'
@@ -316,6 +326,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/security'
+    | '/legal/eligibility'
     | '/admin/audits'
     | '/admin/geo-blocks'
     | '/admin/jurisdictions'
@@ -345,6 +356,7 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding'
     | '/_authenticated/profile'
     | '/_authenticated/security'
+    | '/legal/eligibility'
     | '/_authenticated/admin/audits'
     | '/_authenticated/admin/geo-blocks'
     | '/_authenticated/admin/jurisdictions'
@@ -370,6 +382,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   TheShowRoute: typeof TheShowRoute
   UnlockRoute: typeof UnlockRoute
+  LegalEligibilityRoute: typeof LegalEligibilityRoute
   ApiPublicMonitoringAlertSweepRoute: typeof ApiPublicMonitoringAlertSweepRoute
   ApiPublicMonitoringLogErrorRoute: typeof ApiPublicMonitoringLogErrorRoute
   ApiPublicMonitoringProbeRoute: typeof ApiPublicMonitoringProbeRoute
@@ -480,6 +493,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/eligibility': {
+      id: '/legal/eligibility'
+      path: '/legal/eligibility'
+      fullPath: '/legal/eligibility'
+      preLoaderRoute: typeof LegalEligibilityRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/security': {
@@ -612,6 +632,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   TheShowRoute: TheShowRoute,
   UnlockRoute: UnlockRoute,
+  LegalEligibilityRoute: LegalEligibilityRoute,
   ApiPublicMonitoringAlertSweepRoute: ApiPublicMonitoringAlertSweepRoute,
   ApiPublicMonitoringLogErrorRoute: ApiPublicMonitoringLogErrorRoute,
   ApiPublicMonitoringProbeRoute: ApiPublicMonitoringProbeRoute,
