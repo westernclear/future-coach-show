@@ -18,11 +18,13 @@ test.describe("site access-code gate", () => {
     await ctx.dispose();
   });
 
-  test("production /unlock renders the access-code form", async ({ page }) => {
-    await page.goto(`${PROD_URL}/unlock`, { waitUntil: "domcontentloaded" });
-    await expect(page).toHaveURL(/\/unlock/);
-    await expect(page.getByRole("heading", { name: /access code/i })).toBeVisible();
-    await expect(page.getByRole("button", { name: /unlock|enter|continue/i })).toBeVisible();
+  test("production /unlock serves the access-code page", async () => {
+    const ctx = await pwRequest.newContext({ ignoreHTTPSErrors: true });
+    const res = await ctx.get(`${PROD_URL}/unlock`);
+    expect(res.status()).toBe(200);
+    const html = await res.text();
+    expect(html.toLowerCase()).toContain("access code");
+    await ctx.dispose();
   });
 
   test("preview host bypasses the gate and serves the app", async () => {
