@@ -401,6 +401,48 @@ export type Database = {
           },
         ]
       }
+      geo_block_log: {
+        Row: {
+          action: string
+          attested_country: string | null
+          attested_region: string | null
+          contest_type: string | null
+          context: Json
+          created_at: string
+          id: string
+          ip_country: string | null
+          ip_region: string | null
+          reason: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          attested_country?: string | null
+          attested_region?: string | null
+          contest_type?: string | null
+          context?: Json
+          created_at?: string
+          id?: string
+          ip_country?: string | null
+          ip_region?: string | null
+          reason: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          attested_country?: string | null
+          attested_region?: string | null
+          contest_type?: string | null
+          context?: Json
+          created_at?: string
+          id?: string
+          ip_country?: string | null
+          ip_region?: string | null
+          reason?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       identity_verifications: {
         Row: {
           address_status: string
@@ -437,6 +479,54 @@ export type Database = {
           updated_at?: string
           user_id?: string
           verified_at?: string | null
+        }
+        Relationships: []
+      }
+      jurisdiction_rules: {
+        Row: {
+          active: boolean
+          country_code: string
+          created_at: string
+          dfs_allowed: boolean
+          free_play_allowed: boolean
+          id: string
+          jurisdiction_name: string
+          min_age: number
+          notes: string | null
+          paid_contests_allowed: boolean
+          region_code: string | null
+          season_long_allowed: boolean
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          country_code: string
+          created_at?: string
+          dfs_allowed?: boolean
+          free_play_allowed?: boolean
+          id?: string
+          jurisdiction_name: string
+          min_age?: number
+          notes?: string | null
+          paid_contests_allowed?: boolean
+          region_code?: string | null
+          season_long_allowed?: boolean
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          country_code?: string
+          created_at?: string
+          dfs_allowed?: boolean
+          free_play_allowed?: boolean
+          id?: string
+          jurisdiction_name?: string
+          min_age?: number
+          notes?: string | null
+          paid_contests_allowed?: boolean
+          region_code?: string | null
+          season_long_allowed?: boolean
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1360,6 +1450,57 @@ export type Database = {
           document_version?: string
           id?: string
           metadata?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_eligibility: {
+        Row: {
+          age_confirmed_at: string
+          attested_country_code: string
+          attested_region_code: string | null
+          created_at: string
+          date_of_birth: string
+          free_play_eligible: boolean
+          last_checked_at: string
+          last_ip_country: string | null
+          last_ip_region: string | null
+          paid_play_eligible: boolean
+          responsible_play_accepted_at: string
+          terms_accepted_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age_confirmed_at?: string
+          attested_country_code: string
+          attested_region_code?: string | null
+          created_at?: string
+          date_of_birth: string
+          free_play_eligible?: boolean
+          last_checked_at?: string
+          last_ip_country?: string | null
+          last_ip_region?: string | null
+          paid_play_eligible?: boolean
+          responsible_play_accepted_at?: string
+          terms_accepted_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age_confirmed_at?: string
+          attested_country_code?: string
+          attested_region_code?: string | null
+          created_at?: string
+          date_of_birth?: string
+          free_play_eligible?: boolean
+          last_checked_at?: string
+          last_ip_country?: string | null
+          last_ip_region?: string | null
+          paid_play_eligible?: boolean
+          responsible_play_accepted_at?: string
+          terms_accepted_at?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []

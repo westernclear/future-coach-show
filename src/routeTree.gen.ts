@@ -24,11 +24,17 @@ import { Route as BlueprintRouteImport } from './routes/blueprint'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LegalResponsiblePlayRouteImport } from './routes/legal.responsible-play'
+import { Route as LegalProhibitedRouteImport } from './routes/legal.prohibited'
+import { Route as LegalEligibilityRouteImport } from './routes/legal.eligibility'
 import { Route as AuthenticatedSecurityRouteImport } from './routes/_authenticated/security'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedEligibilityRouteImport } from './routes/_authenticated/eligibility'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminMonitoringRouteImport } from './routes/_authenticated/admin.monitoring'
+import { Route as AuthenticatedAdminJurisdictionsRouteImport } from './routes/_authenticated/admin.jurisdictions'
+import { Route as AuthenticatedAdminGeoBlocksRouteImport } from './routes/_authenticated/admin.geo-blocks'
 import { Route as AuthenticatedAdminAuditsRouteImport } from './routes/_authenticated/admin.audits'
 import { Route as ApiPublicMonitoringProbeRouteImport } from './routes/api/public/monitoring/probe'
 import { Route as ApiPublicMonitoringLogErrorRouteImport } from './routes/api/public/monitoring/log-error'
@@ -108,6 +114,21 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LegalResponsiblePlayRoute = LegalResponsiblePlayRouteImport.update({
+  id: '/legal/responsible-play',
+  path: '/legal/responsible-play',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalProhibitedRoute = LegalProhibitedRouteImport.update({
+  id: '/legal/prohibited',
+  path: '/legal/prohibited',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalEligibilityRoute = LegalEligibilityRouteImport.update({
+  id: '/legal/eligibility',
+  path: '/legal/eligibility',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedSecurityRoute = AuthenticatedSecurityRouteImport.update({
   id: '/security',
   path: '/security',
@@ -123,6 +144,12 @@ const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedEligibilityRoute =
+  AuthenticatedEligibilityRouteImport.update({
+    id: '/eligibility',
+    path: '/eligibility',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -132,6 +159,18 @@ const AuthenticatedAdminMonitoringRoute =
   AuthenticatedAdminMonitoringRouteImport.update({
     id: '/admin/monitoring',
     path: '/admin/monitoring',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminJurisdictionsRoute =
+  AuthenticatedAdminJurisdictionsRouteImport.update({
+    id: '/admin/jurisdictions',
+    path: '/admin/jurisdictions',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminGeoBlocksRoute =
+  AuthenticatedAdminGeoBlocksRouteImport.update({
+    id: '/admin/geo-blocks',
+    path: '/admin/geo-blocks',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminAuditsRoute =
@@ -175,10 +214,16 @@ export interface FileRoutesByFullPath {
   '/the-show': typeof TheShowRoute
   '/unlock': typeof UnlockRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/eligibility': typeof AuthenticatedEligibilityRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/security': typeof AuthenticatedSecurityRoute
+  '/legal/eligibility': typeof LegalEligibilityRoute
+  '/legal/prohibited': typeof LegalProhibitedRoute
+  '/legal/responsible-play': typeof LegalResponsiblePlayRoute
   '/admin/audits': typeof AuthenticatedAdminAuditsRoute
+  '/admin/geo-blocks': typeof AuthenticatedAdminGeoBlocksRoute
+  '/admin/jurisdictions': typeof AuthenticatedAdminJurisdictionsRoute
   '/admin/monitoring': typeof AuthenticatedAdminMonitoringRoute
   '/api/public/monitoring/alert-sweep': typeof ApiPublicMonitoringAlertSweepRoute
   '/api/public/monitoring/log-error': typeof ApiPublicMonitoringLogErrorRoute
@@ -200,10 +245,16 @@ export interface FileRoutesByTo {
   '/the-show': typeof TheShowRoute
   '/unlock': typeof UnlockRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/eligibility': typeof AuthenticatedEligibilityRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/security': typeof AuthenticatedSecurityRoute
+  '/legal/eligibility': typeof LegalEligibilityRoute
+  '/legal/prohibited': typeof LegalProhibitedRoute
+  '/legal/responsible-play': typeof LegalResponsiblePlayRoute
   '/admin/audits': typeof AuthenticatedAdminAuditsRoute
+  '/admin/geo-blocks': typeof AuthenticatedAdminGeoBlocksRoute
+  '/admin/jurisdictions': typeof AuthenticatedAdminJurisdictionsRoute
   '/admin/monitoring': typeof AuthenticatedAdminMonitoringRoute
   '/api/public/monitoring/alert-sweep': typeof ApiPublicMonitoringAlertSweepRoute
   '/api/public/monitoring/log-error': typeof ApiPublicMonitoringLogErrorRoute
@@ -227,10 +278,16 @@ export interface FileRoutesById {
   '/the-show': typeof TheShowRoute
   '/unlock': typeof UnlockRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/eligibility': typeof AuthenticatedEligibilityRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/security': typeof AuthenticatedSecurityRoute
+  '/legal/eligibility': typeof LegalEligibilityRoute
+  '/legal/prohibited': typeof LegalProhibitedRoute
+  '/legal/responsible-play': typeof LegalResponsiblePlayRoute
   '/_authenticated/admin/audits': typeof AuthenticatedAdminAuditsRoute
+  '/_authenticated/admin/geo-blocks': typeof AuthenticatedAdminGeoBlocksRoute
+  '/_authenticated/admin/jurisdictions': typeof AuthenticatedAdminJurisdictionsRoute
   '/_authenticated/admin/monitoring': typeof AuthenticatedAdminMonitoringRoute
   '/api/public/monitoring/alert-sweep': typeof ApiPublicMonitoringAlertSweepRoute
   '/api/public/monitoring/log-error': typeof ApiPublicMonitoringLogErrorRoute
@@ -254,10 +311,16 @@ export interface FileRouteTypes {
     | '/the-show'
     | '/unlock'
     | '/dashboard'
+    | '/eligibility'
     | '/onboarding'
     | '/profile'
     | '/security'
+    | '/legal/eligibility'
+    | '/legal/prohibited'
+    | '/legal/responsible-play'
     | '/admin/audits'
+    | '/admin/geo-blocks'
+    | '/admin/jurisdictions'
     | '/admin/monitoring'
     | '/api/public/monitoring/alert-sweep'
     | '/api/public/monitoring/log-error'
@@ -279,10 +342,16 @@ export interface FileRouteTypes {
     | '/the-show'
     | '/unlock'
     | '/dashboard'
+    | '/eligibility'
     | '/onboarding'
     | '/profile'
     | '/security'
+    | '/legal/eligibility'
+    | '/legal/prohibited'
+    | '/legal/responsible-play'
     | '/admin/audits'
+    | '/admin/geo-blocks'
+    | '/admin/jurisdictions'
     | '/admin/monitoring'
     | '/api/public/monitoring/alert-sweep'
     | '/api/public/monitoring/log-error'
@@ -305,10 +374,16 @@ export interface FileRouteTypes {
     | '/the-show'
     | '/unlock'
     | '/_authenticated/dashboard'
+    | '/_authenticated/eligibility'
     | '/_authenticated/onboarding'
     | '/_authenticated/profile'
     | '/_authenticated/security'
+    | '/legal/eligibility'
+    | '/legal/prohibited'
+    | '/legal/responsible-play'
     | '/_authenticated/admin/audits'
+    | '/_authenticated/admin/geo-blocks'
+    | '/_authenticated/admin/jurisdictions'
     | '/_authenticated/admin/monitoring'
     | '/api/public/monitoring/alert-sweep'
     | '/api/public/monitoring/log-error'
@@ -331,6 +406,9 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   TheShowRoute: typeof TheShowRoute
   UnlockRoute: typeof UnlockRoute
+  LegalEligibilityRoute: typeof LegalEligibilityRoute
+  LegalProhibitedRoute: typeof LegalProhibitedRoute
+  LegalResponsiblePlayRoute: typeof LegalResponsiblePlayRoute
   ApiPublicMonitoringAlertSweepRoute: typeof ApiPublicMonitoringAlertSweepRoute
   ApiPublicMonitoringLogErrorRoute: typeof ApiPublicMonitoringLogErrorRoute
   ApiPublicMonitoringProbeRoute: typeof ApiPublicMonitoringProbeRoute
@@ -443,6 +521,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/legal/responsible-play': {
+      id: '/legal/responsible-play'
+      path: '/legal/responsible-play'
+      fullPath: '/legal/responsible-play'
+      preLoaderRoute: typeof LegalResponsiblePlayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/prohibited': {
+      id: '/legal/prohibited'
+      path: '/legal/prohibited'
+      fullPath: '/legal/prohibited'
+      preLoaderRoute: typeof LegalProhibitedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/eligibility': {
+      id: '/legal/eligibility'
+      path: '/legal/eligibility'
+      fullPath: '/legal/eligibility'
+      preLoaderRoute: typeof LegalEligibilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/security': {
       id: '/_authenticated/security'
       path: '/security'
@@ -464,6 +563,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/eligibility': {
+      id: '/_authenticated/eligibility'
+      path: '/eligibility'
+      fullPath: '/eligibility'
+      preLoaderRoute: typeof AuthenticatedEligibilityRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -476,6 +582,20 @@ declare module '@tanstack/react-router' {
       path: '/admin/monitoring'
       fullPath: '/admin/monitoring'
       preLoaderRoute: typeof AuthenticatedAdminMonitoringRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/jurisdictions': {
+      id: '/_authenticated/admin/jurisdictions'
+      path: '/admin/jurisdictions'
+      fullPath: '/admin/jurisdictions'
+      preLoaderRoute: typeof AuthenticatedAdminJurisdictionsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/geo-blocks': {
+      id: '/_authenticated/admin/geo-blocks'
+      path: '/admin/geo-blocks'
+      fullPath: '/admin/geo-blocks'
+      preLoaderRoute: typeof AuthenticatedAdminGeoBlocksRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/audits': {
@@ -511,19 +631,25 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedEligibilityRoute: typeof AuthenticatedEligibilityRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSecurityRoute: typeof AuthenticatedSecurityRoute
   AuthenticatedAdminAuditsRoute: typeof AuthenticatedAdminAuditsRoute
+  AuthenticatedAdminGeoBlocksRoute: typeof AuthenticatedAdminGeoBlocksRoute
+  AuthenticatedAdminJurisdictionsRoute: typeof AuthenticatedAdminJurisdictionsRoute
   AuthenticatedAdminMonitoringRoute: typeof AuthenticatedAdminMonitoringRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedEligibilityRoute: AuthenticatedEligibilityRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSecurityRoute: AuthenticatedSecurityRoute,
   AuthenticatedAdminAuditsRoute: AuthenticatedAdminAuditsRoute,
+  AuthenticatedAdminGeoBlocksRoute: AuthenticatedAdminGeoBlocksRoute,
+  AuthenticatedAdminJurisdictionsRoute: AuthenticatedAdminJurisdictionsRoute,
   AuthenticatedAdminMonitoringRoute: AuthenticatedAdminMonitoringRoute,
 }
 
@@ -546,6 +672,9 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   TheShowRoute: TheShowRoute,
   UnlockRoute: UnlockRoute,
+  LegalEligibilityRoute: LegalEligibilityRoute,
+  LegalProhibitedRoute: LegalProhibitedRoute,
+  LegalResponsiblePlayRoute: LegalResponsiblePlayRoute,
   ApiPublicMonitoringAlertSweepRoute: ApiPublicMonitoringAlertSweepRoute,
   ApiPublicMonitoringLogErrorRoute: ApiPublicMonitoringLogErrorRoute,
   ApiPublicMonitoringProbeRoute: ApiPublicMonitoringProbeRoute,
@@ -553,13 +682,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
