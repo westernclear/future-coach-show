@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { unlockSite } from "@/lib/site_gate.functions";
+import { clearGateSensitiveCaches } from "@/lib/pwa";
 
 export const Route = createFileRoute("/unlock")({
   validateSearch: z.object({ redirect: z.string().optional() }),
@@ -42,6 +43,7 @@ function UnlockPage() {
         return;
       }
       await router.invalidate();
+      await clearGateSensitiveCaches();
       const target = redirect && redirect.startsWith("/") && !redirect.startsWith("/unlock")
         ? redirect
         : "/";

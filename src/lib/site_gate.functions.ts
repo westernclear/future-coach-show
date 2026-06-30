@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { useSession } from "@tanstack/react-start/server";
+import { setResponseHeader, useSession } from "@tanstack/react-start/server";
 import { createHash, timingSafeEqual } from "node:crypto";
 
 type GateSession = { unlocked?: boolean };
@@ -21,12 +21,15 @@ function getSessionConfig() {
 }
 
 function passwordMatches(input: string, expected: string): boolean {
-  const a = createHash("sha256").update(input, "utf8").digest();
-  const b = createHash("sha256").update(expected, "utf8").digest();
+  const a = createHash("sha256").update(input.trim(), "utf8").digest();
+  const b = createHash("sha256").update(expected.trim(), "utf8").digest();
   return timingSafeEqual(a, b);
 }
 
 export const getGateStatus = createServerFn({ method: "GET" }).handler(async () => {
+  setResponseHeader("cache-control", "no-store, no-cache, max-age=0, must-revalidate");
+  setResponseHeader("pragma", "no-cache");
+  setResponseHeader("expires", "0");
   const session = await useSession<GateSession>(getSessionConfig());
   return { unlocked: Boolean(session.data.unlocked) };
 });
@@ -39,6 +42,9 @@ export const unlockSite = createServerFn({ method: "POST" })
     return { code: data.code };
   })
   .handler(async ({ data }) => {
+    setResponseHeader("cache-control", "no-store, no-cache, max-age=0, must-revalidate");
+    setResponseHeader("pragma", "no-cache");
+    setResponseHeader("expires", "0");
     const expected = process.env.SITE_ACCESS_CODE;
     if (!expected) throw new Error("SITE_ACCESS_CODE is not set");
     if (!passwordMatches(data.code, expected)) {
@@ -50,6 +56,9 @@ export const unlockSite = createServerFn({ method: "POST" })
   });
 
 export const lockSite = createServerFn({ method: "POST" }).handler(async () => {
+  setResponseHeader("cache-control", "no-store, no-cache, max-age=0, must-revalidate");
+  setResponseHeader("pragma", "no-cache");
+  setResponseHeader("expires", "0");
   const session = await useSession<GateSession>(getSessionConfig());
   await session.clear();
   return { ok: true as const };

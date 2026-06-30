@@ -1,6 +1,7 @@
 import { registerSW } from "virtual:pwa-register";
 
 const PREVIEW_HOSTS = ["lovableproject.com", "lovableproject-dev.com", "beta.lovable.dev"];
+const GATE_SENSITIVE_CACHES = ["coachface-pages"];
 
 function isPreviewHost(hostname: string) {
   return (
@@ -23,8 +24,15 @@ async function unregisterCoachFaceWorkers() {
   );
 }
 
+export async function clearGateSensitiveCaches() {
+  if (!("caches" in window)) return;
+  await Promise.all(GATE_SENSITIVE_CACHES.map((cacheName) => caches.delete(cacheName)));
+}
+
 export async function registerCoachFaceServiceWorker() {
   if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
+
+  await clearGateSensitiveCaches();
 
   const isTopLevel = window.self === window.top;
   const disabled = new URLSearchParams(window.location.search).get("sw") === "off";
