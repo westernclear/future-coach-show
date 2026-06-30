@@ -1,11 +1,29 @@
-import { useMemo, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Link, useLocation } from "@tanstack/react-router";
+import { ShieldCheck, ChevronDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { InstallAppButton } from "@/components/install-app-button";
 import { checkIsAdmin } from "@/lib/admin-audits.functions";
+
+const adminLinks = [
+  { to: "/admin/audits", label: "Upload Audits" },
+  { to: "/admin/monitoring", label: "Monitoring" },
+  { to: "/admin/jurisdictions", label: "Jurisdictions" },
+  { to: "/admin/geo-blocks", label: "Geo Blocks" },
+  { to: "/admin/access-codes", label: "Access Codes" },
+] as const;
+
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard" },
