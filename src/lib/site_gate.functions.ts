@@ -2,6 +2,11 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeader, setResponseHeader, useSession } from "@tanstack/react-start/server";
 import { createHash, timingSafeEqual } from "node:crypto";
 
+function hashWithSalt(code: string): string {
+  const salt = process.env.SITE_GATE_SESSION_SECRET ?? "";
+  return createHash("sha256").update(`${salt}::${code.trim()}`, "utf8").digest("hex");
+}
+
 type GateSession = { unlocked?: boolean };
 
 const PREVIEW_HOSTS = ["lovableproject.com", "lovableproject-dev.com", "beta.lovable.dev"];
