@@ -138,7 +138,7 @@ function AdminFooter() {
   if (!isAdmin) return null;
   return (
     <div className="border-b border-game-border bg-foreground py-3 text-background">
-      <nav className="mx-auto flex max-w-7xl items-center justify-center gap-6 px-5 text-xs font-bold lg:px-8" aria-label="Admin">
+      <nav className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-6 gap-y-2 px-5 text-xs font-bold lg:px-8" aria-label="Admin">
         <Link to="/admin/audits" className="flex items-center gap-1.5 text-game-muted hover:text-background">
           <span className="size-2 rounded-full bg-primary" />
           Upload Audits
@@ -146,6 +146,14 @@ function AdminFooter() {
         <Link to="/admin/monitoring" className="flex items-center gap-1.5 text-game-muted hover:text-background">
           <span className="size-2 rounded-full bg-primary" />
           Monitoring
+        </Link>
+        <Link to="/admin/jurisdictions" className="flex items-center gap-1.5 text-game-muted hover:text-background">
+          <span className="size-2 rounded-full bg-primary" />
+          Jurisdictions
+        </Link>
+        <Link to="/admin/geo-blocks" className="flex items-center gap-1.5 text-game-muted hover:text-background">
+          <span className="size-2 rounded-full bg-primary" />
+          Geo Blocks
         </Link>
       </nav>
     </div>
