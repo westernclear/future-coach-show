@@ -72,6 +72,7 @@ export function CoachFacePageShell({ children }: { children: ReactNode }) {
             ))}
           </nav>
           <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+            <AdminHeaderMenu />
             <Button size="sm" variant={isAccountPage ? "outline" : "default"} asChild>
               <Link to={isAccountPage ? "/profile" : "/auth"}>
                 {isAccountPage ? "My profile" : "Sign in"}
@@ -79,6 +80,7 @@ export function CoachFacePageShell({ children }: { children: ReactNode }) {
             </Button>
             <InstallAppButton />
           </div>
+
         </div>
         <nav
           className="flex gap-5 overflow-x-auto border-t border-border/60 px-4 py-3 text-xs font-bold [scrollbar-width:none] sm:px-5 md:hidden [&::-webkit-scrollbar]:hidden"
