@@ -88,11 +88,43 @@ export const unlockSite = createServerFn({ method: "POST" })
     setResponseHeader("cache-control", "no-store, no-cache, max-age=0, must-revalidate");
     setResponseHeader("pragma", "no-cache");
     setResponseHeader("expires", "0");
+
+    let granted = false;
+
+    // 1) Legacy env-var master code
     const expected = process.env.SITE_ACCESS_CODE;
-    if (!expected) throw new Error("SITE_ACCESS_CODE is not set");
-    if (!passwordMatches(data.code, expected)) {
-      return { ok: false as const };
+    if (expected && passwordMatches(data.code, expected)) {
+      granted = true;
     }
+
+    // 2) Admin-issued codes from DB
+    if (!granted) {
+      try {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const code_hash = hashWithSalt(data.code);
+        const { data: row } = await supabaseAdmin
+          .from("site_access_codes")
+          .select("id, active, expires_at, max_uses, uses")
+          .eq("code_hash", code_hash)
+          .maybeSingle();
+        if (row && row.active) {
+          const notExpired = !row.expires_at || new Date(row.expires_at) > new Date();
+          const underLimit = row.max_uses == null || row.uses < row.max_uses;
+          if (notExpired && underLimit) {
+            granted = true;
+            await supabaseAdmin
+              .from("site_access_codes")
+              .update({ uses: row.uses + 1, last_used_at: new Date().toISOString() })
+              .eq("id", row.id);
+          }
+        }
+      } catch (err) {
+        console.error("[site_gate] db code lookup failed", err);
+      }
+    }
+
+    if (!granted) return { ok: false as const };
+
     const session = await useSession<GateSession>(getSessionConfig());
     await session.update({ unlocked: true });
     return { ok: true as const };
