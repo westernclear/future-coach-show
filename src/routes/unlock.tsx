@@ -7,7 +7,7 @@ import { Loader2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { unlockSite } from "@/lib/site_gate.functions";
+import { unlockSite, getGateStatus } from "@/lib/site_gate.functions";
 import { clearGateSensitiveCaches } from "@/lib/pwa";
 
 export const Route = createFileRoute("/unlock")({
@@ -27,6 +27,7 @@ function UnlockPage() {
   const router = useRouter();
   const { redirect } = Route.useSearch();
   const unlock = useServerFn(unlockSite);
+  const checkStatus = useServerFn(getGateStatus);
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -42,12 +43,23 @@ function UnlockPage() {
         setLoading(false);
         return;
       }
-      await router.invalidate();
+      // Immediate recheck against the server to confirm the session cookie
+      // is in place before we navigate; this avoids any race where the
+      // root beforeLoad re-redirects back to /unlock.
+      const status = await checkStatus().catch(() => ({ unlocked: false }));
+      if (!status.unlocked) {
+        setError("Unlock didn't persist. Please try again.");
+        setLoading(false);
+        return;
+      }
       await clearGateSensitiveCaches();
+      await router.invalidate();
       const target = redirect && redirect.startsWith("/") && !redirect.startsWith("/unlock")
         ? redirect
         : "/";
-      window.location.href = target;
+      // Hard reload so the new gate cookie is used for a fresh document
+      // request, bypassing any cached navigation response.
+      window.location.replace(target);
     } catch {
       setError("Something went wrong. Please try again.");
       setLoading(false);
