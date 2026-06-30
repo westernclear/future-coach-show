@@ -99,7 +99,7 @@ export function CoachFacePageShell({ children }: { children: ReactNode }) {
         </nav>
       </header>
       {children}
-      <AdminFooter />
+      
       <footer className="border-t border-game-border bg-foreground py-9 text-background">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-4 px-5 sm:flex-row sm:items-center lg:px-8">
           <div>
