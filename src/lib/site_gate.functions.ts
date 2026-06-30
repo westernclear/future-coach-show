@@ -6,7 +6,7 @@ type GateSession = { unlocked?: boolean };
 
 const PREVIEW_HOSTS = ["lovableproject.com", "lovableproject-dev.com", "beta.lovable.dev"];
 
-function isPreviewOrLocalHost(host: string | null) {
+function isPreviewOrLocalHost(host: string | null | undefined) {
   const hostname = (host ?? "").split(":")[0]?.toLowerCase() ?? "";
   return (
     hostname === "localhost" ||
