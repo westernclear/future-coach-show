@@ -41,11 +41,31 @@ function passwordMatches(input: string, expected: string): boolean {
   return timingSafeEqual(a, b);
 }
 
+function anyHostIsPreview() {
+  const candidates = [
+    getRequestHeader("x-forwarded-host"),
+    getRequestHeader("x-original-host"),
+    getRequestHeader("host"),
+    getRequestHeader("referer"),
+    getRequestHeader("origin"),
+  ];
+  for (const raw of candidates) {
+    if (!raw) continue;
+    try {
+      const host = raw.includes("://") ? new URL(raw).host : raw;
+      if (isPreviewOrLocalHost(host)) return true;
+    } catch {
+      if (isPreviewOrLocalHost(raw)) return true;
+    }
+  }
+  return false;
+}
+
 export const getGateStatus = createServerFn({ method: "GET" }).handler(async () => {
   setResponseHeader("cache-control", "no-store, no-cache, max-age=0, must-revalidate");
   setResponseHeader("pragma", "no-cache");
   setResponseHeader("expires", "0");
-  if (isPreviewOrLocalHost(getRequestHeader("host"))) {
+  if (anyHostIsPreview()) {
     return { unlocked: true, previewBypass: true };
   }
   const session = await useSession<GateSession>(getSessionConfig());
