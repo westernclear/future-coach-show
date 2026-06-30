@@ -33,9 +33,9 @@ export default defineConfig({
               if (request.mode !== "navigate") return false;
               const p = url.pathname;
               if (p.startsWith("/~oauth")) return false;
-              // Never cache authenticated routes — risk of leaking another user's shell on shared devices.
-              const authedPrefixes = ["/dashboard", "/profile", "/onboarding", "/security", "/admin"];
-              return !authedPrefixes.some((prefix) => p === prefix || p.startsWith(`${prefix}/`));
+              // The site is access-code gated. Never cache page navigations, because a
+              // stale locked redirect can survive after a successful unlock.
+              return false;
             },
             handler: "NetworkFirst",
             options: {
