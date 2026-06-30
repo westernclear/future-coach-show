@@ -147,7 +147,7 @@ export function CoachFacePageShell({ children }: { children: ReactNode }) {
   );
 }
 
-function AdminFooter() {
+function AdminHeaderMenu() {
   const checkAdmin = useServerFn(checkIsAdmin);
   const { data: isAdmin } = useQuery({
     queryKey: ["shell-is-admin"],
@@ -157,32 +157,29 @@ function AdminFooter() {
   });
   if (!isAdmin) return null;
   return (
-    <div className="border-b border-game-border bg-foreground py-3 text-background">
-      <nav className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-6 gap-y-2 px-5 text-xs font-bold lg:px-8" aria-label="Admin">
-        <Link to="/admin/audits" className="flex items-center gap-1.5 text-game-muted hover:text-background">
-          <span className="size-2 rounded-full bg-primary" />
-          Upload Audits
-        </Link>
-        <Link to="/admin/monitoring" className="flex items-center gap-1.5 text-game-muted hover:text-background">
-          <span className="size-2 rounded-full bg-primary" />
-          Monitoring
-        </Link>
-        <Link to="/admin/jurisdictions" className="flex items-center gap-1.5 text-game-muted hover:text-background">
-          <span className="size-2 rounded-full bg-primary" />
-          Jurisdictions
-        </Link>
-        <Link to="/admin/geo-blocks" className="flex items-center gap-1.5 text-game-muted hover:text-background">
-          <span className="size-2 rounded-full bg-primary" />
-          Geo Blocks
-        </Link>
-        <Link to="/admin/access-codes" className="flex items-center gap-1.5 text-game-muted hover:text-background">
-          <span className="size-2 rounded-full bg-primary" />
-          Access Codes
-        </Link>
-      </nav>
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button size="sm" variant="ghost" className="gap-1.5 font-bold">
+          <ShieldCheck className="size-4 text-primary" />
+          <span className="hidden sm:inline">Admin</span>
+          <ChevronDown className="size-3.5 opacity-70" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-52">
+        <DropdownMenuLabel>Admin tools</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {adminLinks.map((item) => (
+          <DropdownMenuItem key={item.to} asChild>
+            <Link to={item.to} className="cursor-pointer">
+              {item.label}
+            </Link>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
+
 
 export function PageHero({
   eyebrow,
