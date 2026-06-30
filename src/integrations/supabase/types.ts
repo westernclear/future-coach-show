@@ -1299,6 +1299,51 @@ export type Database = {
         }
         Relationships: []
       }
+      site_access_codes: {
+        Row: {
+          active: boolean
+          code_hash: string
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          label: string
+          last_used_at: string | null
+          max_uses: number | null
+          note: string | null
+          updated_at: string
+          uses: number
+        }
+        Insert: {
+          active?: boolean
+          code_hash: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          label: string
+          last_used_at?: string | null
+          max_uses?: number | null
+          note?: string | null
+          updated_at?: string
+          uses?: number
+        }
+        Update: {
+          active?: boolean
+          code_hash?: string
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          label?: string
+          last_used_at?: string | null
+          max_uses?: number | null
+          note?: string | null
+          updated_at?: string
+          uses?: number
+        }
+        Relationships: []
+      }
       sports: {
         Row: {
           config: Json
