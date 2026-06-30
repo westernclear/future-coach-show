@@ -36,6 +36,7 @@ import { Route as AuthenticatedAdminMonitoringRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminJurisdictionsRouteImport } from './routes/_authenticated/admin.jurisdictions'
 import { Route as AuthenticatedAdminGeoBlocksRouteImport } from './routes/_authenticated/admin.geo-blocks'
 import { Route as AuthenticatedAdminAuditsRouteImport } from './routes/_authenticated/admin.audits'
+import { Route as AuthenticatedAdminAccessCodesRouteImport } from './routes/_authenticated/admin.access-codes'
 import { Route as ApiPublicMonitoringProbeRouteImport } from './routes/api/public/monitoring/probe'
 import { Route as ApiPublicMonitoringLogErrorRouteImport } from './routes/api/public/monitoring/log-error'
 import { Route as ApiPublicMonitoringAlertSweepRouteImport } from './routes/api/public/monitoring/alert-sweep'
@@ -179,6 +180,12 @@ const AuthenticatedAdminAuditsRoute =
     path: '/admin/audits',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminAccessCodesRoute =
+  AuthenticatedAdminAccessCodesRouteImport.update({
+    id: '/admin/access-codes',
+    path: '/admin/access-codes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiPublicMonitoringProbeRoute =
   ApiPublicMonitoringProbeRouteImport.update({
     id: '/api/public/monitoring/probe',
@@ -221,6 +228,7 @@ export interface FileRoutesByFullPath {
   '/legal/eligibility': typeof LegalEligibilityRoute
   '/legal/prohibited': typeof LegalProhibitedRoute
   '/legal/responsible-play': typeof LegalResponsiblePlayRoute
+  '/admin/access-codes': typeof AuthenticatedAdminAccessCodesRoute
   '/admin/audits': typeof AuthenticatedAdminAuditsRoute
   '/admin/geo-blocks': typeof AuthenticatedAdminGeoBlocksRoute
   '/admin/jurisdictions': typeof AuthenticatedAdminJurisdictionsRoute
@@ -252,6 +260,7 @@ export interface FileRoutesByTo {
   '/legal/eligibility': typeof LegalEligibilityRoute
   '/legal/prohibited': typeof LegalProhibitedRoute
   '/legal/responsible-play': typeof LegalResponsiblePlayRoute
+  '/admin/access-codes': typeof AuthenticatedAdminAccessCodesRoute
   '/admin/audits': typeof AuthenticatedAdminAuditsRoute
   '/admin/geo-blocks': typeof AuthenticatedAdminGeoBlocksRoute
   '/admin/jurisdictions': typeof AuthenticatedAdminJurisdictionsRoute
@@ -285,6 +294,7 @@ export interface FileRoutesById {
   '/legal/eligibility': typeof LegalEligibilityRoute
   '/legal/prohibited': typeof LegalProhibitedRoute
   '/legal/responsible-play': typeof LegalResponsiblePlayRoute
+  '/_authenticated/admin/access-codes': typeof AuthenticatedAdminAccessCodesRoute
   '/_authenticated/admin/audits': typeof AuthenticatedAdminAuditsRoute
   '/_authenticated/admin/geo-blocks': typeof AuthenticatedAdminGeoBlocksRoute
   '/_authenticated/admin/jurisdictions': typeof AuthenticatedAdminJurisdictionsRoute
@@ -318,6 +328,7 @@ export interface FileRouteTypes {
     | '/legal/eligibility'
     | '/legal/prohibited'
     | '/legal/responsible-play'
+    | '/admin/access-codes'
     | '/admin/audits'
     | '/admin/geo-blocks'
     | '/admin/jurisdictions'
@@ -349,6 +360,7 @@ export interface FileRouteTypes {
     | '/legal/eligibility'
     | '/legal/prohibited'
     | '/legal/responsible-play'
+    | '/admin/access-codes'
     | '/admin/audits'
     | '/admin/geo-blocks'
     | '/admin/jurisdictions'
@@ -381,6 +393,7 @@ export interface FileRouteTypes {
     | '/legal/eligibility'
     | '/legal/prohibited'
     | '/legal/responsible-play'
+    | '/_authenticated/admin/access-codes'
     | '/_authenticated/admin/audits'
     | '/_authenticated/admin/geo-blocks'
     | '/_authenticated/admin/jurisdictions'
@@ -605,6 +618,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAuditsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/access-codes': {
+      id: '/_authenticated/admin/access-codes'
+      path: '/admin/access-codes'
+      fullPath: '/admin/access-codes'
+      preLoaderRoute: typeof AuthenticatedAdminAccessCodesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/monitoring/probe': {
       id: '/api/public/monitoring/probe'
       path: '/api/public/monitoring/probe'
@@ -635,6 +655,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSecurityRoute: typeof AuthenticatedSecurityRoute
+  AuthenticatedAdminAccessCodesRoute: typeof AuthenticatedAdminAccessCodesRoute
   AuthenticatedAdminAuditsRoute: typeof AuthenticatedAdminAuditsRoute
   AuthenticatedAdminGeoBlocksRoute: typeof AuthenticatedAdminGeoBlocksRoute
   AuthenticatedAdminJurisdictionsRoute: typeof AuthenticatedAdminJurisdictionsRoute
@@ -647,6 +668,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSecurityRoute: AuthenticatedSecurityRoute,
+  AuthenticatedAdminAccessCodesRoute: AuthenticatedAdminAccessCodesRoute,
   AuthenticatedAdminAuditsRoute: AuthenticatedAdminAuditsRoute,
   AuthenticatedAdminGeoBlocksRoute: AuthenticatedAdminGeoBlocksRoute,
   AuthenticatedAdminJurisdictionsRoute: AuthenticatedAdminJurisdictionsRoute,

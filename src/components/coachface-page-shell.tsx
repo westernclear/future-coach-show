@@ -155,6 +155,10 @@ function AdminFooter() {
           <span className="size-2 rounded-full bg-primary" />
           Geo Blocks
         </Link>
+        <Link to="/admin/access-codes" className="flex items-center gap-1.5 text-game-muted hover:text-background">
+          <span className="size-2 rounded-full bg-primary" />
+          Access Codes
+        </Link>
       </nav>
     </div>
   );
