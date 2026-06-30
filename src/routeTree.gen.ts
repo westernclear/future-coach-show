@@ -24,6 +24,7 @@ import { Route as BlueprintRouteImport } from './routes/blueprint'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LegalResponsiblePlayRouteImport } from './routes/legal.responsible-play'
 import { Route as LegalProhibitedRouteImport } from './routes/legal.prohibited'
 import { Route as LegalEligibilityRouteImport } from './routes/legal.eligibility'
 import { Route as AuthenticatedSecurityRouteImport } from './routes/_authenticated/security'
@@ -111,6 +112,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegalResponsiblePlayRoute = LegalResponsiblePlayRouteImport.update({
+  id: '/legal/responsible-play',
+  path: '/legal/responsible-play',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LegalProhibitedRoute = LegalProhibitedRouteImport.update({
@@ -214,6 +220,7 @@ export interface FileRoutesByFullPath {
   '/security': typeof AuthenticatedSecurityRoute
   '/legal/eligibility': typeof LegalEligibilityRoute
   '/legal/prohibited': typeof LegalProhibitedRoute
+  '/legal/responsible-play': typeof LegalResponsiblePlayRoute
   '/admin/audits': typeof AuthenticatedAdminAuditsRoute
   '/admin/geo-blocks': typeof AuthenticatedAdminGeoBlocksRoute
   '/admin/jurisdictions': typeof AuthenticatedAdminJurisdictionsRoute
@@ -244,6 +251,7 @@ export interface FileRoutesByTo {
   '/security': typeof AuthenticatedSecurityRoute
   '/legal/eligibility': typeof LegalEligibilityRoute
   '/legal/prohibited': typeof LegalProhibitedRoute
+  '/legal/responsible-play': typeof LegalResponsiblePlayRoute
   '/admin/audits': typeof AuthenticatedAdminAuditsRoute
   '/admin/geo-blocks': typeof AuthenticatedAdminGeoBlocksRoute
   '/admin/jurisdictions': typeof AuthenticatedAdminJurisdictionsRoute
@@ -276,6 +284,7 @@ export interface FileRoutesById {
   '/_authenticated/security': typeof AuthenticatedSecurityRoute
   '/legal/eligibility': typeof LegalEligibilityRoute
   '/legal/prohibited': typeof LegalProhibitedRoute
+  '/legal/responsible-play': typeof LegalResponsiblePlayRoute
   '/_authenticated/admin/audits': typeof AuthenticatedAdminAuditsRoute
   '/_authenticated/admin/geo-blocks': typeof AuthenticatedAdminGeoBlocksRoute
   '/_authenticated/admin/jurisdictions': typeof AuthenticatedAdminJurisdictionsRoute
@@ -308,6 +317,7 @@ export interface FileRouteTypes {
     | '/security'
     | '/legal/eligibility'
     | '/legal/prohibited'
+    | '/legal/responsible-play'
     | '/admin/audits'
     | '/admin/geo-blocks'
     | '/admin/jurisdictions'
@@ -338,6 +348,7 @@ export interface FileRouteTypes {
     | '/security'
     | '/legal/eligibility'
     | '/legal/prohibited'
+    | '/legal/responsible-play'
     | '/admin/audits'
     | '/admin/geo-blocks'
     | '/admin/jurisdictions'
@@ -369,6 +380,7 @@ export interface FileRouteTypes {
     | '/_authenticated/security'
     | '/legal/eligibility'
     | '/legal/prohibited'
+    | '/legal/responsible-play'
     | '/_authenticated/admin/audits'
     | '/_authenticated/admin/geo-blocks'
     | '/_authenticated/admin/jurisdictions'
@@ -396,6 +408,7 @@ export interface RootRouteChildren {
   UnlockRoute: typeof UnlockRoute
   LegalEligibilityRoute: typeof LegalEligibilityRoute
   LegalProhibitedRoute: typeof LegalProhibitedRoute
+  LegalResponsiblePlayRoute: typeof LegalResponsiblePlayRoute
   ApiPublicMonitoringAlertSweepRoute: typeof ApiPublicMonitoringAlertSweepRoute
   ApiPublicMonitoringLogErrorRoute: typeof ApiPublicMonitoringLogErrorRoute
   ApiPublicMonitoringProbeRoute: typeof ApiPublicMonitoringProbeRoute
@@ -506,6 +519,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legal/responsible-play': {
+      id: '/legal/responsible-play'
+      path: '/legal/responsible-play'
+      fullPath: '/legal/responsible-play'
+      preLoaderRoute: typeof LegalResponsiblePlayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/legal/prohibited': {
@@ -654,6 +674,7 @@ const rootRouteChildren: RootRouteChildren = {
   UnlockRoute: UnlockRoute,
   LegalEligibilityRoute: LegalEligibilityRoute,
   LegalProhibitedRoute: LegalProhibitedRoute,
+  LegalResponsiblePlayRoute: LegalResponsiblePlayRoute,
   ApiPublicMonitoringAlertSweepRoute: ApiPublicMonitoringAlertSweepRoute,
   ApiPublicMonitoringLogErrorRoute: ApiPublicMonitoringLogErrorRoute,
   ApiPublicMonitoringProbeRoute: ApiPublicMonitoringProbeRoute,

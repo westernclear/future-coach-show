@@ -106,6 +106,15 @@ export function CoachFacePageShell({ children }: { children: ReactNode }) {
           <Link to="/fair-play" className="hover:text-background">
             Fair Play Policy
           </Link>
+          <Link to="/legal/eligibility" className="hover:text-background">
+            Eligibility
+          </Link>
+          <Link to="/legal/prohibited" className="hover:text-background">
+            Prohibited Jurisdictions
+          </Link>
+          <Link to="/legal/responsible-play" className="hover:text-background">
+            Responsible Play
+          </Link>
         </nav>
         <div className="mx-auto mt-6 max-w-7xl px-5 lg:px-8">
           <p className="text-center text-xs text-game-muted/60">
