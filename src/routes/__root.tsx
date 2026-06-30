@@ -13,7 +13,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError, installGlobalErrorReporter } from "../lib/lovable-error-reporting";
 import { registerCoachFaceServiceWorker } from "../lib/pwa";
-import { getGateStatus } from "../lib/site-gate.functions";
+import { getGateStatus } from "../lib/site_gate.functions";
 
 
 function NotFoundComponent() {
